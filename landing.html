@@ -1,0 +1,1468 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pleroma — AI Haarconsultatie voor Kappers</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --gold:       #C9A96E;
+      --gold-dark:  #B8944A;
+      --gold-light: #E8D5B0;
+      --gold-bg:    #FAF6EE;
+      --dark:       #1A1A1A;
+      --gray:       #6B6B6B;
+      --gray-light: #9B9B9B;
+      --border:     #E8E8E4;
+      --bg:         #F7F6F3;
+      --white:      #FFFFFF;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: var(--white);
+      color: var(--dark);
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 500;
+      height: 64px;
+      background: rgba(255,255,255,0.94);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+    }
+
+    .nav-logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 22px;
+      letter-spacing: 0.04em;
+      color: var(--dark);
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--gold); }
+
+    .nav-links {
+      display: flex;
+      gap: 36px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--gray);
+      text-decoration: none;
+      letter-spacing: 0.01em;
+      transition: color 0.15s;
+    }
+    .nav-links a:hover { color: var(--dark); }
+
+    .nav-cta {
+      background: var(--gold);
+      color: white;
+      border: none;
+      padding: 10px 26px;
+      border-radius: 100px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.18s, transform 0.18s;
+    }
+    .nav-cta:hover { background: var(--gold-dark); transform: translateY(-1px); }
+
+    /* ── HERO ── */
+    .hero {
+      padding-top: 160px;
+      padding-bottom: 120px;
+      text-align: center;
+      background: var(--white);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -180px; left: 50%; transform: translateX(-50%);
+      width: 900px; height: 900px;
+      background: radial-gradient(ellipse, rgba(201,169,110,0.10) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-inner {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 24px;
+      position: relative;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 28px;
+    }
+    .eyebrow::before, .eyebrow::after {
+      content: '';
+      display: block;
+      width: 28px; height: 1px;
+      background: var(--gold-light);
+    }
+
+    .hero h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 62px;
+      line-height: 1.06;
+      letter-spacing: -0.01em;
+      margin-bottom: 24px;
+      color: var(--dark);
+    }
+    .hero h1 em {
+      color: var(--gold);
+      font-style: italic;
+    }
+
+    .hero-sub {
+      font-size: 18px;
+      color: var(--gray);
+      line-height: 1.65;
+      margin-bottom: 48px;
+      max-width: 520px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      background: var(--gold);
+      color: white;
+      border: 2px solid var(--gold);
+      padding: 16px 42px;
+      border-radius: 100px;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      box-shadow: 0 8px 28px rgba(201,169,110,0.36);
+      transition: all 0.18s;
+    }
+    .btn-primary:hover { background: var(--gold-dark); border-color: var(--gold-dark); transform: translateY(-2px); box-shadow: 0 12px 36px rgba(201,169,110,0.44); }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--dark);
+      border: 2px solid var(--border);
+      padding: 16px 42px;
+      border-radius: 100px;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.18s;
+    }
+    .btn-secondary:hover { border-color: var(--gold); color: var(--gold); }
+
+    .hero-note {
+      margin-top: 20px;
+      font-size: 13px;
+      color: var(--gray-light);
+    }
+
+    /* ── TRUST STRIP ── */
+    .trust-strip {
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 48px;
+      flex-wrap: wrap;
+    }
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--gray);
+      font-weight: 500;
+    }
+    .trust-icon { font-size: 18px; }
+
+    /* ── SECTIONS ── */
+    section {
+      padding: 100px 40px;
+    }
+    .section-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .section-eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 16px;
+    }
+    .section-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 42px;
+      line-height: 1.12;
+      margin-bottom: 18px;
+      color: var(--dark);
+    }
+    .section-sub {
+      font-size: 17px;
+      color: var(--gray);
+      line-height: 1.65;
+      max-width: 540px;
+    }
+
+    /* ── DEMO SECTION ── */
+    #demo {
+      background: var(--bg);
+      padding: 100px 40px;
+    }
+
+    .demo-header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+    .demo-header .section-sub {
+      margin: 0 auto;
+    }
+
+    /* quiz frame */
+    .quiz-frame {
+      max-width: 820px;
+      margin: 0 auto;
+      background: var(--white);
+      border-radius: 28px;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.06);
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* fake browser bar */
+    .browser-bar {
+      background: #F2F2F2;
+      border-bottom: 1px solid #E0E0E0;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      gap: 8px;
+    }
+    .browser-dot {
+      width: 12px; height: 12px;
+      border-radius: 50%;
+    }
+    .browser-dot:nth-child(1) { background: #FF5F57; }
+    .browser-dot:nth-child(2) { background: #FEBC2E; }
+    .browser-dot:nth-child(3) { background: #28C840; }
+    .browser-url {
+      flex: 1;
+      background: var(--white);
+      border-radius: 6px;
+      height: 26px;
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      font-size: 12px;
+      color: var(--gray);
+      margin: 0 12px;
+      border: 1px solid #E0E0E0;
+      gap: 6px;
+    }
+    .url-lock { font-size: 10px; }
+
+    /* ── QUIZ (embedded) ── */
+    .quiz-wrap {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      color: var(--dark);
+      position: relative;
+      overflow: hidden;
+      background: var(--bg);
+    }
+
+    .quiz-header {
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+    }
+
+    .q-logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 18px;
+      letter-spacing: 0.04em;
+    }
+    .q-logo-dot { color: var(--gold); }
+
+    .q-dots {
+      display: flex;
+      gap: 7px;
+      align-items: center;
+    }
+    .q-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--border);
+      transition: all 0.3s;
+    }
+    .q-dot.active { background: var(--gold); transform: scale(1.3); }
+    .q-dot.done   { background: var(--gold-light); }
+
+    .q-progress-bar {
+      height: 2px;
+      background: var(--border);
+      position: relative;
+    }
+    .q-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold), #E8C47A);
+      transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    /* overlay */
+    .q-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 300;
+      background: var(--white);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s;
+    }
+    .q-overlay.visible { opacity: 1; pointer-events: auto; }
+    .q-ov-icon { font-size: 34px; margin-bottom: 14px; animation: qpulse 0.6s ease infinite alternate; }
+    @keyframes qpulse { from { transform: scale(1); } to { transform: scale(1.15); } }
+    .q-ov-msg { font-family: 'DM Serif Display', serif; font-size: 24px; color: var(--dark); margin-bottom: 8px; }
+    .q-ov-sub { font-size: 14px; color: var(--gray); }
+
+    /* steps */
+    .q-main {
+      padding-bottom: 48px;
+    }
+    .q-step {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 28px 24px;
+    }
+    .q-step.active {
+      display: flex;
+      animation: qFadeUp 0.4s cubic-bezier(0.4,0,0.2,1);
+    }
+    @keyframes qFadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .q-eyebrow {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 12px;
+    }
+    .q-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 28px;
+      text-align: center;
+      line-height: 1.2;
+      margin-bottom: 8px;
+    }
+    .q-sub {
+      font-size: 14px;
+      color: var(--gray);
+      text-align: center;
+      margin-bottom: 36px;
+      max-width: 380px;
+      line-height: 1.5;
+    }
+
+    /* grid */
+    .q-grid {
+      display: grid;
+      gap: 14px;
+      width: 100%;
+    }
+    .q-g2 { grid-template-columns: repeat(2, 1fr); max-width: 480px; }
+    .q-g3 { grid-template-columns: repeat(3, 1fr); }
+
+    /* card */
+    .q-card {
+      background: var(--white);
+      border: 2px solid var(--border);
+      border-radius: 18px;
+      cursor: pointer;
+      transition: border-color 0.18s, transform 0.2s, box-shadow 0.2s;
+      overflow: hidden;
+      position: relative;
+      user-select: none;
+    }
+    .q-card:hover { border-color: var(--gold-light); transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.09); }
+    .q-card.selected { border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold), 0 8px 24px rgba(0,0,0,0.09); transform: translateY(-3px); }
+
+    .q-check {
+      position: absolute;
+      top: 10px; right: 10px;
+      width: 28px; height: 28px;
+      background: var(--gold);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0;
+      transform: scale(0.5) rotate(-20deg);
+      transition: opacity 0.2s, transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+      z-index: 2;
+    }
+    .q-card.selected .q-check { opacity: 1; transform: scale(1) rotate(0deg); }
+    .q-check svg { width: 13px; height: 13px; stroke: white; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+
+    .q-card-img {
+      width: 100%; aspect-ratio: 2/3;
+      overflow: hidden; background: #EDEAE4;
+    }
+    .q-card-img img { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; transition: transform 0.35s; }
+    .q-card:hover .q-card-img img { transform: scale(1.04); }
+
+    .q-card-label { padding: 12px 14px 16px; }
+    .q-card-label strong { display: block; font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+    .q-card-label span { font-size: 11px; color: var(--gray); line-height: 1.4; }
+
+    /* gender cards */
+    .q-card-gender {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; padding: 36px 18px; text-align: center; min-height: 160px;
+    }
+    .q-gender-icon { font-size: 40px; margin-bottom: 12px; }
+    .q-card-gender strong { font-size: 16px; font-weight: 600; }
+    .q-gender-note { font-size: 12px; color: var(--gray); margin-top: 4px; }
+    .q-card.q-locked { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
+    .q-badge { display: inline-block; font-size: 10px; background: var(--border); color: var(--gray); padding: 3px 10px; border-radius: 100px; margin-top: 6px; }
+
+    /* welcome */
+    .q-welcome {
+      min-height: 380px;
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; text-align: center; padding: 48px 28px;
+    }
+    .q-welcome-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); margin-bottom: 18px; }
+    .q-welcome h2 { font-family: 'DM Serif Display', serif; font-size: 42px; line-height: 1.1; margin-bottom: 18px; }
+    .q-welcome h2 em { color: var(--gold); font-style: italic; }
+    .q-welcome p { font-size: 15px; color: var(--gray); line-height: 1.6; margin-bottom: 38px; max-width: 360px; }
+    .q-btn-start {
+      background: var(--gold); color: white; border: none;
+      padding: 16px 48px; border-radius: 100px; font-family: inherit;
+      font-size: 15px; font-weight: 500; cursor: pointer;
+      box-shadow: 0 6px 24px rgba(201,169,110,0.36);
+      transition: all 0.18s;
+    }
+    .q-btn-start:hover { background: var(--gold-dark); transform: translateY(-2px); }
+    .q-welcome-note { margin-top: 16px; font-size: 12px; color: var(--gray-light); }
+
+    /* summary */
+    .q-summary-card {
+      background: var(--white); border-radius: 20px; overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.09); max-width: 560px; width: 100%;
+    }
+    .q-summary-top { display: flex; }
+    .q-summary-img { width: 170px; flex-shrink: 0; object-fit: cover; object-position: top center; }
+    .q-summary-info {
+      flex: 1; padding: 24px 22px;
+      background: linear-gradient(135deg, #FAF8F5, #FFF);
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .q-sum-badge {
+      display: inline-block; background: var(--gold-bg); color: var(--gold);
+      font-size: 9px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+      padding: 3px 10px; border-radius: 100px; margin-bottom: 12px; width: fit-content;
+    }
+    .q-sum-style { font-family: 'DM Serif Display', serif; font-size: 22px; line-height: 1.15; margin-bottom: 4px; }
+    .q-sum-sub { font-size: 12px; color: var(--gray); }
+    .q-sum-rows { padding: 4px 22px 0; }
+    .q-sum-row { display: flex; justify-content: space-between; align-items: center; padding: 11px 0; border-bottom: 1px solid var(--border); }
+    .q-sum-row:last-child { border-bottom: none; }
+    .q-row-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gray); }
+    .q-row-value { font-size: 13px; font-weight: 500; text-align: right; max-width: 55%; }
+    .q-maintenance {
+      margin: 4px 22px 16px; background: var(--gold-bg);
+      border-left: 3px solid var(--gold); border-radius: 0 8px 8px 0; padding: 12px 14px;
+    }
+    .q-maint-title { font-size: 9px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); margin-bottom: 5px; }
+    .q-maint-text { font-size: 12px; color: var(--dark); line-height: 1.55; }
+    .q-sum-actions { display: flex; gap: 10px; padding: 14px 22px 22px; border-top: 1px solid var(--border); }
+    .q-btn-action { flex: 1; padding: 11px; border-radius: 100px; font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.18s; }
+    .q-btn-outline { background: none; border: 2px solid var(--border); color: var(--dark); }
+    .q-btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+    .q-btn-filled { background: var(--gold); border: 2px solid var(--gold); color: white; }
+    .q-btn-filled:hover { background: var(--gold-dark); border-color: var(--gold-dark); }
+
+    /* ── HOW IT WORKS ── */
+    #how {
+      background: var(--white);
+    }
+    .how-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 40px;
+      margin-top: 64px;
+    }
+    .how-step {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .how-num {
+      width: 52px; height: 52px;
+      border-radius: 50%;
+      background: var(--gold-bg);
+      border: 2px solid var(--gold-light);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'DM Serif Display', serif;
+      font-size: 22px;
+      color: var(--gold);
+    }
+    .how-step h3 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 22px;
+      line-height: 1.2;
+    }
+    .how-step p {
+      font-size: 15px;
+      color: var(--gray);
+      line-height: 1.65;
+    }
+
+    /* connector line between steps */
+    .how-connector {
+      display: flex;
+      align-items: flex-start;
+      padding-top: 26px;
+    }
+    .how-line {
+      flex: 1;
+      height: 1px;
+      background: var(--gold-light);
+      margin: 0 12px;
+    }
+
+    /* ── FEATURES ── */
+    #features {
+      background: var(--bg);
+    }
+    .features-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+      margin-top: 64px;
+    }
+    .features-list {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+    .feature-item {
+      display: flex;
+      gap: 18px;
+      align-items: flex-start;
+    }
+    .feature-icon {
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      background: var(--gold-bg);
+      border: 1px solid var(--gold-light);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .feature-text h4 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .feature-text p {
+      font-size: 14px;
+      color: var(--gray);
+      line-height: 1.6;
+    }
+
+    .features-visual {
+      position: relative;
+    }
+    .features-mockup {
+      background: var(--white);
+      border-radius: 24px;
+      box-shadow: 0 20px 64px rgba(0,0,0,0.12);
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .mockup-bar {
+      height: 8px;
+      background: linear-gradient(90deg, var(--gold), #E8C47A, var(--gold-light));
+    }
+    .mockup-content {
+      padding: 28px;
+    }
+    .mockup-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 18px;
+    }
+    .mockup-client {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px;
+      background: var(--bg);
+      border-radius: 14px;
+      margin-bottom: 14px;
+    }
+    .client-avatar {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: var(--gold-bg);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .client-info p { font-size: 14px; font-weight: 600; }
+    .client-info span { font-size: 12px; color: var(--gray); }
+    .mockup-advice {
+      background: var(--gold-bg);
+      border-left: 3px solid var(--gold);
+      border-radius: 0 12px 12px 0;
+      padding: 14px 16px;
+      margin-bottom: 14px;
+    }
+    .mockup-advice-title { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
+    .mockup-advice p { font-size: 13px; line-height: 1.55; }
+    .mockup-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+    .tag {
+      padding: 6px 14px;
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 500;
+      background: var(--white);
+      border: 1px solid var(--border);
+      color: var(--dark);
+    }
+    .tag.gold { background: var(--gold-bg); border-color: var(--gold-light); color: var(--gold); }
+
+    /* ── TESTIMONIALS ── */
+    #testimonials {
+      background: var(--dark);
+      padding: 100px 40px;
+    }
+    #testimonials .section-title { color: var(--white); }
+    #testimonials .section-eyebrow { opacity: 0.7; }
+
+    .testi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 56px;
+    }
+    .testi-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 20px;
+      padding: 28px;
+    }
+    .testi-stars {
+      color: var(--gold);
+      font-size: 14px;
+      letter-spacing: 2px;
+      margin-bottom: 16px;
+    }
+    .testi-quote {
+      font-size: 15px;
+      color: rgba(255,255,255,0.82);
+      line-height: 1.7;
+      margin-bottom: 24px;
+      font-style: italic;
+    }
+    .testi-author {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .testi-avatar {
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      background: var(--gold-bg);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .testi-name { font-size: 14px; font-weight: 600; color: var(--white); }
+    .testi-role { font-size: 12px; color: rgba(255,255,255,0.45); }
+
+    /* ── PRICING ── */
+    #pricing {
+      background: var(--white);
+    }
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 56px;
+    }
+    .price-card {
+      border: 2px solid var(--border);
+      border-radius: 24px;
+      padding: 36px 32px;
+      position: relative;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .price-card:hover { border-color: var(--gold-light); box-shadow: 0 8px 32px rgba(0,0,0,0.08); }
+    .price-card.featured {
+      border-color: var(--gold);
+      box-shadow: 0 12px 48px rgba(201,169,110,0.18);
+    }
+    .price-tag {
+      position: absolute;
+      top: -14px; left: 50%; transform: translateX(-50%);
+      background: var(--gold);
+      color: white;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 5px 16px;
+      border-radius: 100px;
+    }
+    .price-name {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gray);
+      margin-bottom: 18px;
+    }
+    .price-amount {
+      display: flex;
+      align-items: flex-end;
+      gap: 4px;
+      margin-bottom: 6px;
+    }
+    .price-cur { font-size: 22px; font-weight: 600; padding-bottom: 6px; }
+    .price-num { font-family: 'DM Serif Display', serif; font-size: 52px; line-height: 1; }
+    .price-per { font-size: 14px; color: var(--gray); padding-bottom: 8px; }
+    .price-desc { font-size: 14px; color: var(--gray); margin-bottom: 28px; line-height: 1.5; }
+    .price-divider { border: none; border-top: 1px solid var(--border); margin-bottom: 24px; }
+    .price-features { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px; }
+    .price-features li {
+      display: flex; align-items: flex-start; gap: 10px;
+      font-size: 14px; color: var(--dark);
+    }
+    .price-features li::before {
+      content: '✓';
+      color: var(--gold);
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .btn-price {
+      width: 100%;
+      padding: 14px;
+      border-radius: 100px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.18s;
+      text-decoration: none;
+      display: block;
+    }
+    .btn-price-outline { background: none; border: 2px solid var(--border); color: var(--dark); }
+    .btn-price-outline:hover { border-color: var(--gold); color: var(--gold); }
+    .btn-price-filled { background: var(--gold); border: 2px solid var(--gold); color: white; }
+    .btn-price-filled:hover { background: var(--gold-dark); border-color: var(--gold-dark); }
+
+    /* ── FINAL CTA ── */
+    #cta {
+      background: var(--gold-bg);
+      text-align: center;
+      padding: 120px 40px;
+      border-top: 1px solid var(--gold-light);
+    }
+    #cta .section-title {
+      font-size: 48px;
+      max-width: 600px;
+      margin: 0 auto 20px;
+    }
+    #cta .section-sub {
+      margin: 0 auto 48px;
+      max-width: 460px;
+      text-align: center;
+    }
+    .cta-note { margin-top: 18px; font-size: 13px; color: var(--gray-light); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--dark);
+      color: rgba(255,255,255,0.5);
+      padding: 48px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .footer-logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 20px;
+      color: var(--white);
+      letter-spacing: 0.04em;
+    }
+    .footer-logo span { color: var(--gold); }
+    .footer-links {
+      display: flex;
+      gap: 28px;
+      list-style: none;
+    }
+    .footer-links a {
+      font-size: 13px;
+      color: rgba(255,255,255,0.45);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .footer-links a:hover { color: rgba(255,255,255,0.8); }
+    .footer-copy { font-size: 12px; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      nav { padding: 0 20px; }
+      .nav-links { display: none; }
+      .hero h1 { font-size: 40px; }
+      .hero-sub { font-size: 16px; }
+      section { padding: 72px 24px; }
+      .how-grid { grid-template-columns: 1fr; gap: 36px; }
+      .features-layout { grid-template-columns: 1fr; gap: 48px; }
+      .testi-grid { grid-template-columns: 1fr; }
+      .pricing-grid { grid-template-columns: 1fr; }
+      .q-g3 { grid-template-columns: 1fr 1fr; }
+      .q-welcome h2 { font-size: 32px; }
+      .q-summary-top { flex-direction: column; }
+      .q-summary-img { width: 100%; height: 200px; }
+      footer { flex-direction: column; gap: 24px; text-align: center; }
+      .footer-links { flex-wrap: wrap; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">Pleroma<span>.</span></a>
+  <ul class="nav-links">
+    <li><a href="#how">Hoe het werkt</a></li>
+    <li><a href="#features">Voordelen</a></li>
+    <li><a href="#demo">Demo</a></li>
+    <li><a href="#pricing">Prijzen</a></li>
+  </ul>
+  <a class="nav-cta" href="#pricing">Gratis proberen</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <p class="eyebrow">AI Haarconsultatie</p>
+    <h1>Jouw klanten weten precies wat ze willen — <em>voordat</em> ze binnenlopen</h1>
+    <p class="hero-sub">Pleroma begeleidt je klanten door een visuele AI-consultatie. Jij ontvangt direct een persoonlijk kapseladvies. Geen miscommunicatie meer.</p>
+    <div class="hero-buttons">
+      <a class="btn-primary" href="#demo">Probeer de demo</a>
+      <a class="btn-secondary" href="#pricing">Voor salons & kappers</a>
+    </div>
+    <p class="hero-note">✦ Geen account nodig · Gratis 14-daagse proefperiode</p>
+  </div>
+</section>
+
+<!-- TRUST STRIP -->
+<div class="trust-strip">
+  <div class="trust-item"><span class="trust-icon">💬</span> Geen miscommunicatie meer</div>
+  <div class="trust-item"><span class="trust-icon">⚡</span> Duurt slechts 2 minuten</div>
+  <div class="trust-item"><span class="trust-icon">🎨</span> Visuele keuzes, geen zoekwoorden</div>
+  <div class="trust-item"><span class="trust-icon">🇳🇱</span> Volledig in het Nederlands</div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="section-inner">
+    <p class="section-eyebrow">Hoe het werkt</p>
+    <h2 class="section-title">Van QR-code tot kapseladvies<br>in drie stappen</h2>
+    <div class="how-grid">
+      <div class="how-step">
+        <div class="how-num">1</div>
+        <h3>Klant opent de link</h3>
+        <p>De klant scant een QR-code bij de balie of ontvangt een link via WhatsApp. Geen app-download, geen account — gewoon openen en starten.</p>
+      </div>
+      <div class="how-step">
+        <div class="how-num">2</div>
+        <h3>AI stelt drie visuele vragen</h3>
+        <p>Pleroma toont realistische afbeeldingen van hairstyles, texturen en kleuren. De klant tikt op wat hen aanspreekt — intuïtief en in hun eigen taal.</p>
+      </div>
+      <div class="how-step">
+        <div class="how-num">3</div>
+        <h3>Kapper ontvangt direct het advies</h3>
+        <p>Zodra de consultatie klaar is, ziet de kapper een volledig kapseladvies met referentiebeelden, onderhoudsnotities en kleurwensen. Klaar voor het gesprek.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DEMO -->
+<section id="demo">
+  <div class="section-inner">
+    <div class="demo-header">
+      <p class="section-eyebrow">Interactieve demo</p>
+      <h2 class="section-title">Probeer het zelf</h2>
+      <p class="section-sub">Dit is precies wat jouw klanten zien. Klik op een antwoord en ervaar de flow.</p>
+    </div>
+
+    <div class="quiz-frame">
+      <!-- browser chrome -->
+      <div class="browser-bar">
+        <div class="browser-dot"></div>
+        <div class="browser-dot"></div>
+        <div class="browser-dot"></div>
+        <div class="browser-url">
+          <span class="url-lock">🔒</span>
+          <span>pleroma.nl/consultatie</span>
+        </div>
+      </div>
+
+      <!-- QUIZ -->
+      <div class="quiz-wrap">
+        <!-- quiz header -->
+        <div class="quiz-header">
+          <div class="q-logo">Pleroma<span class="q-logo-dot">.</span></div>
+          <div class="q-dots" id="q-dots"></div>
+        </div>
+        <div class="q-progress-bar">
+          <div class="q-progress-fill" id="q-bar" style="width:0%"></div>
+        </div>
+
+        <!-- overlay -->
+        <div class="q-overlay" id="q-overlay">
+          <div class="q-ov-icon" id="q-ov-icon">✦</div>
+          <p class="q-ov-msg" id="q-ov-msg">Geweldig!</p>
+          <p class="q-ov-sub" id="q-ov-sub">We gaan verder...</p>
+        </div>
+
+        <div class="q-main">
+
+          <!-- WELCOME -->
+          <div class="q-step active" id="qs0">
+            <div class="q-welcome">
+              <p class="q-welcome-eyebrow">AI Haarconsultatie</p>
+              <h2>Ontdek jouw perfecte <em>look</em></h2>
+              <p>Beantwoord drie visuele vragen en ontvang direct een persoonlijk kapseladvies voor jouw kapper.</p>
+              <button class="q-btn-start" onclick="qAdvance(1)">Start consultatie</button>
+              <p class="q-welcome-note">✦ Duurt slechts 2 minuten</p>
+            </div>
+          </div>
+
+          <!-- STEP 1: GENDER -->
+          <div class="q-step" id="qs1">
+            <p class="q-eyebrow">Stap 1 van 3</p>
+            <h2 class="q-title">Voor wie is de consultatie?</h2>
+            <p class="q-sub">Kies hieronder om de juiste stijladviezen te zien.</p>
+            <div class="q-grid q-g2">
+              <div class="q-card" onclick="qPick('gender','female',this,'Perfecte keuze!','We stellen de beste kapsels voor je samen…','💇‍♀️',2)">
+                <div class="q-check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div>
+                <div class="q-card-gender">
+                  <div class="q-gender-icon">♀</div>
+                  <strong>Vrouw</strong>
+                  <p class="q-gender-note">Dames kapsels & styling</p>
+                </div>
+              </div>
+              <div class="q-card q-locked">
+                <div class="q-card-gender">
+                  <div class="q-gender-icon">♂</div>
+                  <strong>Man</strong>
+                  <span class="q-badge">Binnenkort</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 2: TEXTURE -->
+          <div class="q-step" id="qs2">
+            <p class="q-eyebrow">Stap 2 van 3</p>
+            <h2 class="q-title">Welke finish spreekt jou aan?</h2>
+            <p class="q-sub">Kies hoe je haar er elke dag uit moet zien.</p>
+            <div class="q-grid q-g3">
+              <div class="q-card" onclick="qPick('texture','sleek',this,'Strak & gepolijst!','Bijna klaar, nog één vraag…','✨',3)">
+                <div class="q-check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div>
+                <div class="q-card-img">
+                  <img src="consultation-app/app/images/quiz/curtain-bangs/texture/sleek.png" alt="Strak & glad">
+                </div>
+                <div class="q-card-label">
+                  <strong>Strak & glad</strong>
+                  <span>Gepolijst, spiegelglad</span>
+                </div>
+              </div>
+              <div class="q-card" onclick="qPick('texture','waves',this,'Effortless golven!','Bijna klaar, nog één vraag…','🌊',3)">
+                <div class="q-check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div>
+                <div class="q-card-img">
+                  <img src="consultation-app/app/images/quiz/curtain-bangs/texture/waves.png" alt="Golven">
+                </div>
+                <div class="q-card-label">
+                  <strong>Natuurlijke golven</strong>
+                  <span>Effortless, beachy</span>
+                </div>
+              </div>
+              <div class="q-card" onclick="qPick('texture','bold',this,'Bold & vol volume!','Bijna klaar, nog één vraag…','💥',3)">
+                <div class="q-check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div>
+                <div class="q-card-img">
+                  <img src="consultation-app/app/images/quiz/curtain-bangs/texture/bold.png" alt="Volume">
+                </div>
+                <div class="q-card-label">
+                  <strong>Textuur & volume</strong>
+                  <span>Bold, maximale body</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 3: COLOR -->
+          <div class="q-step" id="qs3">
+            <p class="q-eyebrow">Stap 3 van 3</p>
+            <h2 class="q-title">Wat wil je doen met de kleur?</h2>
+            <p class="q-sub">Houd het naturel of verander je look compleet.</p>
+            <div class="q-grid q-g3">
+              <div class="q-card" onclick="qPick('color','natural',this,'Mooi naturel!','We maken jouw advies klaar…','🍂',4)">
+                <div class="q-check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div>
+                <div class="q-card-img">
+                  <img src="consultation-app/app/images/quiz/curtain-bangs/color/natural.png" alt="Naturel">
+                </div>
+                <div class="q-card-label">
+                  <strong>Naturel</strong>
+                  <span>Eigen haarkleur</span>
+                </div>
+              </div>
+              <div class="q-card" onclick="qPick('color','highlights',this,'Mooie highlights!','We maken jouw advies klaar…','☀️',4)">
+                <div class="q-check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div>
+                <div class="q-card-img">
+                  <img src="consultation-app/app/images/quiz/curtain-bangs/color/highlights.png" alt="Highlights">
+                </div>
+                <div class="q-card-label">
+                  <strong>Highlights</strong>
+                  <span>Dimensie & balayage</span>
+                </div>
+              </div>
+              <div class="q-card" onclick="qPick('color','bold',this,'Durf het verschil!','We maken jouw advies klaar…','🎨',4)">
+                <div class="q-check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div>
+                <div class="q-card-img">
+                  <img src="consultation-app/app/images/quiz/curtain-bangs/color/bold.png" alt="Kleur">
+                </div>
+                <div class="q-card-label">
+                  <strong>Kleurverandering</strong>
+                  <span>Nieuw statement</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 4: SUMMARY -->
+          <div class="q-step" id="qs4">
+            <p class="q-eyebrow">Jouw kapseladvies</p>
+            <h2 class="q-title" style="margin-bottom:28px">Dit is jouw look</h2>
+            <div class="q-summary-card">
+              <div class="q-summary-top">
+                <img class="q-summary-img" id="q-sum-img" src="consultation-app/app/images/haircuts/female/curtain-bangs/light/front.png" alt="Referentie">
+                <div class="q-summary-info">
+                  <span class="q-sum-badge">Kapseladvies</span>
+                  <h3 class="q-sum-style">Curtain Bangs</h3>
+                  <p class="q-sum-sub">Lang haar · Curtain fringe</p>
+                </div>
+              </div>
+              <div class="q-sum-rows">
+                <div class="q-sum-row">
+                  <span class="q-row-label">Kapsel</span>
+                  <span class="q-row-value">Curtain Bangs — lang haar</span>
+                </div>
+                <div class="q-sum-row">
+                  <span class="q-row-label">Finish</span>
+                  <span class="q-row-value" id="q-sum-texture">—</span>
+                </div>
+                <div class="q-sum-row">
+                  <span class="q-row-label">Kleur</span>
+                  <span class="q-row-value" id="q-sum-color">—</span>
+                </div>
+              </div>
+              <div class="q-maintenance">
+                <p class="q-maint-title">✦ Onderhoud & advies</p>
+                <p class="q-maint-text" id="q-sum-maintenance">—</p>
+              </div>
+              <div class="q-sum-actions">
+                <button class="q-btn-action q-btn-outline" onclick="qRestart()">Opnieuw</button>
+                <button class="q-btn-action q-btn-filled" onclick="window.print()">Afdrukken</button>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /q-main -->
+      </div><!-- /quiz-wrap -->
+    </div><!-- /quiz-frame -->
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="section-inner">
+    <div class="features-layout">
+      <div>
+        <p class="section-eyebrow">Voordelen voor kappers</p>
+        <h2 class="section-title">Minder ruis,<br>meer vertrouwen</h2>
+        <div class="features-list" style="margin-top:40px">
+          <div class="feature-item">
+            <div class="feature-icon">🎯</div>
+            <div class="feature-text">
+              <h4>Geen miscommunicatie meer</h4>
+              <p>Klanten kiezen visueel — geen vage omschrijvingen. De kapper weet precies wat de klant bedoelt, nog voor het eerste gesprek.</p>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">⚡</div>
+            <div class="feature-text">
+              <h4>Tijdsbesparing per afspraak</h4>
+              <p>Gemiddeld 8–12 minuten korter intakegesprek. Meer tijd voor het echte werk en meer klanten per dag.</p>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">🌍</div>
+            <div class="feature-text">
+              <h4>Meertalig — geen barrière</h4>
+              <p>Beschikbaar in Nederlands, Engels, Arabisch, Turks en meer. Elke klant voelt zich begrepen, ongeacht taal.</p>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">📋</div>
+            <div class="feature-text">
+              <h4>Volledig kapseladvies voor jou</h4>
+              <p>Referentiebeelden, textuurvoorkeur, kleurwens én onderhoudsnotities. Alles wat je nodig hebt, klaar in het systeem.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="features-visual">
+        <div class="features-mockup">
+          <div class="mockup-bar"></div>
+          <div class="mockup-content">
+            <p class="mockup-label">✦ Kappersdashboard — Vandaag</p>
+            <div class="mockup-client">
+              <div class="client-avatar">👤</div>
+              <div class="client-info">
+                <p>Amira K. — 14:30</p>
+                <span>Consultatie voltooid · 2 min geleden</span>
+              </div>
+            </div>
+            <div class="mockup-advice">
+              <p class="mockup-advice-title">✦ Kapseladvies</p>
+              <p>Curtain Bangs met natuurlijke golven. Highlights & balayage voor dimensie. Bijwerken elke 6–8 weken.</p>
+            </div>
+            <div class="mockup-tags">
+              <span class="tag gold">Curtain Bangs</span>
+              <span class="tag">Golven</span>
+              <span class="tag">Highlights</span>
+              <span class="tag">6–8 weken</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+  <div class="section-inner">
+    <p class="section-eyebrow">Wat kappers zeggen</p>
+    <h2 class="section-title">Vertrouwd door salons<br>in heel Nederland</h2>
+    <div class="testi-grid">
+      <div class="testi-card">
+        <p class="testi-stars">★★★★★</p>
+        <p class="testi-quote">"Vroeger verloren we kostbare tijd aan uitleggen wat de klant bedoelde. Nu lopen ze binnen met een duidelijk beeld. Pleroma is gewoon onmisbaar geworden."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">✂️</div>
+          <div>
+            <p class="testi-name">Youssef El Amrani</p>
+            <p class="testi-role">Eigenaar, Salon Azur — Amsterdam</p>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <p class="testi-stars">★★★★★</p>
+        <p class="testi-quote">"Onze klanten vinden het geweldig. Ze sturen de link door naar vriendinnen en familie. Ons klantenbestand is in drie maanden met 30% gegroeid."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">💇‍♀️</div>
+          <div>
+            <p class="testi-name">Nadia de Vries</p>
+            <p class="testi-role">Eigenaar, Studio Nadia — Rotterdam</p>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <p class="testi-stars">★★★★★</p>
+        <p class="testi-quote">"De meertalige optie maakt echt het verschil voor ons. We bedienen klanten in acht talen en nu voelt iedereen zich welkom en begrepen."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">🌿</div>
+          <div>
+            <p class="testi-name">Mariam Osei</p>
+            <p class="testi-role">Eigenaar, The Root — Den Haag</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="section-inner">
+    <div style="text-align:center;margin-bottom:0">
+      <p class="section-eyebrow">Prijzen</p>
+      <h2 class="section-title">Eenvoudige, eerlijke prijzen</h2>
+      <p class="section-sub" style="margin:0 auto">Geen verborgen kosten. Annuleer wanneer je wilt. Elke plan inclusief 14-daagse gratis proefperiode.</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <p class="price-name">Starter</p>
+        <div class="price-amount">
+          <span class="price-cur">€</span>
+          <span class="price-num">49</span>
+          <span class="price-per">/mnd</span>
+        </div>
+        <p class="price-desc">Ideaal voor één locatie of freelance kapper.</p>
+        <hr class="price-divider">
+        <ul class="price-features">
+          <li>1 locatie</li>
+          <li>Onbeperkte consultaties</li>
+          <li>Nederlands & Engels</li>
+          <li>Kapseladvies PDF-export</li>
+          <li>E-mail ondersteuning</li>
+        </ul>
+        <a href="#" class="btn-price btn-price-outline">Gratis proberen</a>
+      </div>
+      <div class="price-card featured">
+        <div class="price-tag">Meest gekozen</div>
+        <p class="price-name">Pro</p>
+        <div class="price-amount">
+          <span class="price-cur">€</span>
+          <span class="price-num">99</span>
+          <span class="price-per">/mnd</span>
+        </div>
+        <p class="price-desc">Voor groeiende salons met meerdere stylisten.</p>
+        <hr class="price-divider">
+        <ul class="price-features">
+          <li>Tot 3 locaties</li>
+          <li>Onbeperkte consultaties</li>
+          <li>8 talen beschikbaar</li>
+          <li>Kappersdashboard</li>
+          <li>WhatsApp & QR-integratie</li>
+          <li>Prioriteitsondersteuning</li>
+        </ul>
+        <a href="#" class="btn-price btn-price-filled">Gratis proberen</a>
+      </div>
+      <div class="price-card">
+        <p class="price-name">Enterprise</p>
+        <div class="price-amount">
+          <span class="price-num" style="font-size:36px;padding-bottom:8px">Op aanvraag</span>
+        </div>
+        <p class="price-desc">Voor ketens, franchises en grote organisaties.</p>
+        <hr class="price-divider">
+        <ul class="price-features">
+          <li>Onbeperkt locaties</li>
+          <li>Eigen huisstijl & branding</li>
+          <li>API-toegang</li>
+          <li>Koppeling met boekingssysteem</li>
+          <li>Toegewijd accountmanager</li>
+          <li>SLA & maatwerk</li>
+        </ul>
+        <a href="#" class="btn-price btn-price-outline">Contact opnemen</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section id="cta">
+  <div class="section-inner">
+    <p class="section-eyebrow" style="text-align:center">Klaar om te starten?</p>
+    <h2 class="section-title">Geef jouw klanten de consultatie die ze verdienen</h2>
+    <p class="section-sub">Start vandaag nog met Pleroma. Gratis proberen, geen creditcard vereist.</p>
+    <div style="display:flex;justify-content:center;gap:14px;flex-wrap:wrap">
+      <a class="btn-primary" href="#demo">Bekijk de demo</a>
+      <a class="btn-secondary" href="#pricing">Bekijk de prijzen</a>
+    </div>
+    <p class="cta-note">✦ 14 dagen gratis · Geen creditcard vereist · Opzeggen wanneer je wilt</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Pleroma<span>.</span></div>
+  <ul class="footer-links">
+    <li><a href="#">Hoe het werkt</a></li>
+    <li><a href="#">Voordelen</a></li>
+    <li><a href="#">Prijzen</a></li>
+    <li><a href="#">Contact</a></li>
+    <li><a href="#">Privacy</a></li>
+  </ul>
+  <p class="footer-copy">© 2026 Pleroma. Alle rechten voorbehouden.</p>
+</footer>
+
+<!-- QUIZ SCRIPT -->
+<script>
+  const Q_TOTAL = 3;
+  const qState = { gender: null, texture: null, color: null };
+
+  const Q_TEXTURE_LABELS = {
+    sleek: 'Strak & glad — silk blowout',
+    waves: 'Natuurlijke golven — effortless beach',
+    bold:  'Textuur & volume — bold finish'
+  };
+  const Q_COLOR_LABELS = {
+    natural:    'Naturel — eigen haarkleur',
+    highlights: 'Highlights & balayage',
+    bold:       'Kleurverandering — nieuw statement'
+  };
+
+  function qMaintenance(texture, color) {
+    const freq = color === 'bold' ? 'elke 4–5 weken' : 'elke 6–8 weken';
+    const prod = texture === 'sleek'
+      ? 'Gebruik een hittebeschermingsspray en gladmakende serum voor dagelijks onderhoud.'
+      : texture === 'waves'
+      ? 'Sea salt spray of curl cream voor de golven. Droog met diffuser.'
+      : 'Texturerende spray of wax voor volume. Vermijd zware conditioners.';
+    return `Bezoek je kapper ${freq} voor bijwerken van de curtain bangs. ${prod}`;
+  }
+
+  const qOverlay = document.getElementById('q-overlay');
+  const qOvIcon  = document.getElementById('q-ov-icon');
+  const qOvMsg   = document.getElementById('q-ov-msg');
+  const qOvSub   = document.getElementById('q-ov-sub');
+
+  function qShowOverlay(icon, msg, sub, cb) {
+    qOvIcon.textContent = icon;
+    qOvMsg.textContent  = msg;
+    qOvSub.textContent  = sub;
+    qOverlay.classList.add('visible');
+    setTimeout(() => {
+      qOverlay.classList.remove('visible');
+      setTimeout(cb, 260);
+    }, 900);
+  }
+
+  function qPick(key, value, el, icon, msg, sub, next) {
+    qState[key] = value;
+    el.closest('.q-grid').querySelectorAll('.q-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    setTimeout(() => {
+      qShowOverlay(icon, msg, sub, () => {
+        if (next === 4) qBuildSummary();
+        qAdvance(next);
+      });
+    }, 320);
+  }
+
+  function qAdvance(n) {
+    document.querySelectorAll('.q-step').forEach(s => s.classList.remove('active'));
+    document.getElementById('qs' + n).classList.add('active');
+    qUpdateUI(n);
+    // scroll quiz frame into view top
+    const frame = document.querySelector('.quiz-frame');
+    if (frame) frame.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  function qUpdateUI(n) {
+    const pct = n === 0 ? 0 : n >= 4 ? 100 : Math.round((n / Q_TOTAL) * 100);
+    document.getElementById('q-bar').style.width = pct + '%';
+    const dotsEl = document.getElementById('q-dots');
+    dotsEl.innerHTML = '';
+    if (n >= 1 && n <= 4) {
+      for (let i = 1; i <= Q_TOTAL; i++) {
+        const d = document.createElement('div');
+        d.className = 'q-dot' + (i === n ? ' active' : i < n ? ' done' : '');
+        dotsEl.appendChild(d);
+      }
+    }
+  }
+
+  function qBuildSummary() {
+    document.getElementById('q-sum-texture').textContent     = Q_TEXTURE_LABELS[qState.texture] || '—';
+    document.getElementById('q-sum-color').textContent       = Q_COLOR_LABELS[qState.color]     || '—';
+    document.getElementById('q-sum-maintenance').textContent = qMaintenance(qState.texture, qState.color);
+    const colorImg = {
+      natural:    'consultation-app/app/images/quiz/curtain-bangs/color/natural.png',
+      highlights: 'consultation-app/app/images/quiz/curtain-bangs/color/highlights.png',
+      bold:       'consultation-app/app/images/quiz/curtain-bangs/color/bold.png',
+    };
+    document.getElementById('q-sum-img').src = colorImg[qState.color] || 'consultation-app/app/images/haircuts/female/curtain-bangs/light/front.png';
+  }
+
+  function qRestart() {
+    qState.gender = null; qState.texture = null; qState.color = null;
+    document.querySelectorAll('.q-card').forEach(c => c.classList.remove('selected'));
+    qAdvance(0);
+  }
+
+  qUpdateUI(0);
+</script>
+</body>
+</html>

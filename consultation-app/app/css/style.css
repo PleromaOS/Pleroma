@@ -1,0 +1,861 @@
+/* ==========================================================================
+   Pleroma Consultation App — design system stylesheet
+   ========================================================================== */
+
+:root {
+  --color-bg:              #ede8e0;
+  --color-surface:         #f6f3ec;
+  --color-text:            #1c1a18;
+  --color-text-muted:      #55504a;
+  --color-text-subtle:     #8a837a;
+  --color-border:          #ddd5c6;
+  --color-border-subtle:   #d8d0c2;
+  --color-spec-border:     #ded7ca;
+
+  --color-primary:         #2d4a35;
+  --color-primary-hover:   #243c2b;
+  --color-primary-overlay: rgba(45, 74, 53, 0.06);
+  --color-primary-select:  rgba(45, 74, 53, 0.12);
+
+  --color-gold:            #c9a050;
+  --color-gold-bg:         rgba(201, 160, 80, 0.14);
+  --color-gold-border:     rgba(201, 160, 80, 0.5);
+
+  --radius:                12px;
+  --shadow-card:           0 1px 4px rgba(28, 26, 24, 0.05);
+
+  --font-serif: 'Cormorant Garamond', serif;
+  --font-sans:  'DM Sans', sans-serif;
+
+  --max-width: 480px;
+  --ease-standard: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--color-bg);
+  color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------------- Boot loader ---------------- */
+
+#bootLoader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: var(--color-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#bootLoader.hidden { display: none; }
+
+#bootLoader img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  animation: crestPulse 0.4s ease-in-out infinite alternate;
+}
+
+@keyframes crestPulse {
+  from { opacity: 0.5; }
+  to   { opacity: 1; }
+}
+
+/* ---------------- App shell ---------------- */
+
+.app-shell {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  min-height: 100vh;
+  background: var(--color-bg);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.app-main {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  min-height: 100vh;
+}
+
+/* ---------------- Screens (absolutely stacked for slide transitions) ---------------- */
+
+.screen {
+  display: none;
+  flex-direction: column;
+  position: absolute;
+  inset: 0;
+  background: var(--color-bg);
+  padding: 60px 24px 32px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  transform: translateX(0);
+}
+
+.screen.active { display: flex; }
+
+.screen.screen-enter { transform: translateX(100%); }
+.screen.screen-enter.dir-back { transform: translateX(-100%); }
+
+.screen.screen-enter-active {
+  transform: translateX(0);
+  transition: transform 320ms var(--ease-standard);
+}
+
+.screen.screen-exit { transform: translateX(0); }
+
+.screen.screen-exit-active {
+  transform: translateX(-100%);
+  transition: transform 320ms var(--ease-standard);
+}
+
+.screen.screen-exit-active.dir-back { transform: translateX(100%); }
+
+/* ---------------- Screen topbar ---------------- */
+
+.screen-topbar {
+  display: grid;
+  grid-template-columns: 44px 1fr 44px;
+  align-items: center;
+  flex: 0 0 auto;
+  margin-bottom: 16px;
+}
+
+.screen-topbar-spacer {
+  width: 44px;
+  height: 44px;
+}
+
+.screen-title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 22px;
+  text-align: center;
+}
+
+.btn-icon {
+  width: 44px;
+  height: 44px;
+  background: transparent;
+  border: none;
+  color: var(--color-text);
+  font-size: 22px;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 80ms ease-out;
+}
+
+.btn-icon:active { transform: scale(0.9); }
+
+.screen-hint {
+  margin: 4px 0 16px;
+  color: var(--color-text-muted);
+  font-size: 14px;
+  text-align: center;
+}
+
+/* ---------------- Progress ---------------- */
+
+.progress-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.progress-label {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-text-subtle);
+}
+
+.progress-bar {
+  width: 160px;
+  height: 2px;
+  background: var(--color-border-subtle);
+  border-radius: 1px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: 1px;
+  transition: width 400ms ease-out;
+}
+
+/* ---------------- Buttons ---------------- */
+
+.btn {
+  font-family: var(--font-sans);
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  transition: transform 80ms ease-out, background 120ms ease;
+}
+
+.btn:active { transform: scale(0.97); }
+
+.btn-primary {
+  background: var(--color-primary);
+  color: var(--color-bg);
+  font-size: 16px;
+  font-weight: 600;
+  padding: 17px 24px;
+  min-height: 54px;
+}
+
+.btn-primary:hover { background: var(--color-primary-hover); }
+
+.btn-secondary {
+  background: transparent;
+  color: var(--color-primary);
+  border: 1.5px solid var(--color-primary);
+  font-size: 16px;
+  font-weight: 600;
+  padding: 16px 24px;
+  min-height: 54px;
+}
+
+.btn-secondary:hover { background: var(--color-primary-overlay); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--color-text-subtle);
+  border: none;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  padding: 12px 24px;
+  min-height: 44px;
+}
+
+.btn-ghost:hover { color: var(--color-primary); }
+
+.btn-full { width: 100%; }
+
+/* ---------------- Landing screen ---------------- */
+
+.landing {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.landing-crest {
+  width: 176px;
+  height: 176px;
+  object-fit: contain;
+}
+
+.landing-title {
+  margin: 40px 0 0;
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 38px;
+  letter-spacing: 0.2em;
+  text-indent: 0.2em;
+}
+
+.landing-subtitle {
+  margin: 16px 0 0;
+  font-size: 15px;
+  color: var(--color-text-muted);
+  max-width: 26ch;
+}
+
+.landing-spacer { flex: 1.3; }
+
+.landing-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 330px;
+}
+
+.landing-footnote {
+  margin-top: 40px;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-subtle);
+  white-space: nowrap;
+}
+
+/* ---------------- Choice / pick cards (question + family picker) ---------------- */
+
+.choice-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.pick-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  padding: 8px 8px 14px;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  text-align: center;
+  transition: transform 80ms ease-out, border-color 120ms ease;
+}
+
+.pick-card:active { transform: scale(0.97); }
+
+.pick-card.selected { border-color: var(--color-primary); }
+
+.pick-card-check {
+  display: none;
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: var(--color-bg);
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  z-index: 2;
+}
+
+.pick-card.selected .pick-card-check { display: flex; }
+
+.pick-card-img-wrap {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--color-surface);
+}
+
+.pick-card.selected .pick-card-img-wrap::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--color-primary-select);
+  pointer-events: none;
+}
+
+.pick-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+
+.pick-card-img.loaded { opacity: 1; }
+
+.pick-card-img-fallback {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: 22px;
+}
+
+/* Question screen cards: flexible 3/4 aspect ratio image, sentence-case label */
+
+.pick-card--question .pick-card-img-wrap { aspect-ratio: 3 / 4; }
+
+.pick-card-label {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.pick-card--question.selected .pick-card-label { color: var(--color-primary); }
+
+/* Family picker cards: fixed 190px image height, uppercase label */
+
+.family-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  padding-bottom: 8px;
+}
+
+.pick-card--family .pick-card-img-wrap { height: 190px; }
+
+.pick-card--family .pick-card-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.pick-card--family.selected .pick-card-label { color: var(--color-primary); }
+
+/* Text-only choice buttons (feedback screen, non-illustrated questions) */
+
+.choice-list-text {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.choice-btn-text {
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* ---------------- Question / family heading area ---------------- */
+
+.question-card {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.question-text {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 32px;
+  line-height: 40px;
+  text-align: center;
+  margin: 0;
+  text-wrap: balance;
+}
+
+.question-hint {
+  font-size: 14px;
+  color: var(--color-text-muted);
+  text-align: center;
+  margin: 0;
+}
+
+.question-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* ---------------- Spec table (Results + Show Barber) ---------------- */
+
+.spec-table {
+  display: flex;
+  flex-direction: column;
+}
+
+.spec-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: baseline;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--color-spec-border);
+}
+
+.spec-row:last-child { border-bottom: none; }
+
+.spec-label {
+  font-size: 13px;
+  color: var(--color-text-subtle);
+}
+
+.spec-value {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--color-text);
+  text-align: right;
+}
+
+/* Larger variant used on the Show Barber screen */
+
+.spec-table--barber .spec-label { font-size: 14px; }
+.spec-table--barber .spec-value { font-size: 18px; font-weight: 600; }
+
+.reveal-row {
+  opacity: 0;
+  transform: translateY(12px);
+  animation: revealRow 280ms ease-out forwards;
+}
+
+@keyframes revealRow {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------------- Upsell banner ---------------- */
+
+.upsell-banner {
+  margin-top: 24px;
+  background: var(--color-gold-bg);
+  border: 1px solid var(--color-gold-border);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.upsell-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-gold);
+  flex: 0 0 auto;
+}
+
+.upsell-text {
+  font-size: 14px;
+  line-height: 21px;
+  color: var(--color-text-muted);
+}
+
+.upsell-text strong { font-weight: 600; color: var(--color-text); }
+
+/* ---------------- Results screen ---------------- */
+
+.results-label {
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-text-subtle);
+  text-align: center;
+  flex: 0 0 auto;
+  margin: 0 0 16px;
+}
+
+.result-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+.result-image-wrap {
+  position: relative;
+  width: 100%;
+  height: 320px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--color-surface);
+}
+
+.result-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+
+.result-image.loaded { opacity: 1; }
+
+.result-image-fallback {
+  position: absolute;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-size: 44px;
+  font-weight: 700;
+  color: var(--color-bg);
+}
+
+.result-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 24px 0 8px;
+}
+
+.result-style-name {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 34px;
+  margin: 0;
+  text-align: center;
+}
+
+.result-family-name {
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-text-subtle);
+  margin: 0;
+}
+
+.result-description {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+  text-align: center;
+  margin: 0 0 16px;
+}
+
+.result-variant-note {
+  font-size: 12px;
+  color: var(--color-text-subtle);
+  text-align: center;
+  font-style: italic;
+  margin: -8px 0 16px;
+}
+
+.spec-table-header {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+  padding-bottom: 4px;
+}
+
+.result-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding-top: 28px;
+}
+
+.error-msg {
+  color: var(--color-text-muted);
+  text-align: center;
+  font-size: 14px;
+}
+
+/* ---------------- Show Barber screen ---------------- */
+
+.barber-title {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 36px;
+  text-align: center;
+  margin: 22px 0 4px;
+}
+
+/* ---------------- Feedback screen ---------------- */
+
+.feedback {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.feedback-spacer { flex: 1; }
+.feedback-spacer-lg { flex: 1.2; }
+
+.feedback-title {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 38px;
+  line-height: 44px;
+  margin: 0;
+}
+
+.feedback-subtitle {
+  margin: 16px 0 0;
+  font-size: 15px;
+  color: var(--color-text-muted);
+}
+
+.feedback-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  max-width: 330px;
+}
+
+/* ---------------- Quick Pick grid ---------------- */
+
+.haircut-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  padding-bottom: 8px;
+}
+
+.haircut-card {
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  padding: 8px 8px 14px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 80ms ease-out, border-color 120ms ease;
+}
+
+.haircut-card:active { transform: scale(0.97); }
+
+.haircut-card-img-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 10px;
+  background: var(--color-surface);
+}
+
+.haircut-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+
+.haircut-card-img.loaded { opacity: 1; }
+
+.haircut-card-img-fallback {
+  position: absolute;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--color-bg);
+}
+
+.card-name {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  line-height: 1.25;
+  color: var(--color-text);
+}
+
+.card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  justify-content: center;
+}
+
+.tag {
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: var(--color-primary-overlay);
+  color: var(--color-primary);
+  white-space: nowrap;
+}
+
+.tag.tag-accent {
+  background: var(--color-gold-bg);
+  color: var(--color-gold);
+}
+
+/* ---------------- Quick Pick detail ---------------- */
+
+.detail-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-avatar-row {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.detail-name {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 28px;
+  text-align: center;
+  margin: 0 0 4px;
+}
+
+.detail-family {
+  text-align: center;
+  color: var(--color-text-subtle);
+  font-size: 13px;
+  margin: 0 0 18px;
+}
+
+.detail-description {
+  font-size: 14.5px;
+  line-height: 1.55;
+  margin: 0 0 18px;
+}
+
+.attr-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.attr-item {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.attr-label {
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--color-text-subtle);
+  font-weight: 700;
+  margin-bottom: 3px;
+}
+
+.attr-value {
+  font-size: 13.5px;
+  font-weight: 600;
+}
+
+/* ---------------- Small screens ---------------- */
+
+@media (max-width: 360px) {
+  .family-grid { grid-template-columns: 1fr; }
+}

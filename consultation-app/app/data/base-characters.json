@@ -1,0 +1,29 @@
+[
+  {
+    "characterId": "BC-light",
+    "skinTone": "Light",
+    "ethnicity": "Dutch / Northern European",
+    "higgsfield_job_id": "1206b020-9148-4142-aeca-83d6bcfa4b98",
+    "localFile": "images/mannequins/base-characters/base-light.png",
+    "status": "approved",
+    "usedForMannequins": ["MAN-01", "MAN-04", "MAN-07", "MAN-10"]
+  },
+  {
+    "characterId": "BC-medium",
+    "skinTone": "Medium",
+    "ethnicity": "Middle Eastern / North African (Moroccan / Turkish)",
+    "higgsfield_job_id": "851f4a6d-9a8b-45ca-ab10-06923db6073a",
+    "localFile": "images/mannequins/base-characters/base-medium.png",
+    "status": "approved",
+    "usedForMannequins": ["MAN-02", "MAN-05", "MAN-08", "MAN-11"]
+  },
+  {
+    "characterId": "BC-deep",
+    "skinTone": "Deep",
+    "ethnicity": "Black / Sub-Saharan African (West African / Surinamese)",
+    "higgsfield_job_id": "735b2fd4-abe0-48c8-a4f5-f926f7ea2f32",
+    "localFile": "images/mannequins/base-characters/base-deep.png",
+    "status": "approved",
+    "usedForMannequins": ["MAN-03", "MAN-06", "MAN-09", "MAN-12"]
+  }
+]

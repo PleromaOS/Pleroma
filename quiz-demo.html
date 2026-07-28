@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pleroma — Haarconsultatie</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --gold: #C9A96E;
+      --gold-light: #E8D5B0;
+      --gold-bg: #FAF6EE;
+      --dark: #1A1A1A;
+      --gray: #6B6B6B;
+      --border: #E8E8E4;
+      --bg: #F7F6F3;
+      --white: #FFFFFF;
+    }
+
+    body {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--dark);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+    }
+
+    .logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 20px;
+      letter-spacing: 0.04em;
+      color: var(--dark);
+    }
+    .logo-dot { color: var(--gold); }
+
+    .progress-dots {
+      display: flex;
+      gap: 7px;
+      align-items: center;
+    }
+    .dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--border);
+      transition: all 0.3s ease;
+    }
+    .dot.active { background: var(--gold); transform: scale(1.3); }
+    .dot.done   { background: var(--gold-light); }
+
+    /* ── PROGRESS BAR ── */
+    .progress-bar {
+      position: fixed;
+      top: 60px; left: 0; right: 0;
+      z-index: 199;
+      height: 2px;
+      background: var(--border);
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold), #E8C47A);
+      transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* ── TRANSITION OVERLAY ── */
+    .transition-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 300;
+      background: var(--white);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .transition-overlay.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .transition-icon {
+      font-size: 36px;
+      margin-bottom: 16px;
+      animation: pulse 0.6s ease infinite alternate;
+    }
+    @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.15); } }
+    .transition-msg {
+      font-family: 'DM Serif Display', serif;
+      font-size: 26px;
+      color: var(--dark);
+      margin-bottom: 8px;
+    }
+    .transition-sub {
+      font-size: 15px;
+      color: var(--gray);
+    }
+
+    /* ── MAIN ── */
+    .main {
+      flex: 1;
+      padding-top: 80px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* ── STEPS ── */
+    .step {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 900px;
+      padding: 48px 24px 80px;
+    }
+    .step.active {
+      display: flex;
+      animation: fadeUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(22px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 14px;
+    }
+
+    .step-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 34px;
+      text-align: center;
+      line-height: 1.15;
+      margin-bottom: 10px;
+    }
+
+    .step-sub {
+      font-size: 15px;
+      color: var(--gray);
+      text-align: center;
+      margin-bottom: 44px;
+      max-width: 400px;
+      line-height: 1.55;
+    }
+
+    /* ── CARD GRID ── */
+    .grid {
+      display: grid;
+      gap: 16px;
+      width: 100%;
+    }
+    .g2 { grid-template-columns: repeat(2, 1fr); max-width: 560px; }
+    .g3 { grid-template-columns: repeat(3, 1fr); }
+
+    /* ── OPTION CARD ── */
+    .card {
+      background: var(--white);
+      border: 2px solid var(--border);
+      border-radius: 20px;
+      cursor: pointer;
+      transition: border-color 0.18s, transform 0.2s, box-shadow 0.2s;
+      overflow: hidden;
+      position: relative;
+      user-select: none;
+    }
+    .card:hover {
+      border-color: var(--gold-light);
+      transform: translateY(-4px);
+      box-shadow: 0 8px 28px rgba(0,0,0,0.10);
+    }
+    .card.selected {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 1px var(--gold), 0 8px 28px rgba(0,0,0,0.10);
+      transform: translateY(-4px);
+    }
+
+    /* checkmark */
+    .check {
+      position: absolute;
+      top: 12px; right: 12px;
+      width: 30px; height: 30px;
+      background: var(--gold);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0;
+      transform: scale(0.5) rotate(-20deg);
+      transition: opacity 0.2s, transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+      z-index: 2;
+    }
+    .card.selected .check {
+      opacity: 1;
+      transform: scale(1) rotate(0deg);
+    }
+    .check svg {
+      width: 14px; height: 14px;
+      stroke: white; fill: none;
+      stroke-width: 2.5;
+      stroke-linecap: round; stroke-linejoin: round;
+    }
+
+    /* card image */
+    .card-img {
+      width: 100%;
+      aspect-ratio: 2/3;
+      overflow: hidden;
+      background: #EDEAE4;
+    }
+    .card-img img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      display: block;
+      transition: transform 0.35s ease;
+    }
+    .card:hover .card-img img { transform: scale(1.04); }
+
+    /* card label */
+    .card-label {
+      padding: 14px 16px 18px;
+    }
+    .card-label strong {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 3px;
+    }
+    .card-label span {
+      font-size: 12px;
+      color: var(--gray);
+      line-height: 1.4;
+    }
+
+    /* Gender cards (no image) */
+    .card-gender {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      text-align: center;
+      min-height: 180px;
+    }
+    .gender-icon { font-size: 44px; margin-bottom: 14px; line-height: 1; }
+    .card-gender strong { font-size: 18px; font-weight: 600; }
+    .gender-note { font-size: 13px; color: var(--gray); margin-top: 6px; }
+    .card.locked { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
+    .badge {
+      display: inline-block;
+      font-size: 11px;
+      background: var(--border);
+      color: var(--gray);
+      padding: 3px 10px;
+      border-radius: 100px;
+      margin-top: 8px;
+    }
+
+    /* ── WELCOME ── */
+    .welcome {
+      min-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 48px 24px;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+    .welcome-eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 22px;
+    }
+    .welcome-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 54px;
+      line-height: 1.08;
+      margin-bottom: 22px;
+    }
+    .welcome-title em { color: var(--gold); font-style: italic; }
+    .welcome-sub {
+      font-size: 17px;
+      color: var(--gray);
+      line-height: 1.6;
+      margin-bottom: 44px;
+      max-width: 400px;
+    }
+    .btn-start {
+      background: var(--gold);
+      color: white;
+      border: none;
+      padding: 18px 56px;
+      border-radius: 100px;
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+      cursor: pointer;
+      box-shadow: 0 6px 24px rgba(201,169,110,0.38);
+      transition: background 0.18s, transform 0.18s, box-shadow 0.18s;
+    }
+    .btn-start:hover {
+      background: #B8944A;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 32px rgba(201,169,110,0.45);
+    }
+    .welcome-note {
+      margin-top: 18px;
+      font-size: 13px;
+      color: var(--gray);
+      letter-spacing: 0.02em;
+    }
+
+    /* ── SUMMARY ── */
+    .summary-card {
+      background: var(--white);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 12px 48px rgba(0,0,0,0.11);
+      max-width: 620px;
+      width: 100%;
+    }
+
+    .summary-top {
+      display: flex;
+    }
+    .summary-img {
+      width: 190px;
+      flex-shrink: 0;
+      object-fit: cover;
+      object-position: top center;
+    }
+    .summary-info {
+      flex: 1;
+      padding: 28px 26px;
+      background: linear-gradient(135deg, #FAF8F5, #FFF);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .summary-badge {
+      display: inline-block;
+      background: var(--gold-bg);
+      color: var(--gold);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 100px;
+      margin-bottom: 14px;
+      width: fit-content;
+    }
+    .summary-style {
+      font-family: 'DM Serif Display', serif;
+      font-size: 26px;
+      line-height: 1.15;
+      margin-bottom: 4px;
+    }
+    .summary-sub { font-size: 13px; color: var(--gray); }
+
+    .summary-rows {
+      padding: 8px 26px 0;
+    }
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .summary-row:last-child { border-bottom: none; }
+    .row-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gray);
+    }
+    .row-value {
+      font-size: 14px;
+      font-weight: 500;
+      text-align: right;
+    }
+
+    .maintenance {
+      margin: 4px 26px 20px;
+      background: var(--gold-bg);
+      border-left: 3px solid var(--gold);
+      border-radius: 0 10px 10px 0;
+      padding: 14px 16px;
+    }
+    .maintenance-title {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 6px;
+    }
+    .maintenance-text {
+      font-size: 13px;
+      color: var(--dark);
+      line-height: 1.6;
+    }
+
+    .summary-actions {
+      display: flex;
+      gap: 10px;
+      padding: 16px 26px 26px;
+      border-top: 1px solid var(--border);
+    }
+    .btn-action {
+      flex: 1;
+      padding: 13px;
+      border-radius: 100px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+    .btn-outline {
+      background: none;
+      border: 2px solid var(--border);
+      color: var(--dark);
+    }
+    .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+    .btn-filled {
+      background: var(--gold);
+      border: 2px solid var(--gold);
+      color: white;
+    }
+    .btn-filled:hover { background: #B8944A; border-color: #B8944A; }
+
+    @media (max-width: 600px) {
+      .g3 { grid-template-columns: 1fr 1fr; }
+      .welcome-title { font-size: 38px; }
+      .summary-top { flex-direction: column; }
+      .summary-img { width: 100%; height: 200px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="logo">Pleroma<span class="logo-dot">.</span></div>
+  <div class="progress-dots" id="dots"></div>
+</header>
+<div class="progress-bar">
+  <div class="progress-fill" id="bar" style="width:0%"></div>
+</div>
+
+<!-- TRANSITION OVERLAY -->
+<div class="transition-overlay" id="overlay">
+  <div class="transition-icon" id="overlay-icon">✦</div>
+  <p class="transition-msg" id="overlay-msg">Geweldig!</p>
+  <p class="transition-sub" id="overlay-sub">We gaan verder...</p>
+</div>
+
+<main class="main">
+
+  <!-- WELCOME -->
+  <div class="step active" id="s0">
+    <div class="welcome">
+      <p class="welcome-eyebrow">AI Haarconsultatie</p>
+      <h1 class="welcome-title">Ontdek jouw perfecte <em>look</em></h1>
+      <p class="welcome-sub">Beantwoord drie visuele vragen en ontvang direct een persoonlijk kapseladvies voor jouw kapper.</p>
+      <button class="btn-start" onclick="advance(1)">Start consultatie</button>
+      <p class="welcome-note">✦ Duurt slechts 2 minuten</p>
+    </div>
+  </div>
+
+  <!-- STEP 1: GENDER -->
+  <div class="step" id="s1">
+    <p class="eyebrow">Stap 1 van 3</p>
+    <h2 class="step-title">Voor wie is de consultatie?</h2>
+    <p class="step-sub">Kies hieronder om de juiste stijladviezen te zien.</p>
+    <div class="grid g2">
+      <div class="card" onclick="pick('gender','female',this,'Perfecte keuze!','We stellen de beste kapsels voor je samen…','💇‍♀️', 2)">
+        <div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div>
+        <div class="card-gender">
+          <div class="gender-icon">♀</div>
+          <strong>Vrouw</strong>
+          <p class="gender-note">Dames kapsels & styling</p>
+        </div>
+      </div>
+      <div class="card locked">
+        <div class="card-gender">
+          <div class="gender-icon">♂</div>
+          <strong>Man</strong>
+          <span class="badge">Binnenkort</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2: TEXTURE -->
+  <div class="step" id="s2">
+    <p class="eyebrow">Stap 2 van 3</p>
+    <h2 class="step-title">Welke finish spreekt jou aan?</h2>
+    <p class="step-sub">Kies hoe je haar er elke dag uit moet zien.</p>
+    <div class="grid g3">
+      <div class="card" onclick="pick('texture','sleek',this,'Strak & gepolijst!','Bijna klaar, nog één vraag…','✨', 3)">
+        <div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div>
+        <div class="card-img">
+          <img src="consultation-app/app/images/quiz/curtain-bangs/texture/sleek.png" alt="Strak & glad">
+        </div>
+        <div class="card-label">
+          <strong>Strak & glad</strong>
+          <span>Gepolijst, spiegelglad, geconditioneerd</span>
+        </div>
+      </div>
+      <div class="card" onclick="pick('texture','waves',this,'Effortless golven!','Bijna klaar, nog één vraag…','🌊', 3)">
+        <div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div>
+        <div class="card-img">
+          <img src="consultation-app/app/images/quiz/curtain-bangs/texture/waves.png" alt="Natuurlijke golven">
+        </div>
+        <div class="card-label">
+          <strong>Natuurlijke golven</strong>
+          <span>Effortless, beachy, levendig</span>
+        </div>
+      </div>
+      <div class="card" onclick="pick('texture','bold',this,'Bold & vol volume!','Bijna klaar, nog één vraag…','💥', 3)">
+        <div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div>
+        <div class="card-img">
+          <img src="consultation-app/app/images/quiz/curtain-bangs/texture/bold.png" alt="Textuur & volume">
+        </div>
+        <div class="card-label">
+          <strong>Textuur & volume</strong>
+          <span>Bold, uitgesproken, maximale body</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3: COLOR -->
+  <div class="step" id="s3">
+    <p class="eyebrow">Stap 3 van 3</p>
+    <h2 class="step-title">Wat wil je doen met de kleur?</h2>
+    <p class="step-sub">Houd het naturel of verander je look compleet.</p>
+    <div class="grid g3">
+      <div class="card" onclick="pick('color','natural',this,'Mooi naturel!','We maken jouw advies klaar…','🍂', 4)">
+        <div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div>
+        <div class="card-img">
+          <img src="consultation-app/app/images/quiz/curtain-bangs/color/natural.png" alt="Naturel">
+        </div>
+        <div class="card-label">
+          <strong>Naturel</strong>
+          <span>Eigen haarkleur behouden</span>
+        </div>
+      </div>
+      <div class="card" onclick="pick('color','highlights',this,'Mooie highlights!','We maken jouw advies klaar…','☀️', 4)">
+        <div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div>
+        <div class="card-img">
+          <img src="consultation-app/app/images/quiz/curtain-bangs/color/highlights.png" alt="Highlights">
+        </div>
+        <div class="card-label">
+          <strong>Highlights & balayage</strong>
+          <span>Dimensie, zonnekust-effect</span>
+        </div>
+      </div>
+      <div class="card" onclick="pick('color','bold',this,'Durf het verschil!','We maken jouw advies klaar…','🎨', 4)">
+        <div class="check"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div>
+        <div class="card-img">
+          <img src="consultation-app/app/images/quiz/curtain-bangs/color/bold.png" alt="Kleurverandering">
+        </div>
+        <div class="card-label">
+          <strong>Kleurverandering</strong>
+          <span>Nieuwe kleur, nieuw jij</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 4: SUMMARY -->
+  <div class="step" id="s4">
+    <p class="eyebrow">Jouw kapseladvies</p>
+    <h2 class="step-title" style="margin-bottom:32px">Dit is jouw look</h2>
+    <div class="summary-card">
+      <div class="summary-top">
+        <img class="summary-img" id="sum-img" src="consultation-app/app/images/haircuts/female/curtain-bangs/light/front.png" alt="Referentie kapsel">
+        <div class="summary-info">
+          <span class="summary-badge">Kapseladvies</span>
+          <h3 class="summary-style">Curtain Bangs</h3>
+          <p class="summary-sub">Lang haar · Curtain fringe</p>
+        </div>
+      </div>
+      <div class="summary-rows">
+        <div class="summary-row">
+          <span class="row-label">Kapsel</span>
+          <span class="row-value">Curtain Bangs — lang haar</span>
+        </div>
+        <div class="summary-row">
+          <span class="row-label">Finish</span>
+          <span class="row-value" id="sum-texture">—</span>
+        </div>
+        <div class="summary-row">
+          <span class="row-label">Kleur</span>
+          <span class="row-value" id="sum-color">—</span>
+        </div>
+      </div>
+      <div class="maintenance">
+        <p class="maintenance-title">✦ Onderhoud & advies</p>
+        <p class="maintenance-text" id="sum-maintenance">—</p>
+      </div>
+      <div class="summary-actions">
+        <button class="btn-action btn-outline" onclick="restart()">Opnieuw beginnen</button>
+        <button class="btn-action btn-filled" onclick="window.print()">Afdrukken / Delen</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  const TOTAL_STEPS = 3; // steps shown in dots (1,2,3)
+
+  const state = { gender: null, texture: null, color: null };
+
+  const TEXTURE_LABELS = {
+    sleek: 'Strak & glad — silk blowout',
+    waves: 'Natuurlijke golven — effortless beach',
+    bold:  'Textuur & volume — bold finish'
+  };
+
+  const COLOR_LABELS = {
+    natural:    'Naturel — eigen haarkleur',
+    highlights: 'Highlights & balayage',
+    bold:       'Kleurverandering — nieuw statement'
+  };
+
+  function maintenance(texture, color) {
+    const freq = color === 'bold' ? 'elke 4–5 weken' : 'elke 6–8 weken';
+    const prod = texture === 'sleek'
+      ? 'Gebruik een hittebeschermingsspray en gladmakende serum voor dagelijks onderhoud.'
+      : texture === 'waves'
+      ? 'Sea salt spray of curl cream voor de golven. Droog lucht of diffuser.'
+      : 'Texturerende spray of wax voor volume en definitie. Vermijd zware conditioners.';
+    return `Bezoek je kapper ${freq} voor bijwerken van de curtain bangs. ${prod}`;
+  }
+
+  // ── TRANSITION ──
+  const overlay   = document.getElementById('overlay');
+  const overlayIcon = document.getElementById('overlay-icon');
+  const overlayMsg  = document.getElementById('overlay-msg');
+  const overlaySub  = document.getElementById('overlay-sub');
+
+  function showOverlay(icon, msg, sub, cb) {
+    overlayIcon.textContent = icon;
+    overlayMsg.textContent  = msg;
+    overlaySub.textContent  = sub;
+    overlay.classList.add('visible');
+    setTimeout(() => {
+      overlay.classList.remove('visible');
+      setTimeout(cb, 260);
+    }, 900);
+  }
+
+  // ── PICK + AUTO-ADVANCE ──
+  function pick(key, value, el, icon, msg, sub, next) {
+    state[key] = value;
+    el.closest('.grid').querySelectorAll('.card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+
+    setTimeout(() => {
+      showOverlay(icon, msg, sub, () => {
+        if (next === 4) buildSummary();
+        advance(next);
+      });
+    }, 320);
+  }
+
+  // ── NAVIGATE ──
+  function advance(n) {
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+    document.getElementById('s' + n).classList.add('active');
+    updateUI(n);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function updateUI(n) {
+    // progress bar
+    const pct = n === 0 ? 0 : n >= 4 ? 100 : Math.round((n / TOTAL_STEPS) * 100);
+    document.getElementById('bar').style.width = pct + '%';
+
+    // dots — show for steps 1–3
+    const dotsEl = document.getElementById('dots');
+    dotsEl.innerHTML = '';
+    if (n >= 1 && n <= 4) {
+      for (let i = 1; i <= TOTAL_STEPS; i++) {
+        const d = document.createElement('div');
+        d.className = 'dot' + (i === n ? ' active' : i < n ? ' done' : '');
+        dotsEl.appendChild(d);
+      }
+    }
+  }
+
+  // ── SUMMARY ──
+  function buildSummary() {
+    document.getElementById('sum-texture').textContent    = TEXTURE_LABELS[state.texture] || '—';
+    document.getElementById('sum-color').textContent      = COLOR_LABELS[state.color]     || '—';
+    document.getElementById('sum-maintenance').textContent = maintenance(state.texture, state.color);
+
+    // swap reference image based on chosen color for visual consistency
+    const colorImg = {
+      natural:    'consultation-app/app/images/quiz/curtain-bangs/color/natural.png',
+      highlights: 'consultation-app/app/images/quiz/curtain-bangs/color/highlights.png',
+      bold:       'consultation-app/app/images/quiz/curtain-bangs/color/bold.png',
+    };
+    document.getElementById('sum-img').src = colorImg[state.color] || 'consultation-app/app/images/haircuts/female/curtain-bangs/light/front.png';
+  }
+
+  function restart() {
+    state.gender = null; state.texture = null; state.color = null;
+    document.querySelectorAll('.card').forEach(c => c.classList.remove('selected'));
+    advance(0);
+  }
+
+  // init
+  updateUI(0);
+</script>
+</body>
+</html>

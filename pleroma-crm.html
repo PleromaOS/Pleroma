@@ -1,0 +1,1808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pleroma CRM — Outreach Tracker</title>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --bg2: #111118;
+      --surface: #16161f;
+      --surface2: #1c1c28;
+      --border: #23232f;
+      --accent: #6c63ff;
+      --accent2: #a78bfa;
+      --green: #22d3a0;
+      --yellow: #fbbf24;
+      --red: #f87171;
+      --blue: #60a5fa;
+      --orange: #fb923c;
+      --pink: #f472b6;
+      --text: #f0f0f8;
+      --muted: #8888aa;
+      --radius: 10px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    /* LAYOUT */
+    .app { display: flex; height: 100vh; overflow: hidden; }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 220px; min-width: 220px;
+      background: var(--bg2);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      padding: 0;
+    }
+    .sidebar-header {
+      padding: 20px 20px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .logo {
+      font-size: 1.2rem; font-weight: 900;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .logo-sub { font-size: 0.7rem; color: var(--muted); margin-top: 2px; }
+    .sidebar-nav { flex: 1; padding: 12px 0; }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 20px;
+      cursor: pointer;
+      color: var(--muted);
+      border-left: 3px solid transparent;
+      transition: all .15s;
+      font-size: 0.875rem; font-weight: 500;
+    }
+    .nav-item:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+    .nav-item.active { color: var(--text); border-left-color: var(--accent); background: rgba(108,99,255,0.08); }
+    .nav-icon { font-size: 1rem; width: 20px; text-align: center; }
+    .sidebar-footer {
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+      font-size: 0.75rem; color: var(--muted);
+    }
+
+    /* MAIN */
+    .main { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+    .topbar {
+      height: 56px; min-height: 56px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px;
+      background: var(--bg2);
+    }
+    .topbar-title { font-size: 1rem; font-weight: 700; }
+    .topbar-actions { display: flex; gap: 10px; align-items: center; }
+
+    .content { flex: 1; overflow-y: auto; padding: 24px; }
+
+    /* Tabs */
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+
+    /* BUTTONS */
+    .btn {
+      padding: 8px 16px; border-radius: 8px; border: none;
+      font-size: 0.8rem; font-weight: 600; cursor: pointer;
+      transition: opacity .15s, transform .1s;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+    .btn-outline:hover { border-color: var(--accent2); }
+    .btn-danger { background: rgba(248,113,113,0.15); border: 1px solid rgba(248,113,113,0.3); color: var(--red); }
+    .btn-sm { padding: 5px 10px; font-size: 0.75rem; }
+    .btn-green { background: rgba(34,211,160,0.15); border: 1px solid rgba(34,211,160,0.3); color: var(--green); }
+    .btn-copy { background: rgba(108,99,255,0.12); border: 1px solid rgba(108,99,255,0.25); color: var(--accent2); }
+
+    /* STATS GRID */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+    .stat-label { font-size: 0.75rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+    .stat-value { font-size: 2rem; font-weight: 900; margin-top: 6px; line-height: 1; }
+    .stat-sub { font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
+    .stat-accent { color: var(--accent2); }
+    .stat-green { color: var(--green); }
+    .stat-yellow { color: var(--yellow); }
+    .stat-blue { color: var(--blue); }
+
+    /* PROGRESS BAR */
+    .progress-row { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+    .progress-label { width: 120px; font-size: 0.8rem; color: var(--muted); }
+    .progress-bar-wrap { flex: 1; height: 6px; background: var(--border); border-radius: 4px; }
+    .progress-bar { height: 100%; border-radius: 4px; transition: width .4s; }
+    .progress-count { width: 40px; text-align: right; font-size: 0.8rem; font-weight: 700; }
+
+    /* TABLE */
+    .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .table-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .table-title { font-weight: 700; font-size: 0.9rem; }
+    table { width: 100%; border-collapse: collapse; }
+    thead th {
+      text-align: left; padding: 10px 16px;
+      font-size: 0.72rem; font-weight: 700;
+      color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em;
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    tbody tr { border-bottom: 1px solid var(--border); transition: background .1s; cursor: pointer; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: rgba(255,255,255,0.025); }
+    td { padding: 12px 16px; font-size: 0.85rem; vertical-align: middle; }
+    td .company { font-weight: 600; }
+    td .contact { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+
+    /* BADGES */
+    .badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 10px; border-radius: 100px;
+      font-size: 0.72rem; font-weight: 700;
+    }
+    .badge-dot { width: 5px; height: 5px; border-radius: 50%; }
+    .badge-new { background: rgba(108,99,255,0.15); color: var(--accent2); }
+    .badge-new .badge-dot { background: var(--accent2); }
+    .badge-emailed { background: rgba(96,165,250,0.15); color: var(--blue); }
+    .badge-emailed .badge-dot { background: var(--blue); }
+    .badge-linkedin { background: rgba(251,191,36,0.15); color: var(--yellow); }
+    .badge-linkedin .badge-dot { background: var(--yellow); }
+    .badge-instagram { background: rgba(244,114,182,0.15); color: var(--pink); }
+    .badge-instagram .badge-dot { background: var(--pink); }
+    .badge-sms { background: rgba(34,211,160,0.12); color: var(--green); }
+    .badge-sms .badge-dot { background: var(--green); }
+    .badge-responded { background: rgba(251,146,60,0.15); color: var(--orange); }
+    .badge-responded .badge-dot { background: var(--orange); }
+    .badge-waitlist { background: rgba(34,211,160,0.15); color: var(--green); }
+    .badge-waitlist .badge-dot { background: var(--green); }
+    .badge-dead { background: rgba(248,113,113,0.12); color: var(--red); }
+    .badge-dead .badge-dot { background: var(--red); }
+
+    /* PLATFORM ICONS */
+    .platform-icons { display: flex; gap: 4px; }
+    .pi {
+      width: 22px; height: 22px; border-radius: 5px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.7rem; font-weight: 700;
+      opacity: 0.3;
+    }
+    .pi.sent { opacity: 1; }
+    .pi-email { background: rgba(96,165,250,0.15); color: var(--blue); }
+    .pi-li { background: rgba(251,191,36,0.15); color: var(--yellow); }
+    .pi-ig { background: rgba(244,114,182,0.15); color: var(--pink); }
+    .pi-sms { background: rgba(34,211,160,0.12); color: var(--green); }
+
+    /* MODAL */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      display: none; align-items: center; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px;
+      width: 540px; max-width: 95vw;
+      max-height: 90vh; overflow-y: auto;
+      position: relative;
+    }
+    .modal h3 { font-size: 1.1rem; font-weight: 800; margin-bottom: 20px; }
+    .modal-close {
+      position: absolute; top: 16px; right: 16px;
+      background: none; border: none; color: var(--muted);
+      font-size: 1.2rem; cursor: pointer;
+    }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-size: 0.75rem; font-weight: 600; margin-bottom: 6px; color: var(--muted); }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%; background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 7px; color: var(--text); padding: 9px 12px;
+      font-size: 0.875rem; font-family: inherit; outline: none;
+      transition: border-color .2s;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--accent); }
+    .form-group textarea { resize: vertical; min-height: 80px; }
+    .form-group select option { background: var(--surface); }
+
+    /* TEMPLATES */
+    .template-tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+    .template-tab {
+      padding: 8px 16px; border-radius: 8px;
+      border: 1px solid var(--border);
+      background: transparent; color: var(--muted);
+      font-size: 0.8rem; font-weight: 600; cursor: pointer;
+      transition: all .15s; display: flex; align-items: center; gap: 6px;
+    }
+    .template-tab:hover { color: var(--text); border-color: var(--accent2); }
+    .template-tab.active { background: rgba(108,99,255,0.15); border-color: var(--accent); color: var(--accent2); }
+    .template-pane { display: none; }
+    .template-pane.active { display: block; }
+    .template-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .template-card-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 14px;
+    }
+    .template-card-header span { font-weight: 700; font-size: 0.875rem; }
+    .template-field { margin-bottom: 12px; }
+    .template-field label {
+      font-size: 0.7rem; font-weight: 700;
+      color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em;
+      display: block; margin-bottom: 4px;
+    }
+    .template-text {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 12px 14px;
+      font-size: 0.85rem; line-height: 1.65;
+      color: var(--text);
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .template-note {
+      font-size: 0.75rem; color: var(--muted);
+      background: rgba(108,99,255,0.06);
+      border: 1px solid rgba(108,99,255,0.15);
+      border-radius: 7px; padding: 8px 12px; margin-top: 12px;
+    }
+
+    /* WAITLIST TABLE */
+    .wl-answer { font-size: 0.75rem; color: var(--muted); }
+
+    /* SEARCH BAR */
+    .search-bar {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 8px; padding: 8px 14px;
+      color: var(--text); font-size: 0.875rem; font-family: inherit;
+      outline: none; width: 220px; transition: border-color .2s;
+    }
+    .search-bar:focus { border-color: var(--accent); }
+
+    /* FILTER PILLS */
+    .filter-pills { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+    .filter-pill {
+      padding: 5px 12px; border-radius: 100px;
+      border: 1px solid var(--border); background: transparent;
+      color: var(--muted); font-size: 0.75rem; font-weight: 600; cursor: pointer;
+      transition: all .15s;
+    }
+    .filter-pill:hover { color: var(--text); border-color: var(--accent2); }
+    .filter-pill.active { background: rgba(108,99,255,0.15); border-color: var(--accent); color: var(--accent2); }
+
+    /* EMPTY STATE */
+    .empty-state {
+      text-align: center; padding: 60px 20px; color: var(--muted);
+    }
+    .empty-state .icon { font-size: 2.5rem; margin-bottom: 12px; }
+    .empty-state p { font-size: 0.875rem; }
+
+    /* SCROLLBAR */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    /* TOAST */
+    .toast {
+      position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+      background: var(--surface); border: 1px solid var(--green);
+      color: var(--green); padding: 10px 18px; border-radius: 8px;
+      font-size: 0.85rem; font-weight: 600;
+      transform: translateY(80px); opacity: 0;
+      transition: all .3s;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+
+    /* DETAIL PANEL */
+    .detail-panel {
+      position: fixed; right: 0; top: 0; bottom: 0;
+      width: 420px; background: var(--surface);
+      border-left: 1px solid var(--border);
+      z-index: 500; transform: translateX(100%); transition: transform .25s;
+      overflow-y: auto; padding: 24px;
+    }
+    .detail-panel.open { transform: translateX(0); }
+    .detail-close { background: none; border: none; color: var(--muted); font-size: 1.1rem; cursor: pointer; }
+    .detail-name { font-size: 1.3rem; font-weight: 800; margin: 12px 0 4px; }
+    .detail-company { color: var(--muted); font-size: 0.875rem; margin-bottom: 16px; }
+    .detail-section { margin-top: 20px; }
+    .detail-section h4 { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); font-weight: 700; margin-bottom: 10px; }
+    .detail-row { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid var(--border); }
+    .detail-row:last-child { border-bottom: none; }
+    .detail-row .label { color: var(--muted); font-size: 0.8rem; }
+    .detail-row .value { font-size: 0.8rem; font-weight: 600; max-width: 220px; word-break: break-all; text-align: right; }
+    .detail-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+    .detail-actions .btn { width: 100%; justify-content: center; }
+    .notes-area {
+      width: 100%; background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 7px; color: var(--text); padding: 10px 12px;
+      font-family: inherit; font-size: 0.85rem; line-height: 1.6;
+      resize: vertical; min-height: 100px; outline: none;
+      transition: border-color .2s; margin-top: 8px;
+    }
+    .notes-area:focus { border-color: var(--accent); }
+
+    /* REPLY HISTORY */
+    .reply-item {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+    }
+    .reply-item-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 4px;
+    }
+    .reply-channel {
+      font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.05em; color: var(--accent2);
+    }
+    .reply-date { font-size: 0.72rem; color: var(--muted); }
+    .reply-text { font-size: 0.8rem; line-height: 1.5; margin-bottom: 6px; color: var(--text); }
+    .reply-outcome {
+      display: inline-block; font-size: 0.72rem; font-weight: 600;
+      padding: 2px 8px; border-radius: 100px;
+    }
+    .outcome-interested { background: rgba(34,211,160,0.12); color: var(--green); }
+    .outcome-waitlist { background: rgba(34,211,160,0.2); color: var(--green); }
+    .outcome-maybe { background: rgba(251,191,36,0.12); color: var(--yellow); }
+    .outcome-not_interested { background: rgba(248,113,113,0.12); color: var(--red); }
+    .outcome-wrong_person { background: rgba(136,136,170,0.12); color: var(--muted); }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">Pleroma</div>
+      <div class="logo-sub">Outreach CRM</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-item active" onclick="switchTab('dashboard', this)">
+        <span class="nav-icon">📊</span> Dashboard
+      </div>
+      <div class="nav-item" onclick="switchTab('leads', this)">
+        <span class="nav-icon">👥</span> Leads
+      </div>
+      <div class="nav-item" onclick="switchTab('waitlist', this)">
+        <span class="nav-icon">✅</span> Waitlist Signups
+      </div>
+      <div class="nav-item" onclick="switchTab('templates', this)">
+        <span class="nav-icon">✉️</span> Message Templates
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      Data stored locally in your browser.<br/>Use Export CSV to back up.
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="main">
+
+    <!-- TOP BAR -->
+    <div class="topbar">
+      <span class="topbar-title" id="topbarTitle">Dashboard</span>
+      <div class="topbar-actions">
+        <button class="btn btn-outline btn-sm" onclick="exportCSV()">⬇ Export CSV</button>
+        <button class="btn btn-primary btn-sm" onclick="openAddLead()">+ Add Lead</button>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <div class="tab-pane active" id="tab-dashboard">
+        <div class="stats-grid" id="statsGrid"></div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:24px;">
+          <div class="table-wrap">
+            <div class="table-header"><span class="table-title">Funnel</span></div>
+            <div style="padding:20px;" id="funnelChart"></div>
+          </div>
+          <div class="table-wrap">
+            <div class="table-header"><span class="table-title">By Platform</span></div>
+            <div style="padding:20px;" id="platformChart"></div>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <div class="table-header">
+            <span class="table-title">Recent Activity</span>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Company</th>
+                <th>Status</th>
+                <th>Platforms</th>
+                <th>Added</th>
+              </tr>
+            </thead>
+            <tbody id="recentTable"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- LEADS -->
+      <div class="tab-pane" id="tab-leads">
+        <div style="display:flex; gap:12px; margin-bottom:16px; align-items:center; flex-wrap:wrap;">
+          <input class="search-bar" type="text" placeholder="🔍  Search leads…" id="leadsSearch" oninput="renderLeads()" />
+          <button class="btn btn-outline btn-sm" onclick="showImportModal()">⬆ Import from CSV / Paste</button>
+        </div>
+        <div class="filter-pills" id="statusFilters"></div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Company</th>
+                <th>Contact</th>
+                <th>Email</th>
+                <th>Status</th>
+                <th>Platforms Tried</th>
+                <th>Added</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="leadsTable"></tbody>
+          </table>
+          <div class="empty-state" id="leadsEmpty" style="display:none;">
+            <div class="icon">👥</div>
+            <p>No leads yet. Click <strong>+ Add Lead</strong> to get started.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- WAITLIST SIGNUPS -->
+      <div class="tab-pane" id="tab-waitlist">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
+          <p style="color:var(--muted);font-size:0.875rem;">Live from pleromaos.nl — signups appear here automatically.</p>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-outline btn-sm" onclick="loadWaitlist()">↻ Refresh</button>
+            <button class="btn btn-outline btn-sm" onclick="exportWaitlistCSV()">⬇ Export CSV</button>
+          </div>
+        </div>
+        <div id="waitlistLoading" style="color:var(--muted);font-size:0.875rem;padding:24px 0;">Loading…</div>
+        <div class="table-wrap" id="waitlistWrap" style="display:none;">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Business Type</th>
+                <th>Problem real?</th>
+                <th>Top priority</th>
+                <th>Big challenge</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody id="waitlistTable"></tbody>
+          </table>
+          <div class="empty-state" id="waitlistEmpty" style="display:none;">
+            <div class="icon">📬</div>
+            <p>No signups yet — share pleromaos.nl to get your first one.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- TEMPLATES -->
+      <div class="tab-pane" id="tab-templates">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px;">
+          <p style="color:var(--muted); font-size:0.875rem; max-width:520px;">
+            Vervang <code style="background:var(--surface2);padding:2px 6px;border-radius:4px;">[Voornaam]</code> en <code style="background:var(--surface2);padding:2px 6px;border-radius:4px;">[Salonaam]</code> voor je verstuur. Link: <strong style="color:var(--accent2)">pleromaos.nl</strong>
+          </p>
+          <div style="display:flex;gap:6px;background:var(--surface2);border-radius:8px;padding:4px;">
+            <button id="lang-nl" onclick="setLang('nl')" style="padding:6px 14px;border-radius:6px;border:none;background:var(--accent);color:#fff;font-size:12px;font-weight:600;cursor:pointer;">🇳🇱 Nederlands</button>
+            <button id="lang-en" onclick="setLang('en')" style="padding:6px 14px;border-radius:6px;border:none;background:transparent;color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;">🇬🇧 English</button>
+          </div>
+        </div>
+        <div class="template-tabs">
+          <button class="template-tab active" onclick="switchTemplate('email', this)">📧 Email</button>
+          <button class="template-tab" onclick="switchTemplate('linkedin', this)">💼 LinkedIn</button>
+          <button class="template-tab" onclick="switchTemplate('instagram', this)">📸 Instagram / WhatsApp</button>
+          <button class="template-tab" onclick="switchTemplate('sms', this)">📱 SMS</button>
+        </div>
+
+        <!-- EMAIL -->
+        <div class="template-pane active" id="tmpl-email">
+          <div class="template-card">
+            <div class="template-card-header">
+              <span>📧 Cold Email — Intro</span>
+              <button class="btn btn-copy btn-sm" onclick="copyTmpl('email-intro')">Copy</button>
+            </div>
+            <div class="template-field">
+              <label>Onderwerp / Subject</label>
+              <div class="template-text tmpl-nl" id="email-intro-nl-subj">Even een vraag, [Voornaam]</div>
+              <div class="template-text tmpl-en" id="email-intro-en-subj" style="display:none">Quick question, [First Name]</div>
+            </div>
+            <div class="template-field">
+              <label>Bericht / Body</label>
+              <div class="template-text tmpl-nl" id="email-intro-nl">Hoi [Voornaam],
+
+Na 11 jaar in het vak — als stylist voor Sony Music, Wall Street Journal en de Met Gala, en als manager van 3 salons tegelijkertijd — ken ik dit moment:
+
+Een klant laat een foto zien. Je begrijpt het. Je knipt. Toch klopt er iets net niet.
+
+Niet jouw fout. Taal kan een mentaal beeld nu eenmaal niet precies overbrengen. En de klant die "super, bedankt!" zegt maar daarna niet terugkomt — die laat jou achter met nul informatie.
+
+Ik bouw Pleroma om dat op te lossen. Zo simpel als een QR-menu in een restaurant: de klant scant, kiest de look die zij wil, en jij ziet dat direct op je scherm. Geen gokken. Geen miscommunicatie.
+
+Als eerste gebruiker krijg je gratis toegang en directe invloed op wat we bouwen.
+
+pleromaos.nl
+
+Groeten,
+Bryan</div>
+              <div class="template-text tmpl-en" id="email-intro-en" style="display:none">Hey [First Name],
+
+After 11 years in the industry — as a stylist for Sony Music, Wall Street Journal, and the Met Gala, and managing 3 salons at the same time — I know this moment:
+
+A client shows you a photo. You understand it. You cut. And still, something's slightly off.
+
+Not your fault. Language just can't transfer a mental image precisely. And the client who says "love it, thanks!" but never comes back? They leave you with zero data.
+
+I'm building Pleroma to fix this. As simple as a QR menu in a restaurant: the client scans, picks the look they want, and you see it on your screen instantly. No guessing. No miscommunication.
+
+Early users get free access and direct input on what we build.
+
+pleromaos.nl
+
+Bryan</div>
+            </div>
+            <div class="template-note tmpl-nl">💡 Personaliseer de eerste zin met iets specifieks over hun salon of recente werk. Gepersonaliseerde mails krijgen 3–5× hogere respons.</div>
+            <div class="template-note tmpl-en" style="display:none">💡 Personalize the opening with something specific about their salon or recent work. Personalized emails get 3–5× higher reply rates.</div>
+          </div>
+
+          <div class="template-card">
+            <div class="template-card-header">
+              <span>📧 Follow-Up (Dag 3 / Day 3)</span>
+              <button class="btn btn-copy btn-sm" onclick="copyTmpl('email-followup')">Copy</button>
+            </div>
+            <div class="template-field">
+              <label>Onderwerp / Subject</label>
+              <div class="template-text tmpl-nl" id="email-followup-nl-subj">Re: Even een vraag, [Voornaam]</div>
+              <div class="template-text tmpl-en" id="email-followup-en-subj" style="display:none">Re: Quick question, [First Name]</div>
+            </div>
+            <div class="template-field">
+              <label>Bericht / Body</label>
+              <div class="template-text tmpl-nl" id="email-followup-nl">Hoi [Voornaam],
+
+Kort follow-upje — mijn vorige mail is misschien weggezakt.
+
+Eén ding dat me altijd heeft gestoord als stylist: de klant die achteraf zwijgt over haar teleurstelling. Je hebt geen idee wat er niet klopte. Je kunt er niets van leren.
+
+Pleroma geeft jouw salon voor het eerst een database van wat elke klant écht wil — niet alleen opgeslagen in het hoofd van één medewerker.
+
+Als dat herkenbaar klinkt: pleromaos.nl
+
+Bryan</div>
+              <div class="template-text tmpl-en" id="email-followup-en" style="display:none">Hey [First Name],
+
+Just a short follow-up in case my previous email got buried.
+
+One thing that always frustrated me as a stylist: the client who stays quiet about their disappointment. You have no idea what went wrong. You can't learn from it.
+
+Pleroma gives your salon a database of what each client actually wants — not just stored in one staff member's head.
+
+If that sounds familiar: pleromaos.nl
+
+Bryan</div>
+            </div>
+          </div>
+
+          <div class="template-card">
+            <div class="template-card-header">
+              <span>📧 Laatste Poging (Dag 7 / Day 7)</span>
+              <button class="btn btn-copy btn-sm" onclick="copyTmpl('email-final')">Copy</button>
+            </div>
+            <div class="template-field">
+              <label>Onderwerp / Subject</label>
+              <div class="template-text tmpl-nl" id="email-final-nl-subj">Laatste berichtje, [Voornaam]</div>
+              <div class="template-text tmpl-en" id="email-final-en-subj" style="display:none">Last one, [First Name]</div>
+            </div>
+            <div class="template-field">
+              <label>Bericht / Body</label>
+              <div class="template-text tmpl-nl" id="email-final-nl">Hoi [Voornaam],
+
+Laatste mail — ik hou het kort.
+
+Als het communicatiegat tussen klant en kapper iets is waar jij weleens tegenaan loopt, dan is Pleroma voor jou gebouwd. Als het op dit moment niet relevant is, geen probleem.
+
+pleromaos.nl
+
+Succes met alles,
+Bryan</div>
+              <div class="template-text tmpl-en" id="email-final-en" style="display:none">Hey [First Name],
+
+Last email, keeping it short.
+
+If the communication gap between client and stylist is something you run into — Pleroma is built for you. If not, no worries at all.
+
+pleromaos.nl
+
+Best,
+Bryan</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- LINKEDIN -->
+        <div class="template-pane" id="tmpl-linkedin">
+          <div class="template-card">
+            <div class="template-card-header">
+              <span>💼 LinkedIn Connectieverzoek / Connection Request</span>
+              <button class="btn btn-copy btn-sm" onclick="copyTmpl('li-connect')">Copy</button>
+            </div>
+            <div class="template-field">
+              <label>Notitie (max 300 tekens)</label>
+              <div class="template-text tmpl-nl" id="li-connect-nl">Hoi [Voornaam] — 11 jaar als stylist (o.a. Sony Music, Met Gala). Nu bouw ik een tool die kappers helpt de communicatiekloof met klanten te dichten. Mag ik connecten?</div>
+              <div class="template-text tmpl-en" id="li-connect-en" style="display:none">Hey [First Name] — 11 yrs as a stylist (Sony Music, Met Gala). Now building a tool that helps barbers and stylists close the communication gap with clients. Would love to connect.</div>
+            </div>
+            <div class="template-note tmpl-nl">💡 Houd de connectienoot onder 300 tekens. Geen pitch in het verzoek — open gewoon de deur.</div>
+            <div class="template-note tmpl-en" style="display:none">💡 Keep connection notes under 300 characters. Don't pitch in the request — just open the door.</div>
+          </div>
+
+          <div class="template-card">
+            <div class="template-card-header">
+              <span>💼 LinkedIn DM Na Connectie / After Connecting</span>
+              <button class="btn btn-copy btn-sm" onclick="copyTmpl('li-dm')">Copy</button>
+            </div>
+            <div class="template-field">
+              <label>Bericht / Message</label>
+              <div class="template-text tmpl-nl" id="li-dm-nl">Hoi [Voornaam], bedankt voor de connectie!
+
+Ik bouw Pleroma — zo simpel als een QR-menu in een restaurant, maar dan voor kappers: de klant kiest de look die zij wil, jij ontvangt het direct op je scherm.
+
+Na 11 jaar in het vak (Sony Music, Wall Street Journal, Met Gala, en 3 salons geleid) weet ik hoe groot dat communicatiegat is — en hoe weinig salons er data over bijhouden.
+
+Ik zoek kappers die als eerste toegang willen. Gratis, geen verplichtingen.
+
+pleromaos.nl</div>
+              <div class="template-text tmpl-en" id="li-dm-en" style="display:none">Hey [First Name], thanks for connecting!
+
+I'm building Pleroma — as simple as a QR menu in a restaurant, but for barbers and stylists: the client picks the look they want, you get it on your screen instantly.
+
+After 11 years in the industry (Sony Music, WSJ, Met Gala, managed 3 salons), I know how big that communication gap is — and how little data most salons collect on it.
+
+Looking for stylists who want first access. Free, no commitment.
+
+pleromaos.nl</div>
+            </div>
+          </div>
+
+          <div class="template-card">
+            <div class="template-card-header">
+              <span>💼 LinkedIn Follow-Up DM</span>
+              <button class="btn btn-copy btn-sm" onclick="copyTmpl('li-followup')">Copy</button>
+            </div>
+            <div class="template-field">
+              <label>Bericht / Message</label>
+              <div class="template-text tmpl-nl" id="li-followup-nl">Hoi [Voornaam], nog even een follow-up op mijn vorige bericht.
+
+Als de communicatie met klanten over hun gewenste look weleens voor frustratie zorgt — dat is precies het probleem dat Pleroma oplost.
+
+pleromaos.nl
+
+Geen druk, ik waardeer de connectie sowieso!</div>
+              <div class="template-text tmpl-en" id="li-followup-en" style="display:none">Hey [First Name], just following up on my previous message.
+
+If communicating with clients about their desired look ever causes frustration — that's exactly the problem Pleroma solves.
+
+pleromaos.nl
+
+No pressure either way — appreciate the connection!</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- INSTAGRAM / WHATSAPP -->
+        <div class="template-pane" id="tmpl-instagram">
+          <div class="template-card">
+            <div class="template-card-header">
+              <span>📸 Instagram DM — Koude Intro / Cold Intro</span>
+              <button class="btn btn-copy btn-sm" onclick="copyTmpl('ig-intro')">Copy</button>
+            </div>
+            <div class="template-field">
+              <label>Bericht / Message</label>
+              <div class="template-text tmpl-nl" id="ig-intro-nl">Hoi [Voornaam]! Mooie looks op je pagina 🙌
+
+Ik ben zelf 11 jaar stylist geweest (o.a. Sony Music en de Met Gala) en bouw nu Pleroma — een tool zodat klanten hun gewenste look kunnen kiezen via een simpele QR-scan, en jij dat direct ontvangt. Geen miscommunicatie meer.
+
+Vroege toegang is gratis: pleromaos.nl</div>
+              <div class="template-text tmpl-en" id="ig-intro-en" style="display:none">Hey [First Name]! Great work on your page 🙌
+
+I spent 11 years as a stylist (Sony Music, Met Gala) and now I'm building Pleroma — a tool so clients can choose their desired look via a simple QR scan, and you receive it instantly. No more miscommunication.
+
+Early access is free: pleromaos.nl</div>
+            </div>
+            <div class="template-note tmpl-nl">💡 Reageer eerst op een recente post of story voor je het DM stuurt — warmer contact.</div>
+            <div class="template-note tmpl-en" style="display:none">💡 Engage with a recent post or story before sending the DM — warmer contact, higher reply rate.</div>
+          </div>
+
+          <div class="template-card">
+            <div class="template-card-header">
+              <span>💬 WhatsApp — Eerste Bericht / First Message</span>
+              <button class="btn btn-copy btn-sm" onclick="copyTmpl('wa-intro')">Copy</button>
+            </div>
+            <div class="template-field">
+              <label>Bericht / Message</label>
+              <div class="template-text tmpl-nl" id="wa-intro-nl">Hoi [Voornaam], ik ben Bryan — 11 jaar stylist (Sony Music, Met Gala, 3 salons geleid). Ik bouw nu Pleroma: klanten kiezen hun look via QR, jij ontvangt het direct. Gratis vroege toegang: pleromaos.nl</div>
+              <div class="template-text tmpl-en" id="wa-intro-en" style="display:none">Hey [First Name], I'm Bryan — 11 yrs as a stylist (Sony Music, Met Gala, managed 3 salons). Building Pleroma: clients pick their look via QR, you receive it instantly. Free early access: pleromaos.nl</div>
+            </div>
+            <div class="template-note tmpl-nl">💡 WhatsApp werkt het best voor warme leads of wederzijdse contacten. Koud WhatsApp versturen kan als spam worden ervaren.</div>
+            <div class="template-note tmpl-en" style="display:none">💡 WhatsApp works best for warm leads or mutual contacts. Cold WhatsApp can feel intrusive.</div>
+          </div>
+
+          <div class="template-card">
+            <div class="template-card-header">
+              <span>📸 IG / WhatsApp Follow-Up</span>
+              <button class="btn btn-copy btn-sm" onclick="copyTmpl('ig-followup')">Copy</button>
+            </div>
+            <div class="template-field">
+              <label>Bericht / Message</label>
+              <div class="template-text tmpl-nl" id="ig-followup-nl">Hoi [Voornaam], korte follow-up op mijn vorige bericht. Als het idee interessant klinkt of als je vragen hebt — laat het me weten! pleromaos.nl</div>
+              <div class="template-text tmpl-en" id="ig-followup-en" style="display:none">Hey [First Name], just a quick follow-up on my previous message. If the idea sounds interesting or you have questions — let me know! pleromaos.nl</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SMS -->
+        <div class="template-pane" id="tmpl-sms">
+          <div class="template-card">
+            <div class="template-card-header">
+              <span>📱 SMS — Eerste Bericht / First Text</span>
+              <button class="btn btn-copy btn-sm" onclick="copyTmpl('sms-intro')">Copy</button>
+            </div>
+            <div class="template-field">
+              <label>Bericht / Message</label>
+              <div class="template-text tmpl-nl" id="sms-intro-nl">Hoi [Voornaam], Bryan hier — stylist (Sony Music, Met Gala). Bouw nu Pleroma: klanten kiezen hun look via QR, jij ontvangt het. Gratis: pleromaos.nl</div>
+              <div class="template-text tmpl-en" id="sms-intro-en" style="display:none">Hey [First Name], Bryan here — stylist (Sony Music, Met Gala). Building Pleroma: clients pick their look via QR, you receive it. Free early access: pleromaos.nl</div>
+            </div>
+            <div class="template-note tmpl-nl">💡 Houd SMS onder 160 tekens. Gebruik SMS alleen voor warme of semi-warme leads.</div>
+            <div class="template-note tmpl-en" style="display:none">💡 Keep SMS under 160 characters. Use SMS only for warm or semi-warm leads.</div>
+          </div>
+
+          <div class="template-card">
+            <div class="template-card-header">
+              <span>📱 SMS Follow-Up</span>
+              <button class="btn btn-copy btn-sm" onclick="copyTmpl('sms-followup')">Copy</button>
+            </div>
+            <div class="template-field">
+              <label>Bericht / Message</label>
+              <div class="template-text tmpl-nl" id="sms-followup-nl">Hoi [Voornaam], kort follow-upje. Als communicatie met klanten over gewenste looks soms een uitdaging is, is Pleroma voor jou: pleromaos.nl</div>
+              <div class="template-text tmpl-en" id="sms-followup-en" style="display:none">Hey [First Name], quick follow-up. If communicating with clients about their desired look is sometimes a challenge, Pleroma is for you: pleromaos.nl</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end .content -->
+  </div><!-- end .main -->
+</div><!-- end .app -->
+
+<!-- ADD LEAD MODAL -->
+<div class="modal-overlay" id="addLeadModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('addLeadModal')">✕</button>
+    <h3 id="modalTitle">Add Lead</h3>
+    <input type="hidden" id="editLeadId" value="" />
+    <div class="form-row">
+      <div class="form-group">
+        <label>Company Name *</label>
+        <input type="text" id="f-company" placeholder="Acme Consulting" />
+      </div>
+      <div class="form-group">
+        <label>Contact Name *</label>
+        <input type="text" id="f-contact" placeholder="Jane Smith" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" id="f-email" placeholder="jane@acme.com" />
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>LinkedIn URL</label>
+        <input type="text" id="f-linkedin" placeholder="linkedin.com/in/jane" />
+      </div>
+      <div class="form-group">
+        <label>Instagram / X</label>
+        <input type="text" id="f-ig" placeholder="@janesmith" />
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Phone / WhatsApp</label>
+        <input type="text" id="f-phone" placeholder="+1 555 000 0000" />
+      </div>
+      <div class="form-group">
+        <label>Industry</label>
+        <input type="text" id="f-industry" placeholder="Law Firm, Agency…" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Status</label>
+      <select id="f-status">
+        <option value="new">🆕 Not Contacted</option>
+        <option value="emailed">📧 Emailed</option>
+        <option value="linkedin">💼 LinkedIn DM Sent</option>
+        <option value="instagram">📸 Instagram/X DM Sent</option>
+        <option value="sms">📱 SMS/WhatsApp Sent</option>
+        <option value="responded">💬 Responded</option>
+        <option value="waitlist">✅ Joined Waitlist</option>
+        <option value="dead">❌ Not Interested</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Platforms Outreached</label>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;">
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.8rem;color:var(--text);font-weight:400;">
+          <input type="checkbox" id="p-email" value="email" /> 📧 Email
+        </label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.8rem;color:var(--text);font-weight:400;">
+          <input type="checkbox" id="p-linkedin" value="linkedin" /> 💼 LinkedIn
+        </label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.8rem;color:var(--text);font-weight:400;">
+          <input type="checkbox" id="p-ig" value="ig" /> 📸 Instagram/X
+        </label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.8rem;color:var(--text);font-weight:400;">
+          <input type="checkbox" id="p-sms" value="sms" /> 📱 SMS
+        </label>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Source</label>
+      <input type="text" id="f-source" placeholder="LinkedIn search, referral, cold list…" />
+    </div>
+    <div class="form-group">
+      <label>Notes</label>
+      <textarea id="f-notes" placeholder="Any context about this lead…"></textarea>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px;">
+      <button class="btn btn-outline" onclick="closeModal('addLeadModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveLead()">Save Lead</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD SIGNUP MODAL -->
+<div class="modal-overlay" id="addSignupModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('addSignupModal')">✕</button>
+    <h3>Add Waitlist Signup</h3>
+    <div class="form-row">
+      <div class="form-group">
+        <label>First Name *</label>
+        <input type="text" id="s-fname" placeholder="Jane" />
+      </div>
+      <div class="form-group">
+        <label>Last Name</label>
+        <input type="text" id="s-lname" placeholder="Smith" />
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Email *</label>
+        <input type="email" id="s-email" placeholder="jane@company.com" />
+      </div>
+      <div class="form-group">
+        <label>Company</label>
+        <input type="text" id="s-company" placeholder="Acme Co." />
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Business Type</label>
+      <select id="s-biztype">
+        <option value="">Select…</option>
+        <option>Barbershop</option>
+        <option>Women's Hair Salon</option>
+        <option>Mixed / Unisex Salon</option>
+        <option>Other</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Consults per Month</label>
+        <select id="s-consults">
+          <option value="">Select…</option>
+          <option>1–5</option>
+          <option>6–20</option>
+          <option>21–50</option>
+          <option>50+</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Timeline</label>
+        <select id="s-timeline">
+          <option value="">Select…</option>
+          <option>Immediately — I need this now</option>
+          <option>Within 1–3 months</option>
+          <option>Just exploring for now</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Willing to jump on a call?</label>
+      <select id="s-call">
+        <option value="">Select…</option>
+        <option>Yes — happy to help</option>
+        <option>Maybe, reach out first</option>
+        <option>No thanks</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Pain Point <span style="color:var(--muted);font-weight:400;">(from form)</span></label>
+      <textarea id="s-pain" placeholder="Paste their answer here…"></textarea>
+    </div>
+    <div class="form-group">
+      <label>Current Tools</label>
+      <input type="text" id="s-tools" placeholder="HubSpot, Calendly…" />
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>LinkedIn</label>
+        <input type="text" id="s-linkedin" placeholder="linkedin.com/in/…" />
+      </div>
+      <div class="form-group">
+        <label>Phone</label>
+        <input type="text" id="s-phone" placeholder="+1 555…" />
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px;">
+      <button class="btn btn-outline" onclick="closeModal('addSignupModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveSignup()">Save Signup</button>
+    </div>
+  </div>
+</div>
+
+<!-- IMPORT MODAL -->
+<div class="modal-overlay" id="importModal">
+  <div class="modal" style="max-width:600px;">
+    <button class="modal-close" onclick="closeModal('importModal')">✕</button>
+    <h3>Import Leads</h3>
+    <div style="display:flex;gap:6px;background:var(--surface2);border-radius:8px;padding:4px;margin-bottom:16px;width:fit-content;">
+      <button id="imp-tab-apollo" onclick="setImportTab('apollo')" style="padding:6px 16px;border-radius:6px;border:none;background:var(--accent);color:#fff;font-size:12px;font-weight:600;cursor:pointer;">🚀 Apollo.io</button>
+      <button id="imp-tab-generic" onclick="setImportTab('generic')" style="padding:6px 16px;border-radius:6px;border:none;background:transparent;color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;">📋 Generic CSV</button>
+    </div>
+
+    <!-- Apollo mode -->
+    <div id="imp-apollo">
+      <p style="color:var(--muted);font-size:0.85rem;margin-bottom:8px;">
+        Export from Apollo.io → <strong>People</strong> → <strong>Export to CSV</strong>. Paste the full CSV including header row.
+      </p>
+      <p style="font-size:0.75rem;color:var(--green);margin-bottom:12px;">
+        ✓ Automatically maps: First Name, Last Name, Title, Company, Email, Phone, LinkedIn URL, City, Country, Industry
+      </p>
+      <div class="form-group">
+        <label>Apollo CSV (paste with header row)</label>
+        <textarea id="apolloData" style="min-height:160px;width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:7px;color:var(--text);padding:10px 12px;font-family:monospace;font-size:0.78rem;outline:none;" placeholder="First Name,Last Name,Title,Company,Email,Phone,LinkedIn URL,City,Country,Industry&#10;Jan,de Vries,Owner,Kapsalon De Vries,jan@salon.nl,+31612345678,linkedin.com/in/jan,..."></textarea>
+      </div>
+      <div id="apollo-preview" style="font-size:0.8rem;color:var(--muted);margin-top:8px;"></div>
+    </div>
+
+    <!-- Generic mode -->
+    <div id="imp-generic" style="display:none;">
+      <p style="color:var(--muted);font-size:0.85rem;margin-bottom:8px;">
+        Paste CSV rows below. No header row needed.
+      </p>
+      <code style="font-size:0.72rem;background:var(--surface2);padding:4px 10px;border-radius:4px;display:block;margin-bottom:12px;color:var(--muted);">Company, Contact Name, Email, LinkedIn, Instagram, Phone, Industry, Source, Notes</code>
+      <div class="form-group">
+        <textarea id="importData" style="min-height:140px;width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:7px;color:var(--text);padding:10px 12px;font-family:monospace;font-size:0.8rem;outline:none;" placeholder="Kapsalon Fleur, Fleur Bakker, fleur@salon.nl, linkedin.com/in/fleur, @fleursalon, +31612345678, Hair Salon, Apollo
+Barber Den Haag, Mehmet Yilmaz, mehmet@barber.nl, , , +31687654321, Barbershop, Google Maps"></textarea>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:12px;">
+      <button class="btn btn-outline" onclick="closeModal('importModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="doImport()">Import Leads</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOG REPLY MODAL -->
+<div class="modal-overlay" id="replyModal">
+  <div class="modal" style="max-width:480px;">
+    <button class="modal-close" onclick="closeModal('replyModal')">✕</button>
+    <h3>Log Reply</h3>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Channel</label>
+        <select id="r-channel">
+          <option value="email">📧 Email</option>
+          <option value="linkedin">💼 LinkedIn</option>
+          <option value="instagram">📸 Instagram</option>
+          <option value="whatsapp">💬 WhatsApp</option>
+          <option value="sms">📱 SMS</option>
+          <option value="phone">📞 Phone call</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Date</label>
+        <input type="date" id="r-date">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>What did they say?</label>
+      <textarea id="r-text" style="min-height:100px;" placeholder="Paste or summarise their reply…"></textarea>
+    </div>
+    <div class="form-group">
+      <label>Outcome</label>
+      <select id="r-outcome">
+        <option value="interested">✅ Interested — wants to know more</option>
+        <option value="waitlist">🎉 Joined the waitlist</option>
+        <option value="maybe">🤔 Maybe — follow up later</option>
+        <option value="not_interested">❌ Not interested</option>
+        <option value="wrong_person">↩️ Wrong person / not the owner</option>
+      </select>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px;">
+      <button class="btn btn-outline" onclick="closeModal('replyModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveReply()">Save Reply</button>
+    </div>
+  </div>
+</div>
+
+<!-- DETAIL PANEL -->
+<div class="detail-panel" id="detailPanel">
+  <div style="display:flex;justify-content:space-between;align-items:center;">
+    <span style="font-size:0.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;font-weight:700;">Lead Details</span>
+    <button class="detail-close" onclick="closeDetail()">✕</button>
+  </div>
+  <div class="detail-name" id="d-name">—</div>
+  <div class="detail-company" id="d-company">—</div>
+  <div id="d-badge"></div>
+
+  <div class="detail-actions" id="d-actions"></div>
+
+  <div class="detail-section">
+    <h4>Contact Info</h4>
+    <div id="d-contacts"></div>
+  </div>
+
+  <div class="detail-section">
+    <h4>Outreach Log</h4>
+    <div id="d-platforms"></div>
+  </div>
+
+  <div class="detail-section" id="d-replies-section">
+    <h4>Reply History</h4>
+    <div id="d-replies"></div>
+    <button class="btn btn-green btn-sm" style="width:100%;justify-content:center;margin-top:6px;" onclick="openReplyModal()">💬 Log Reply</button>
+  </div>
+
+  <div class="detail-section">
+    <h4>Notes</h4>
+    <textarea class="notes-area" id="d-notes" placeholder="Add notes…" onblur="saveDetailNotes()"></textarea>
+  </div>
+
+  <div class="detail-section" style="display:flex;gap:8px;margin-top:16px;">
+    <button class="btn btn-primary btn-sm" onclick="openEditLead()">✏️ Edit</button>
+    <button class="btn btn-danger btn-sm" onclick="deleteLead()">🗑 Delete</button>
+  </div>
+</div>
+
+<div class="toast" id="toast">Copied!</div>
+
+<script>
+// ==================== SUPABASE ====================
+const SB_URL = 'https://eusyxqguevqgrnnjqhut.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1c3l4cWd1ZXZxZ3JubmpxaHV0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQxNjUxMDMsImV4cCI6MjA5OTc0MTEwM30.AjWfEIUeE1giPrB7XT37sEBsKZvfyHg4qRHnrI_m9_E';
+let sbSignups = []; // populated from Supabase
+
+// ==================== DATA ====================
+let leads = JSON.parse(localStorage.getItem('pleromaLeads') || '[]');
+let signups = JSON.parse(localStorage.getItem('pleromaSignups') || '[]');
+let activeLeadId = null;
+let statusFilter = 'all';
+
+function save() {
+  localStorage.setItem('pleromaLeads', JSON.stringify(leads));
+  localStorage.setItem('pleromaSignups', JSON.stringify(signups));
+}
+
+// ==================== TABS ====================
+function switchTab(tab, el) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  el.classList.add('active');
+  const titles = { dashboard:'Dashboard', leads:'Leads', waitlist:'Waitlist Signups', templates:'Message Templates' };
+  document.getElementById('topbarTitle').textContent = titles[tab] || tab;
+  if (tab === 'dashboard') renderDashboard();
+  if (tab === 'leads') renderLeads();
+  if (tab === 'waitlist') loadWaitlist();
+}
+
+// ==================== BADGES ====================
+const statusConfig = {
+  new: { label: 'Not Contacted', cls: 'badge-new' },
+  emailed: { label: 'Emailed', cls: 'badge-emailed' },
+  linkedin: { label: 'LinkedIn DM', cls: 'badge-linkedin' },
+  instagram: { label: 'Instagram/X DM', cls: 'badge-instagram' },
+  sms: { label: 'SMS Sent', cls: 'badge-sms' },
+  responded: { label: 'Responded', cls: 'badge-responded' },
+  waitlist: { label: 'Joined Waitlist', cls: 'badge-waitlist' },
+  dead: { label: 'Not Interested', cls: 'badge-dead' },
+};
+
+function badgeHTML(status) {
+  const c = statusConfig[status] || statusConfig.new;
+  return `<span class="badge ${c.cls}"><span class="badge-dot"></span>${c.label}</span>`;
+}
+
+function platformHTML(platforms) {
+  const ps = platforms || [];
+  return `<div class="platform-icons">
+    <div class="pi pi-email ${ps.includes('email')?'sent':''}" title="Email">E</div>
+    <div class="pi pi-li ${ps.includes('linkedin')?'sent':''}" title="LinkedIn">Li</div>
+    <div class="pi pi-ig ${ps.includes('ig')?'sent':''}" title="Instagram/X">Ig</div>
+    <div class="pi pi-sms ${ps.includes('sms')?'sent':''}" title="SMS">Tx</div>
+  </div>`;
+}
+
+// ==================== DASHBOARD ====================
+function renderDashboard() {
+  const total = leads.length;
+  const contacted = leads.filter(l => l.status !== 'new').length;
+  const responded = leads.filter(l => ['responded','waitlist'].includes(l.status)).length;
+  const waitlist = leads.filter(l => l.status === 'waitlist').length;
+  const wlSignups = signups.length;
+  const convRate = contacted > 0 ? Math.round((responded/contacted)*100) : 0;
+
+  document.getElementById('statsGrid').innerHTML = `
+    <div class="stat-card"><div class="stat-label">Total Leads</div><div class="stat-value stat-accent">${total}</div><div class="stat-sub">in CRM</div></div>
+    <div class="stat-card"><div class="stat-label">Contacted</div><div class="stat-value stat-blue">${contacted}</div><div class="stat-sub">${total>0?Math.round((contacted/total)*100):0}% of leads</div></div>
+    <div class="stat-card"><div class="stat-label">Responded</div><div class="stat-value stat-yellow">${responded}</div><div class="stat-sub">${convRate}% response rate</div></div>
+    <div class="stat-card"><div class="stat-label">Waitlist (CRM)</div><div class="stat-value stat-green">${waitlist}</div><div class="stat-sub">from outreach</div></div>
+    <div class="stat-card"><div class="stat-label">Form Signups</div><div class="stat-value stat-green">${wlSignups}</div><div class="stat-sub">from landing page</div></div>
+    <div class="stat-card"><div class="stat-label">Total Waitlist</div><div class="stat-value stat-green">${waitlist+wlSignups}</div><div class="stat-sub">combined</div></div>
+  `;
+
+  // Funnel
+  const stages = [
+    { label: 'Total Leads', count: total, color: '#6c63ff' },
+    { label: 'Contacted', count: contacted, color: '#60a5fa' },
+    { label: 'Responded', count: responded, color: '#fbbf24' },
+    { label: 'Waitlist', count: waitlist+wlSignups, color: '#22d3a0' },
+  ];
+  document.getElementById('funnelChart').innerHTML = stages.map(s => `
+    <div class="progress-row">
+      <div class="progress-label">${s.label}</div>
+      <div class="progress-bar-wrap"><div class="progress-bar" style="width:${total>0?Math.round((s.count/total)*100):0}%;background:${s.color};"></div></div>
+      <div class="progress-count" style="color:${s.color}">${s.count}</div>
+    </div>
+  `).join('');
+
+  // Platform
+  const platforms = [
+    { label: '📧 Email', key: 'email', color: '#60a5fa' },
+    { label: '💼 LinkedIn', key: 'linkedin', color: '#fbbf24' },
+    { label: '📸 Instagram/X', key: 'ig', color: '#f472b6' },
+    { label: '📱 SMS', key: 'sms', color: '#22d3a0' },
+  ];
+  const maxP = Math.max(...platforms.map(p => leads.filter(l => (l.platforms||[]).includes(p.key)).length), 1);
+  document.getElementById('platformChart').innerHTML = platforms.map(p => {
+    const count = leads.filter(l => (l.platforms||[]).includes(p.key)).length;
+    return `
+    <div class="progress-row">
+      <div class="progress-label">${p.label}</div>
+      <div class="progress-bar-wrap"><div class="progress-bar" style="width:${Math.round((count/maxP)*100)}%;background:${p.color};"></div></div>
+      <div class="progress-count" style="color:${p.color}">${count}</div>
+    </div>`;
+  }).join('');
+
+  // Recent
+  const recent = [...leads].sort((a,b) => b.addedAt - a.addedAt).slice(0,8);
+  const tbody = document.getElementById('recentTable');
+  if (recent.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:32px;">No leads yet</td></tr>`;
+  } else {
+    tbody.innerHTML = recent.map(l => `
+      <tr onclick="openDetail('${l.id}')">
+        <td><div class="company">${l.company}</div><div class="contact">${l.contact}</div></td>
+        <td>${badgeHTML(l.status)}</td>
+        <td>${platformHTML(l.platforms)}</td>
+        <td style="color:var(--muted);font-size:0.75rem;">${fmtDate(l.addedAt)}</td>
+      </tr>`).join('');
+  }
+}
+
+// ==================== LEADS ====================
+function renderLeads() {
+  const allStatuses = ['all', 'new', 'emailed', 'linkedin', 'instagram', 'sms', 'responded', 'waitlist', 'dead'];
+  const filterEl = document.getElementById('statusFilters');
+  filterEl.innerHTML = allStatuses.map(s => {
+    const label = s === 'all' ? `All (${leads.length})` : `${statusConfig[s]?.label||s} (${leads.filter(l=>l.status===s).length})`;
+    return `<button class="filter-pill ${statusFilter===s?'active':''}" onclick="setFilter('${s}')">${label}</button>`;
+  }).join('');
+
+  const q = document.getElementById('leadsSearch').value.toLowerCase();
+  let filtered = leads.filter(l => {
+    const matchStatus = statusFilter === 'all' || l.status === statusFilter;
+    const matchQ = !q || l.company.toLowerCase().includes(q) || (l.contact||'').toLowerCase().includes(q) || (l.email||'').toLowerCase().includes(q);
+    return matchStatus && matchQ;
+  });
+
+  const tbody = document.getElementById('leadsTable');
+  const empty = document.getElementById('leadsEmpty');
+  if (filtered.length === 0) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+  } else {
+    empty.style.display = 'none';
+    tbody.innerHTML = filtered.sort((a,b) => b.addedAt - a.addedAt).map(l => `
+      <tr onclick="openDetail('${l.id}')">
+        <td><div class="company">${l.company}</div></td>
+        <td><div>${l.contact||'—'}</div><div class="contact">${l.industry||''}</div></td>
+        <td style="font-size:0.8rem;">${l.email||'—'}</td>
+        <td>${badgeHTML(l.status)}</td>
+        <td>${platformHTML(l.platforms)}</td>
+        <td style="color:var(--muted);font-size:0.75rem;">${fmtDate(l.addedAt)}</td>
+        <td>
+          <div style="display:flex;gap:6px;">
+            <button class="btn btn-outline btn-sm" onclick="event.stopPropagation();openEditLeadId('${l.id}')">Edit</button>
+            <select class="btn btn-outline btn-sm" style="padding:4px 8px;font-size:0.75rem;" onchange="quickStatus('${l.id}',this.value)" onclick="event.stopPropagation()">
+              ${Object.entries(statusConfig).map(([k,v]) => `<option value="${k}" ${l.status===k?'selected':''}>${v.label}</option>`).join('')}
+            </select>
+          </div>
+        </td>
+      </tr>`).join('');
+  }
+}
+
+function setFilter(s) {
+  statusFilter = s;
+  renderLeads();
+}
+
+function quickStatus(id, val) {
+  const l = leads.find(x => x.id === id);
+  if (l) { l.status = val; l.updatedAt = Date.now(); save(); renderLeads(); renderDashboard(); }
+}
+
+// ==================== WAITLIST ====================
+const bizLabels   = {barbershop:'Barbershop',salon:'Hair salon',both:'Mixed / Unisex'};
+const realLabels  = {yes:'Yes, definitely',somewhat:'It happens',no:'Not really'};
+const featLabels  = {brief:'Precise brief',history:'Client history',retention:'Retention data',experience:'Client experience'};
+const chalLabels  = {newclients:'New clients',noshows:'No-shows',staff:'Staff turnover',operations:'Operations'};
+
+async function loadWaitlist() {
+  const loading = document.getElementById('waitlistLoading');
+  const wrap    = document.getElementById('waitlistWrap');
+  if(loading) loading.style.display = 'block';
+  if(wrap)    wrap.style.display    = 'none';
+  try {
+    const res = await fetch(`${SB_URL}/rest/v1/waitlist?select=*&order=created_at.desc`, {
+      headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` }
+    });
+    sbSignups = await res.json();
+  } catch(e) {
+    sbSignups = [];
+  }
+  if(loading) loading.style.display = 'none';
+  if(wrap)    wrap.style.display    = 'block';
+  renderWaitlist();
+}
+
+function renderWaitlist() {
+  const tbody = document.getElementById('waitlistTable');
+  const empty = document.getElementById('waitlistEmpty');
+  if (!sbSignups || sbSignups.length === 0) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+  } else {
+    empty.style.display = 'none';
+    tbody.innerHTML = sbSignups.map(s => `
+      <tr>
+        <td><strong>${s.name||'—'}</strong></td>
+        <td style="font-size:0.8rem;">${s.email}</td>
+        <td class="wl-answer">${bizLabels[s.business_type]||s.business_type||'—'}</td>
+        <td class="wl-answer">${realLabels[s.feels_real]||s.feels_real||'—'}</td>
+        <td class="wl-answer">${featLabels[s.top_feature]||s.top_feature||'—'}</td>
+        <td class="wl-answer">${chalLabels[s.big_challenge]||s.big_challenge||'—'}</td>
+        <td style="color:var(--muted);font-size:0.75rem;">${new Date(s.created_at).toLocaleDateString('nl-NL')}</td>
+      </tr>`).join('');
+  }
+}
+
+// ==================== DETAIL PANEL ====================
+function openDetail(id) {
+  const l = leads.find(x => x.id === id);
+  if (!l) return;
+  activeLeadId = id;
+
+  document.getElementById('d-name').textContent = l.contact || l.company;
+  document.getElementById('d-company').textContent = l.company + (l.industry ? ` · ${l.industry}` : '');
+  document.getElementById('d-badge').innerHTML = badgeHTML(l.status);
+  document.getElementById('d-notes').value = l.notes || '';
+
+  const contacts = [
+    ['Email', l.email ? `<a href="mailto:${l.email}" style="color:var(--accent2)">${l.email}</a>` : '—'],
+    ['LinkedIn', l.linkedin ? `<a href="${l.linkedin.startsWith('http')?l.linkedin:'https://'+l.linkedin}" target="_blank" style="color:var(--accent2)">View Profile</a>` : '—'],
+    ['Instagram/X', l.ig || '—'],
+    ['Phone', l.phone || '—'],
+    ['Source', l.source || '—'],
+    ['Added', fmtDate(l.addedAt)],
+  ];
+  document.getElementById('d-contacts').innerHTML = contacts.map(([k,v]) => `
+    <div class="detail-row"><span class="label">${k}</span><span class="value">${v}</span></div>`).join('');
+
+  const ps = l.platforms || [];
+  document.getElementById('d-platforms').innerHTML = [
+    ['📧 Email', ps.includes('email')],
+    ['💼 LinkedIn', ps.includes('linkedin')],
+    ['📸 Instagram/X', ps.includes('ig')],
+    ['📱 SMS', ps.includes('sms')],
+  ].map(([name, sent]) => `
+    <div class="detail-row">
+      <span class="label">${name}</span>
+      <span class="value" style="color:${sent?'var(--green)':'var(--muted)'}">${sent?'✓ Sent':'Not sent'}</span>
+    </div>`).join('');
+
+  document.getElementById('d-actions').innerHTML = `
+    <select class="btn btn-outline" style="width:100%;padding:8px 12px;" onchange="quickStatusDetail(this.value)">
+      ${Object.entries(statusConfig).map(([k,v]) => `<option value="${k}" ${l.status===k?'selected':''}>${v.label}</option>`).join('')}
+    </select>`;
+
+  renderReplies(l);
+  document.getElementById('detailPanel').classList.add('open');
+}
+
+function quickStatusDetail(val) {
+  const l = leads.find(x => x.id === activeLeadId);
+  if (l) { l.status = val; l.updatedAt = Date.now(); save(); renderLeads(); renderDashboard(); openDetail(activeLeadId); }
+}
+
+function closeDetail() {
+  document.getElementById('detailPanel').classList.remove('open');
+  activeLeadId = null;
+}
+
+function saveDetailNotes() {
+  const l = leads.find(x => x.id === activeLeadId);
+  if (l) { l.notes = document.getElementById('d-notes').value; save(); }
+}
+
+function openEditLead() { if (activeLeadId) openEditLeadId(activeLeadId); }
+
+// ==================== REPLY LOG ====================
+function openReplyModal() {
+  if (!activeLeadId) return;
+  document.getElementById('r-date').value = new Date().toISOString().slice(0,10);
+  document.getElementById('r-text').value = '';
+  document.getElementById('r-outcome').value = 'interested';
+  openModal('replyModal');
+}
+
+const outcomeLabels = {
+  interested:    '✅ Interested',
+  waitlist:      '🎉 Joined Waitlist',
+  maybe:         '🤔 Maybe',
+  not_interested:'❌ Not interested',
+  wrong_person:  '↩️ Wrong person',
+};
+
+function saveReply() {
+  const l = leads.find(x => x.id === activeLeadId);
+  if (!l) return;
+  const text = document.getElementById('r-text').value.trim();
+  const outcome = document.getElementById('r-outcome').value;
+  if (!text) { showToast('Please describe what they said'); return; }
+
+  if (!l.replies) l.replies = [];
+  l.replies.push({
+    id: uid(),
+    channel: document.getElementById('r-channel').value,
+    date: document.getElementById('r-date').value,
+    text,
+    outcome,
+  });
+
+  // Auto-update lead status based on outcome
+  if (outcome === 'waitlist') l.status = 'waitlist';
+  else if (outcome === 'not_interested') l.status = 'dead';
+  else if (['interested','maybe'].includes(outcome)) l.status = 'responded';
+
+  l.updatedAt = Date.now();
+  save();
+  closeModal('replyModal');
+  renderReplies(l);
+  renderLeads(); renderDashboard();
+  showToast('Reply logged!');
+}
+
+function renderReplies(l) {
+  const replies = l.replies || [];
+  const el = document.getElementById('d-replies');
+  if (!el) return;
+  if (replies.length === 0) {
+    el.innerHTML = '<p style="color:var(--muted);font-size:0.8rem;">No replies logged yet.</p>';
+  } else {
+    const channelIcons = { email:'📧', linkedin:'💼', instagram:'📸', whatsapp:'💬', sms:'📱', phone:'📞' };
+    el.innerHTML = [...replies].reverse().map(r => `
+      <div class="reply-item">
+        <div class="reply-item-header">
+          <span class="reply-channel">${channelIcons[r.channel]||''} ${r.channel}</span>
+          <span class="reply-date">${r.date || ''}</span>
+        </div>
+        <div class="reply-text">${r.text}</div>
+        <span class="reply-outcome outcome-${r.outcome}">${outcomeLabels[r.outcome]||r.outcome}</span>
+      </div>`).join('');
+  }
+  // Refresh badge after status may have changed
+  const updated = leads.find(x => x.id === activeLeadId);
+  if (updated) document.getElementById('d-badge').innerHTML = badgeHTML(updated.status);
+}
+
+function deleteLead() {
+  if (!activeLeadId) return;
+  if (!confirm('Delete this lead?')) return;
+  leads = leads.filter(l => l.id !== activeLeadId);
+  save(); closeDetail(); renderLeads(); renderDashboard();
+}
+
+// ==================== ADD / EDIT LEAD ====================
+function openAddLead() {
+  document.getElementById('editLeadId').value = '';
+  document.getElementById('modalTitle').textContent = 'Add Lead';
+  ['company','contact','email','linkedin','ig','phone','industry','source','notes'].forEach(f => {
+    document.getElementById('f-'+f).value = '';
+  });
+  document.getElementById('f-status').value = 'new';
+  ['email','linkedin','ig','sms'].forEach(p => document.getElementById('p-'+p).checked = false);
+  openModal('addLeadModal');
+}
+
+function openEditLeadId(id) {
+  const l = leads.find(x => x.id === id);
+  if (!l) return;
+  document.getElementById('editLeadId').value = id;
+  document.getElementById('modalTitle').textContent = 'Edit Lead';
+  document.getElementById('f-company').value = l.company || '';
+  document.getElementById('f-contact').value = l.contact || '';
+  document.getElementById('f-email').value = l.email || '';
+  document.getElementById('f-linkedin').value = l.linkedin || '';
+  document.getElementById('f-ig').value = l.ig || '';
+  document.getElementById('f-phone').value = l.phone || '';
+  document.getElementById('f-industry').value = l.industry || '';
+  document.getElementById('f-source').value = l.source || '';
+  document.getElementById('f-notes').value = l.notes || '';
+  document.getElementById('f-status').value = l.status || 'new';
+  ['email','linkedin','ig','sms'].forEach(p => {
+    document.getElementById('p-'+p).checked = (l.platforms||[]).includes(p);
+  });
+  openModal('addLeadModal');
+}
+
+function saveLead() {
+  const company = document.getElementById('f-company').value.trim();
+  const contact = document.getElementById('f-contact').value.trim();
+  if (!company) { alert('Company name is required.'); return; }
+
+  const platforms = ['email','linkedin','ig','sms'].filter(p => document.getElementById('p-'+p).checked);
+  const editId = document.getElementById('editLeadId').value;
+
+  if (editId) {
+    const l = leads.find(x => x.id === editId);
+    if (l) {
+      l.company = company; l.contact = contact;
+      l.email = document.getElementById('f-email').value.trim();
+      l.linkedin = document.getElementById('f-linkedin').value.trim();
+      l.ig = document.getElementById('f-ig').value.trim();
+      l.phone = document.getElementById('f-phone').value.trim();
+      l.industry = document.getElementById('f-industry').value.trim();
+      l.source = document.getElementById('f-source').value.trim();
+      l.notes = document.getElementById('f-notes').value.trim();
+      l.status = document.getElementById('f-status').value;
+      l.platforms = platforms;
+      l.updatedAt = Date.now();
+    }
+  } else {
+    leads.push({
+      id: uid(), company, contact,
+      email: document.getElementById('f-email').value.trim(),
+      linkedin: document.getElementById('f-linkedin').value.trim(),
+      ig: document.getElementById('f-ig').value.trim(),
+      phone: document.getElementById('f-phone').value.trim(),
+      industry: document.getElementById('f-industry').value.trim(),
+      source: document.getElementById('f-source').value.trim(),
+      notes: document.getElementById('f-notes').value.trim(),
+      status: document.getElementById('f-status').value,
+      platforms, replies: [],
+      addedAt: Date.now(), updatedAt: Date.now(),
+    });
+  }
+  save();
+  closeModal('addLeadModal');
+  renderLeads();
+  renderDashboard();
+  showToast('Lead saved!');
+}
+
+// ==================== IMPORT ====================
+function showImportModal() { openModal('importModal'); }
+
+function setImportTab(tab) {
+  const isApollo = tab === 'apollo';
+  document.getElementById('imp-apollo').style.display = isApollo ? '' : 'none';
+  document.getElementById('imp-generic').style.display = isApollo ? 'none' : '';
+  const tabApollo = document.getElementById('imp-tab-apollo');
+  const tabGeneric = document.getElementById('imp-tab-generic');
+  tabApollo.style.background = isApollo ? 'var(--accent)' : 'transparent';
+  tabApollo.style.color = isApollo ? '#fff' : 'var(--muted)';
+  tabGeneric.style.background = !isApollo ? 'var(--accent)' : 'transparent';
+  tabGeneric.style.color = !isApollo ? '#fff' : 'var(--muted)';
+}
+
+// Minimal CSV parser — handles quoted fields with commas inside
+function parseCSVLine(line) {
+  const cols = [];
+  let cur = '', inQ = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (ch === '"') {
+      if (inQ && line[i+1] === '"') { cur += '"'; i++; } // escaped quote
+      else { inQ = !inQ; }
+    } else if (ch === ',' && !inQ) {
+      cols.push(cur.trim()); cur = '';
+    } else {
+      cur += ch;
+    }
+  }
+  cols.push(cur.trim());
+  return cols;
+}
+
+function doImport() {
+  // Determine active tab
+  const apolloVisible = document.getElementById('imp-apollo').style.display !== 'none';
+
+  if (apolloVisible) {
+    const raw = document.getElementById('apolloData').value.trim();
+    if (!raw) { showToast('Paste Apollo CSV data first'); return; }
+    const lines = raw.split('\n').filter(l => l.trim());
+    if (lines.length < 2) { showToast('Need at least a header + 1 data row'); return; }
+
+    const headers = parseCSVLine(lines[0]).map(h => h.toLowerCase().replace(/[^a-z ]/g,'').trim());
+    const idx = (name) => headers.indexOf(name.toLowerCase());
+
+    const iFirst    = idx('first name');
+    const iLast     = idx('last name');
+    const iCompany  = idx('company');
+    const iEmail    = idx('email');
+    const iPhone    = idx('phone');
+    const iLinkedIn = idx('linkedin url');
+    const iCity     = idx('city');
+    const iCountry  = idx('country');
+    const iIndustry = idx('industry');
+    const iTitle    = idx('title');
+
+    let count = 0;
+    for (let i = 1; i < lines.length; i++) {
+      const r = parseCSVLine(lines[i]);
+      if (!r || r.every(c => !c)) continue;
+      const firstName = iFirst  >= 0 ? r[iFirst]  : '';
+      const lastName  = iLast   >= 0 ? r[iLast]   : '';
+      const company   = iCompany >= 0 ? r[iCompany] : '';
+      const email     = iEmail  >= 0 ? r[iEmail]  : '';
+      if (!company && !email && !firstName) continue;
+
+      const noteParts = [
+        iTitle   >= 0 && r[iTitle]   ? `Title: ${r[iTitle]}`   : '',
+        iCity    >= 0 && r[iCity]    ? `City: ${r[iCity]}`    : '',
+        iCountry >= 0 && r[iCountry] ? `Country: ${r[iCountry]}` : '',
+      ].filter(Boolean);
+
+      leads.push({
+        id: uid(),
+        company:  company || `${firstName} ${lastName}`.trim(),
+        contact:  `${firstName} ${lastName}`.trim(),
+        email,
+        phone:    iPhone    >= 0 ? r[iPhone]    : '',
+        linkedin: iLinkedIn >= 0 ? r[iLinkedIn] : '',
+        ig: '',
+        industry: iIndustry >= 0 ? r[iIndustry] : '',
+        source: 'Apollo.io',
+        notes: noteParts.join(' | '),
+        status: 'new', platforms: [], replies: [],
+        addedAt: Date.now(), updatedAt: Date.now(),
+      });
+      count++;
+    }
+    save();
+    closeModal('importModal');
+    document.getElementById('apolloData').value = '';
+    renderLeads(); renderDashboard();
+    showToast(`Imported ${count} leads from Apollo!`);
+
+  } else {
+    // Generic CSV: Company, Contact Name, Email, LinkedIn, Instagram, Phone, Industry, Source, Notes
+    const raw = document.getElementById('importData').value.trim();
+    if (!raw) { showToast('Paste CSV data first'); return; }
+    const rows = raw.split('\n').filter(r => r.trim());
+    let count = 0;
+    rows.forEach(row => {
+      const cols = parseCSVLine(row);
+      if (!cols[0]) return;
+      leads.push({
+        id: uid(),
+        company: cols[0] || '', contact: cols[1] || '',
+        email: cols[2] || '', linkedin: cols[3] || '',
+        ig: cols[4] || '', phone: cols[5] || '',
+        industry: cols[6] || '', source: cols[7] || '',
+        notes: cols[8] || '',
+        status: 'new', platforms: [], replies: [],
+        addedAt: Date.now(), updatedAt: Date.now(),
+      });
+      count++;
+    });
+    save();
+    closeModal('importModal');
+    document.getElementById('importData').value = '';
+    renderLeads(); renderDashboard();
+    showToast(`Imported ${count} leads!`);
+  }
+}
+
+// ==================== SIGNUP ====================
+function openAddSignup() { openModal('addSignupModal'); }
+
+function saveSignup() {
+  const email = document.getElementById('s-email').value.trim();
+  const fname = document.getElementById('s-fname').value.trim();
+  if (!email || !fname) { alert('Name and email required.'); return; }
+  signups.push({
+    id: uid(), fname, lname: document.getElementById('s-lname').value.trim(),
+    email, company: document.getElementById('s-company').value.trim(),
+    biztype: document.getElementById('s-biztype').value,
+    consults: document.getElementById('s-consults').value,
+    timeline: document.getElementById('s-timeline').value,
+    call: document.getElementById('s-call').value,
+    pain: document.getElementById('s-pain').value.trim(),
+    tools: document.getElementById('s-tools').value.trim(),
+    linkedin: document.getElementById('s-linkedin').value.trim(),
+    phone: document.getElementById('s-phone').value.trim(),
+    addedAt: Date.now(),
+  });
+  save();
+  closeModal('addSignupModal');
+  renderWaitlist();
+  renderDashboard();
+  showToast('Signup added!');
+}
+
+function deleteSignup(id) {
+  if (!confirm('Remove this signup?')) return;
+  signups = signups.filter(s => s.id !== id);
+  save(); renderWaitlist(); renderDashboard();
+}
+
+// ==================== TEMPLATES ====================
+function switchTemplate(tab, el) {
+  document.querySelectorAll('.template-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.template-pane').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tmpl-' + tab).classList.add('active');
+}
+
+// Language toggle (nl / en)
+let currentLang = 'nl';
+function setLang(lang) {
+  currentLang = lang;
+  document.querySelectorAll('.tmpl-nl').forEach(el => el.style.display = lang === 'nl' ? '' : 'none');
+  document.querySelectorAll('.tmpl-en').forEach(el => el.style.display = lang === 'en' ? '' : 'none');
+  const btnNl = document.getElementById('lang-nl');
+  const btnEn = document.getElementById('lang-en');
+  if (btnNl && btnEn) {
+    btnNl.style.background = lang === 'nl' ? 'var(--accent)' : 'transparent';
+    btnNl.style.color = lang === 'nl' ? '#fff' : 'var(--muted)';
+    btnEn.style.background = lang === 'en' ? 'var(--accent)' : 'transparent';
+    btnEn.style.color = lang === 'en' ? '#fff' : 'var(--muted)';
+  }
+}
+
+// Copy template (language-aware)
+function copyTmpl(id) {
+  const lang = currentLang;
+  const subjEl = document.getElementById(id + '-' + lang + '-subj') || document.getElementById(id + '-subj');
+  const bodyEl = document.getElementById(id + '-' + lang) || document.getElementById(id);
+  let text = '';
+  if (subjEl) text = 'ONDERWERP / SUBJECT: ' + subjEl.textContent.trim() + '\n\n';
+  if (bodyEl) text += bodyEl.textContent.trim();
+  navigator.clipboard.writeText(text.trim()).then(() => showToast('Gekopieerd! / Copied!'));
+}
+
+// Legacy copyTemplate alias
+function copyTemplate(id) { copyTmpl(id); }
+
+// ==================== EXPORT ====================
+function exportCSV() {
+  const headers = ['Company','Contact','Email','LinkedIn','Instagram/X','Phone','Industry','Source','Status','Platforms','Notes','Added'];
+  const rows = leads.map(l => [
+    l.company, l.contact, l.email, l.linkedin, l.ig, l.phone,
+    l.industry, l.source, statusConfig[l.status]?.label||l.status,
+    (l.platforms||[]).join('; '), l.notes, fmtDate(l.addedAt)
+  ].map(v => `"${(v||'').replace(/"/g,'""')}"`));
+  downloadCSV([headers, ...rows], 'pleroma-leads.csv');
+}
+
+function exportWaitlistCSV() {
+  const headers = ['Name','Email','Business Type','Problem Real?','Top Priority','Big Challenge','Date'];
+  const rows = sbSignups.map(s => [
+    s.name, s.email,
+    bizLabels[s.business_type]||s.business_type,
+    realLabels[s.feels_real]||s.feels_real,
+    featLabels[s.top_feature]||s.top_feature,
+    chalLabels[s.big_challenge]||s.big_challenge,
+    new Date(s.created_at).toLocaleDateString('nl-NL')
+  ].map(v => `"${(v||'').replace(/"/g,'""')}"`));
+  downloadCSV([headers, ...rows], 'pleroma-waitlist.csv');
+}
+
+function downloadCSV(rows, filename) {
+  const csv = rows.map(r => r.join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = filename;
+  a.click();
+}
+
+// ==================== HELPERS ====================
+function uid() { return Math.random().toString(36).slice(2) + Date.now().toString(36); }
+function fmtDate(ts) { if (!ts) return '—'; return new Date(ts).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+// Close modals on overlay click
+document.querySelectorAll('.modal-overlay').forEach(o => {
+  o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
+});
+
+// ==================== INIT ====================
+renderDashboard();
+</script>
+</body>
+</html>

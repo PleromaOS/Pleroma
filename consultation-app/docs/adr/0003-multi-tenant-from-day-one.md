@@ -1,0 +1,3 @@
+# Multi-tenant schema from day one, not single-shop
+
+Pleroma is intended to be sold/deployed to multiple different barbershops, not built for one shop and retrofitted later. We considered building single-shop first (simpler schema, no `shop_id` anywhere, hardcoded Barber list) and adding tenancy later if the product took off. We rejected that: retrofitting `shop_id` onto `consultations`, `feedback`, Barbers, and the PIN/access model after real data exists is expensive and risky, while designing for it now is a modest upfront cost. Every Barber, Consultation, and access PIN is scoped to a **Shop** from the start.

@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pleroma — Smarter Consultation Software</title>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --bg2: #111118;
+      --surface: #16161f;
+      --border: #23232f;
+      --accent: #6c63ff;
+      --accent2: #a78bfa;
+      --green: #22d3a0;
+      --text: #f0f0f8;
+      --muted: #8888aa;
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    a { color: var(--accent2); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(10,10,15,0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 5%;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 64px;
+    }
+    .logo {
+      font-size: 1.4rem; font-weight: 800;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .nav-links { display: flex; gap: 2rem; align-items: center; }
+    .nav-links a { color: var(--muted); font-size: 0.9rem; transition: color .2s; }
+    .nav-links a:hover { color: var(--text); text-decoration: none; }
+    .btn-nav {
+      background: var(--accent);
+      color: #fff !important;
+      padding: 8px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.875rem !important;
+      transition: opacity .2s;
+    }
+    .btn-nav:hover { opacity: 0.85; text-decoration: none !important; }
+
+    /* HERO */
+    .hero {
+      padding: 100px 5% 80px;
+      text-align: center;
+      position: relative;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+      width: 800px; height: 600px;
+      background: radial-gradient(ellipse at center, rgba(108,99,255,0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(108,99,255,0.12);
+      border: 1px solid rgba(108,99,255,0.3);
+      color: var(--accent2);
+      padding: 6px 16px; border-radius: 100px;
+      font-size: 0.8rem; font-weight: 600;
+      margin-bottom: 28px;
+      letter-spacing: 0.05em;
+    }
+    .badge-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--green);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+    h1 {
+      font-size: clamp(2.4rem, 5vw, 4rem);
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      margin-bottom: 24px;
+    }
+    h1 span {
+      background: linear-gradient(135deg, var(--accent), var(--accent2), #ec4899);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-sub {
+      font-size: 1.15rem;
+      color: var(--muted);
+      max-width: 580px;
+      margin: 0 auto 40px;
+      line-height: 1.7;
+    }
+    .hero-cta { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), #8b5cf6);
+      color: #fff;
+      border: none;
+      padding: 14px 32px;
+      border-radius: var(--radius);
+      font-size: 1rem; font-weight: 700;
+      cursor: pointer;
+      transition: transform .2s, box-shadow .2s;
+      box-shadow: 0 0 40px rgba(108,99,255,0.3);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 60px rgba(108,99,255,0.45); }
+    .btn-secondary {
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 14px 28px;
+      border-radius: var(--radius);
+      font-size: 1rem; font-weight: 600;
+      cursor: pointer;
+      transition: border-color .2s;
+    }
+    .btn-secondary:hover { border-color: var(--accent2); }
+
+    .hero-social {
+      margin-top: 40px;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+    .hero-social strong { color: var(--text); }
+
+    /* LOGOS */
+    .logos-strip {
+      padding: 32px 5%;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+    }
+    .logos-strip p { color: var(--muted); font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 20px; }
+    .logos-row {
+      display: flex; justify-content: center; align-items: center;
+      gap: 48px; flex-wrap: wrap;
+    }
+    .fake-logo {
+      color: #333344; font-weight: 800; font-size: 1.1rem; letter-spacing: -0.02em;
+    }
+
+    /* PROBLEM */
+    .section { padding: 80px 5%; }
+    .section-label {
+      color: var(--accent2);
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 12px;
+    }
+    h2 {
+      font-size: clamp(1.8rem, 3vw, 2.6rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+    .section-sub {
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 560px;
+    }
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+      margin-top: 48px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      transition: border-color .2s;
+    }
+    .card:hover { border-color: rgba(108,99,255,0.4); }
+    .card-icon { font-size: 1.8rem; margin-bottom: 16px; }
+    .card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 8px; }
+    .card p { color: var(--muted); font-size: 0.9rem; line-height: 1.6; }
+
+    /* HOW IT WORKS */
+    .how-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 0;
+      margin-top: 48px;
+      position: relative;
+    }
+    .step {
+      padding: 32px 28px;
+      text-align: center;
+      position: relative;
+    }
+    .step:not(:last-child)::after {
+      content: '';
+      position: absolute; right: 0; top: 50%;
+      transform: translateY(-50%);
+      width: 1px; height: 60%;
+      background: var(--border);
+    }
+    .step-num {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), #8b5cf6);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900; font-size: 1.1rem;
+      margin: 0 auto 20px;
+      box-shadow: 0 0 30px rgba(108,99,255,0.35);
+    }
+    .step h3 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+    .step p { color: var(--muted); font-size: 0.875rem; line-height: 1.6; }
+
+    /* FEATURES */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      margin-top: 48px;
+    }
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      transition: border-color .2s, transform .2s;
+    }
+    .feature-card:hover { border-color: rgba(108,99,255,0.4); transform: translateY(-2px); }
+    .feature-card .icon {
+      width: 44px; height: 44px;
+      background: rgba(108,99,255,0.12);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem;
+      margin-bottom: 20px;
+    }
+    .feature-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 10px; }
+    .feature-card p { color: var(--muted); font-size: 0.875rem; line-height: 1.65; }
+
+    /* SOCIAL PROOF */
+    .testimonials {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-top: 48px;
+    }
+    .testimonial {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+    }
+    .testimonial p { font-size: 0.95rem; line-height: 1.7; margin-bottom: 20px; font-style: italic; }
+    .testimonial .author { display: flex; align-items: center; gap: 12px; }
+    .avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), #ec4899);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 0.85rem;
+    }
+    .author-info .name { font-weight: 700; font-size: 0.875rem; }
+    .author-info .role { color: var(--muted); font-size: 0.8rem; }
+
+    /* WAITLIST FORM */
+    #waitlist {
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .form-container {
+      max-width: 640px;
+      margin: 0 auto;
+    }
+    .form-header { text-align: center; margin-bottom: 48px; }
+    .form-steps { display: flex; gap: 8px; justify-content: center; margin-bottom: 40px; }
+    .form-step-dot {
+      width: 28px; height: 4px; border-radius: 4px;
+      background: var(--border);
+      transition: background .3s;
+    }
+    .form-step-dot.active { background: var(--accent); }
+    .form-step-dot.done { background: var(--green); }
+
+    .form-page { display: none; }
+    .form-page.active { display: block; }
+
+    .form-group { margin-bottom: 24px; }
+    label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+    label span { color: var(--muted); font-weight: 400; }
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    select,
+    textarea {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      padding: 12px 16px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      transition: border-color .2s;
+      outline: none;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+    select option { background: var(--surface); }
+    textarea { resize: vertical; min-height: 100px; }
+
+    .radio-group { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
+    .radio-option {
+      display: flex; align-items: center; gap: 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 16px;
+      cursor: pointer;
+      transition: border-color .2s;
+    }
+    .radio-option:hover { border-color: var(--accent2); }
+    .radio-option input[type="radio"] { accent-color: var(--accent); width: 16px; height: 16px; }
+    .radio-option label { margin: 0; cursor: pointer; font-weight: 400; font-size: 0.9rem; }
+    .radio-option.selected { border-color: var(--accent); background: rgba(108,99,255,0.08); }
+
+    .form-nav { display: flex; gap: 12px; justify-content: flex-end; margin-top: 32px; }
+    .btn-back {
+      background: transparent; border: 1px solid var(--border);
+      color: var(--muted); padding: 12px 24px; border-radius: 8px;
+      font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all .2s;
+    }
+    .btn-back:hover { border-color: var(--muted); color: var(--text); }
+    .btn-next {
+      background: linear-gradient(135deg, var(--accent), #8b5cf6);
+      color: #fff; border: none;
+      padding: 12px 28px; border-radius: 8px;
+      font-size: 0.95rem; font-weight: 700;
+      cursor: pointer; transition: opacity .2s;
+      box-shadow: 0 4px 20px rgba(108,99,255,0.35);
+    }
+    .btn-next:hover { opacity: 0.88; }
+
+    /* SUCCESS STATE */
+    .success-state {
+      text-align: center; padding: 60px 20px;
+      display: none;
+    }
+    .success-icon {
+      width: 72px; height: 72px;
+      background: rgba(34,211,160,0.12);
+      border: 2px solid var(--green);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; margin: 0 auto 24px;
+    }
+    .success-state h3 { font-size: 1.6rem; font-weight: 800; margin-bottom: 12px; }
+    .success-state p { color: var(--muted); }
+
+    /* FAQ */
+    .faq-list { max-width: 680px; margin: 48px auto 0; }
+    .faq-item {
+      border-bottom: 1px solid var(--border);
+      padding: 20px 0;
+    }
+    .faq-q {
+      font-weight: 700; font-size: 0.95rem;
+      cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+    }
+    .faq-q span { color: var(--muted); transition: transform .2s; }
+    .faq-q.open span { transform: rotate(45deg); }
+    .faq-a { color: var(--muted); font-size: 0.875rem; line-height: 1.7; margin-top: 12px; display: none; }
+    .faq-a.open { display: block; }
+
+    /* FOOTER */
+    footer {
+      padding: 40px 5%;
+      border-top: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 16px;
+      color: var(--muted); font-size: 0.85rem;
+    }
+    .footer-logo {
+      font-size: 1.1rem; font-weight: 800;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    @media (max-width: 640px) {
+      .nav-links { display: none; }
+      .step:not(:last-child)::after { display: none; }
+      footer { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Pleroma</div>
+  <div class="nav-links">
+    <a href="#problem">Why Pleroma</a>
+    <a href="#features">Features</a>
+    <a href="#waitlist">Early Access</a>
+    <a href="#waitlist" class="btn-nav">Join Waitlist</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="badge">
+    <span class="badge-dot"></span>
+    Now accepting early access applications
+  </div>
+  <h1>Run consultations that<br/><span>actually convert.</span></h1>
+  <p class="hero-sub">
+    Pleroma is consultation software built for businesses that want to stop losing clients
+    to messy intake flows, slow follow-ups, and scattered notes — and start closing faster.
+  </p>
+  <div class="hero-cta">
+    <button class="btn-primary" onclick="document.getElementById('waitlist').scrollIntoView({behavior:'smooth'})">
+      Get Early Access →
+    </button>
+    <button class="btn-secondary" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})">
+      See how it works
+    </button>
+  </div>
+  <p class="hero-social">
+    Trusted by early testers at <strong>consulting firms, agencies, and service businesses</strong>
+  </p>
+</section>
+
+<!-- LOGOS -->
+<div class="logos-strip">
+  <p>Built for teams at</p>
+  <div class="logos-row">
+    <span class="fake-logo">Agencies</span>
+    <span class="fake-logo">Law Firms</span>
+    <span class="fake-logo">Coaches</span>
+    <span class="fake-logo">Consultancies</span>
+    <span class="fake-logo">Clinics</span>
+    <span class="fake-logo">Freelancers</span>
+  </div>
+</div>
+
+<!-- PROBLEM -->
+<section class="section" id="problem">
+  <div class="section-label">The Problem</div>
+  <h2>Your consultation process<br/>is costing you clients.</h2>
+  <p class="section-sub">
+    Most businesses run consultations across five different tools and still lose track of
+    everything. Here's what that looks like:
+  </p>
+  <div class="cards-grid">
+    <div class="card">
+      <div class="card-icon">🕳️</div>
+      <h3>Leads fall through the cracks</h3>
+      <p>Inquiry comes in. You take notes on paper. Someone forgets to follow up. That lead signs with a competitor.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">📋</div>
+      <h3>No structured intake</h3>
+      <p>You ask the same qualifying questions in every call. Half the time you forget something. The other half you're not prepared.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🔀</div>
+      <h3>Too many disconnected tools</h3>
+      <p>Calendly here. Google Doc there. HubSpot somewhere else. Nothing talks to each other and nothing is in one place.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">⏳</div>
+      <h3>Follow-up is always late</h3>
+      <p>By the time you send the proposal or recap, your prospect has already cooled off or moved on.</p>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section" style="background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+  <div style="text-align:center; margin-bottom: 0;">
+    <div class="section-label" style="text-align:center;">How It Works</div>
+    <h2>From first contact to signed client<br/>in one platform.</h2>
+  </div>
+  <div class="how-grid" style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); margin-top: 48px;">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h3>Capture Every Lead</h3>
+      <p>Embed your intake form anywhere. Every inquiry flows directly into your Pleroma pipeline.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <h3>Run the Consultation</h3>
+      <p>Structured intake answers, auto-generated talking points, and a built-in notes panel — all in one view.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h3>Follow Up Fast</h3>
+      <p>Automated follow-up reminders, proposal templates, and pipeline tracking so nothing falls through.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <h3>Close & Onboard</h3>
+      <p>Convert to a client with one click. All consultation notes and intake data carry forward automatically.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section" id="features">
+  <div class="section-label">Features</div>
+  <h2>Everything you need.<br/>Nothing you don't.</h2>
+  <p class="section-sub">Designed specifically for businesses that live and die by consultations.</p>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="icon">📥</div>
+      <h3>Smart Intake Forms</h3>
+      <p>Build custom intake forms with conditional logic. Clients answer the right questions before the call — so you show up prepared.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">📅</div>
+      <h3>Consultation Scheduling</h3>
+      <p>Integrated booking with automatic confirmations, reminders, and intake form collection — no back-and-forth needed.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">🗂️</div>
+      <h3>Pipeline View</h3>
+      <p>See every lead, prospect, and client in one visual pipeline. Know exactly where every consultation stands at a glance.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">🤖</div>
+      <h3>AI Meeting Notes</h3>
+      <p>Join your call and Pleroma takes structured notes automatically — then drafts your follow-up email the moment the call ends.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">⚡</div>
+      <h3>Follow-Up Automation</h3>
+      <p>Set triggers: send a proposal 2 hours after a call, nudge non-responders after 48 hours. Never lose a deal to slow follow-up again.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">📊</div>
+      <h3>Conversion Analytics</h3>
+      <p>Track show rates, close rates, and revenue by lead source. Know which channels and scripts actually work.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SOCIAL PROOF (placeholder) -->
+<section class="section" style="background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+  <div class="section-label" style="text-align:center;">Early Feedback</div>
+  <h2 style="text-align:center;">What early users are saying</h2>
+  <div class="testimonials">
+    <div class="testimonial">
+      <p>"Finally something that connects our intake forms to our follow-up process. We've been duct-taping Typeform and HubSpot together for years."</p>
+      <div class="author">
+        <div class="avatar">SK</div>
+        <div class="author-info">
+          <div class="name">Sarah K.</div>
+          <div class="role">Founder, Marketing Consultancy</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial">
+      <p>"The idea of having notes, intake data, and follow-up templates in one place is exactly what we've needed. Can't wait to get access."</p>
+      <div class="author">
+        <div class="avatar">MR</div>
+        <div class="author-info">
+          <div class="name">Marcus R.</div>
+          <div class="role">Operations Lead, Law Firm</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial">
+      <p>"We lose 20% of our consultation leads to slow follow-up. If Pleroma fixes that, it's a no-brainer."</p>
+      <div class="author">
+        <div class="avatar">AL</div>
+        <div class="author-info">
+          <div class="name">Anika L.</div>
+          <div class="role">Business Coach</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WAITLIST FORM -->
+<section class="section" id="waitlist">
+  <div class="form-container">
+    <div class="form-header">
+      <div class="section-label" style="text-align:center;">Early Access</div>
+      <h2 style="text-align:center;">Join the Pleroma waitlist</h2>
+      <p style="text-align:center; color:var(--muted); margin-top:12px;">
+        We're onboarding a limited number of early access businesses. Answer a few quick questions to secure your spot.
+      </p>
+    </div>
+
+    <!-- Step indicators -->
+    <div class="form-steps">
+      <div class="form-step-dot active" id="dot-0"></div>
+      <div class="form-step-dot" id="dot-1"></div>
+      <div class="form-step-dot" id="dot-2"></div>
+    </div>
+
+    <!--
+      IMPORTANT: To make this form actually send submissions to your email,
+      1. Go to https://formspree.io and create a free account
+      2. Create a new form — you'll get an endpoint like https://formspree.io/f/xyzabcde
+      3. Replace "YOUR_FORMSPREE_ID" below with that endpoint
+    -->
+    <form id="waitlistForm" action="https://formspree.io/f/YOUR_FORMSPREE_ID" method="POST">
+
+      <!-- PAGE 1: Qualifying questions -->
+      <div class="form-page active" id="page-0">
+        <div class="form-group">
+          <label>What best describes your business? <span>*</span></label>
+          <select name="business_type" required>
+            <option value="" disabled selected>Select one…</option>
+            <option>Consulting Firm</option>
+            <option>Law Firm / Legal Services</option>
+            <option>Coaching / Training</option>
+            <option>Marketing / Creative Agency</option>
+            <option>Financial Advisory</option>
+            <option>Healthcare / Medical Practice</option>
+            <option>Real Estate</option>
+            <option>Technology / SaaS</option>
+            <option>Freelancer / Solo Operator</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>How many consultations or discovery calls do you run per month?</label>
+          <div class="radio-group" id="rg-consults">
+            <div class="radio-option" onclick="selectRadio(this,'consults_per_month','1–5')">
+              <input type="radio" name="consults_per_month" value="1–5" /> <label>1–5</label>
+            </div>
+            <div class="radio-option" onclick="selectRadio(this,'consults_per_month','6–20')">
+              <input type="radio" name="consults_per_month" value="6–20" /> <label>6–20</label>
+            </div>
+            <div class="radio-option" onclick="selectRadio(this,'consults_per_month','21–50')">
+              <input type="radio" name="consults_per_month" value="21–50" /> <label>21–50</label>
+            </div>
+            <div class="radio-option" onclick="selectRadio(this,'consults_per_month','50+')">
+              <input type="radio" name="consults_per_month" value="50+" /> <label>50+</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>What's your biggest pain point with consultations today?</label>
+          <textarea name="pain_point" placeholder="e.g. Leads fall through the cracks, follow-up is too slow, no way to track pipeline…"></textarea>
+        </div>
+
+        <div class="form-nav">
+          <button type="button" class="btn-next" onclick="nextPage(0)">Next →</button>
+        </div>
+      </div>
+
+      <!-- PAGE 2: More context -->
+      <div class="form-page" id="page-1">
+        <div class="form-group">
+          <label>What tools do you currently use to manage consultations? <span>(optional)</span></label>
+          <input type="text" name="current_tools" placeholder="e.g. Calendly, HubSpot, Google Docs, Notion…" />
+        </div>
+
+        <div class="form-group">
+          <label>How soon would you want to use Pleroma if it was ready?</label>
+          <div class="radio-group" id="rg-timeline">
+            <div class="radio-option" onclick="selectRadio(this,'timeline','Immediately — I need this now')">
+              <input type="radio" name="timeline" value="Immediately — I need this now" /> <label>Immediately — I need this now</label>
+            </div>
+            <div class="radio-option" onclick="selectRadio(this,'timeline','Within 1–3 months')">
+              <input type="radio" name="timeline" value="Within 1–3 months" /> <label>Within 1–3 months</label>
+            </div>
+            <div class="radio-option" onclick="selectRadio(this,'timeline','Just exploring for now')">
+              <input type="radio" name="timeline" value="Just exploring for now" /> <label>Just exploring for now</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Would you be willing to jump on a 15-min call to share more feedback?</label>
+          <div class="radio-group" id="rg-call">
+            <div class="radio-option" onclick="selectRadio(this,'willing_to_call','Yes — happy to help')">
+              <input type="radio" name="willing_to_call" value="Yes — happy to help" /> <label>Yes — happy to help</label>
+            </div>
+            <div class="radio-option" onclick="selectRadio(this,'willing_to_call','Maybe, reach out first')">
+              <input type="radio" name="willing_to_call" value="Maybe, reach out first" /> <label>Maybe, reach out first</label>
+            </div>
+            <div class="radio-option" onclick="selectRadio(this,'willing_to_call','No thanks')">
+              <input type="radio" name="willing_to_call" value="No thanks" /> <label>No thanks</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-nav">
+          <button type="button" class="btn-back" onclick="prevPage(1)">← Back</button>
+          <button type="button" class="btn-next" onclick="nextPage(1)">Next →</button>
+        </div>
+      </div>
+
+      <!-- PAGE 3: Contact info -->
+      <div class="form-page" id="page-2">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+          <div class="form-group">
+            <label>First name <span>*</span></label>
+            <input type="text" name="first_name" placeholder="Bryan" required />
+          </div>
+          <div class="form-group">
+            <label>Last name</label>
+            <input type="text" name="last_name" placeholder="Alexander" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Work email <span>*</span></label>
+          <input type="email" name="email" placeholder="you@company.com" required />
+        </div>
+        <div class="form-group">
+          <label>Company / Business name <span>*</span></label>
+          <input type="text" name="company" placeholder="Your Company" required />
+        </div>
+        <div class="form-group">
+          <label>LinkedIn profile URL <span>(optional — we'll reach out here too)</span></label>
+          <input type="text" name="linkedin" placeholder="https://linkedin.com/in/yourname" />
+        </div>
+        <div class="form-group">
+          <label>Phone / WhatsApp <span>(optional)</span></label>
+          <input type="tel" name="phone" placeholder="+1 555 000 0000" />
+        </div>
+
+        <div class="form-nav">
+          <button type="button" class="btn-back" onclick="prevPage(2)">← Back</button>
+          <button type="submit" class="btn-next">Secure My Spot 🎯</button>
+        </div>
+      </div>
+
+    </form>
+
+    <!-- Success -->
+    <div class="success-state" id="successState">
+      <div class="success-icon">✓</div>
+      <h3>You're on the list!</h3>
+      <p>We'll be in touch soon with early access details.<br/>Keep an eye on your inbox.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section">
+  <div class="section-label" style="text-align:center;">Questions</div>
+  <h2 style="text-align:center;">Frequently asked</h2>
+  <div class="faq-list">
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        When will Pleroma be available? <span>+</span>
+      </div>
+      <div class="faq-a">We're currently in development and validating with early adopters. Waitlist members will get access first — expected to roll out in phases over the next few months.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        Is there a cost to join the waitlist? <span>+</span>
+      </div>
+      <div class="faq-a">No — joining the waitlist is completely free. Early access members will receive special founding pricing when the product launches.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        What types of businesses is Pleroma for? <span>+</span>
+      </div>
+      <div class="faq-a">Pleroma is designed for any business where consultations are a core part of the sales or service process — consulting firms, agencies, coaches, law firms, financial advisors, healthcare providers, and more.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        Will it integrate with my existing tools? <span>+</span>
+      </div>
+      <div class="faq-a">Yes — we're building integrations with the most common tools (Google Calendar, Zoom, HubSpot, Calendly, etc.). Early access members will help shape which integrations we prioritize first.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        Can I give feedback during the early access period? <span>+</span>
+      </div>
+      <div class="faq-a">Absolutely — that's the whole point. Early users will have a direct line to the team and their feedback will shape the product.</div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-logo">Pleroma</span>
+  <span>© 2025 Pleroma. All rights reserved.</span>
+  <span><a href="mailto:hello@pleroma.io">hello@pleroma.io</a></span>
+</footer>
+
+<script>
+  // Multi-step form logic
+  let currentPage = 0;
+  const totalPages = 3;
+
+  function updateDots(page) {
+    for (let i = 0; i < totalPages; i++) {
+      const dot = document.getElementById('dot-' + i);
+      dot.classList.remove('active', 'done');
+      if (i < page) dot.classList.add('done');
+      else if (i === page) dot.classList.add('active');
+    }
+  }
+
+  function nextPage(from) {
+    document.getElementById('page-' + from).classList.remove('active');
+    currentPage = from + 1;
+    document.getElementById('page-' + currentPage).classList.add('active');
+    updateDots(currentPage);
+    window.scrollTo({ top: document.getElementById('waitlist').offsetTop - 80, behavior: 'smooth' });
+  }
+
+  function prevPage(from) {
+    document.getElementById('page-' + from).classList.remove('active');
+    currentPage = from - 1;
+    document.getElementById('page-' + currentPage).classList.add('active');
+    updateDots(currentPage);
+  }
+
+  function selectRadio(el, name, value) {
+    // Deselect all in group
+    el.closest('.radio-group').querySelectorAll('.radio-option').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    el.querySelector('input[type="radio"]').checked = true;
+  }
+
+  // Handle form submission
+  const form = document.getElementById('waitlistForm');
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const action = form.getAttribute('action');
+    // If placeholder not replaced, just show success state (for demo)
+    if (action.includes('YOUR_FORMSPREE_ID')) {
+      document.getElementById('page-2').classList.remove('active');
+      document.getElementById('successState').style.display = 'block';
+      return;
+    }
+    try {
+      const data = new FormData(form);
+      const res = await fetch(action, { method: 'POST', body: data, headers: { Accept: 'application/json' } });
+      if (res.ok) {
+        document.getElementById('page-2').classList.remove('active');
+        document.getElementById('successState').style.display = 'block';
+      } else {
+        alert('Something went wrong. Please try again or email us directly.');
+      }
+    } catch {
+      alert('Network error. Please try again.');
+    }
+  });
+
+  // FAQ accordion
+  function toggleFaq(el) {
+    el.classList.toggle('open');
+    const ans = el.nextElementSibling;
+    ans.classList.toggle('open');
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+[
+  { "mannequinId": "MAN-01", "hairTexture": "Straight", "skinTone": "Light",  "baseCharacter": "BC-light",  "localFile": "images/mannequins/bases/MAN-01.png" },
+  { "mannequinId": "MAN-02", "hairTexture": "Straight", "skinTone": "Medium", "baseCharacter": "BC-medium", "localFile": "images/mannequins/bases/MAN-02.png" },
+  { "mannequinId": "MAN-03", "hairTexture": "Straight", "skinTone": "Deep",   "baseCharacter": "BC-deep",   "localFile": "images/mannequins/bases/MAN-03.png" },
+  { "mannequinId": "MAN-04", "hairTexture": "Wavy",     "skinTone": "Light",  "baseCharacter": "BC-light",  "localFile": "images/mannequins/bases/MAN-04.png" },
+  { "mannequinId": "MAN-05", "hairTexture": "Wavy",     "skinTone": "Medium", "baseCharacter": "BC-medium", "localFile": "images/mannequins/bases/MAN-05.png" },
+  { "mannequinId": "MAN-06", "hairTexture": "Wavy",     "skinTone": "Deep",   "baseCharacter": "BC-deep",   "localFile": "images/mannequins/bases/MAN-06.png" },
+  { "mannequinId": "MAN-07", "hairTexture": "Curly",    "skinTone": "Light",  "baseCharacter": "BC-light",  "localFile": "images/mannequins/bases/MAN-07.png" },
+  { "mannequinId": "MAN-08", "hairTexture": "Curly",    "skinTone": "Medium", "baseCharacter": "BC-medium", "localFile": "images/mannequins/bases/MAN-08.png" },
+  { "mannequinId": "MAN-09", "hairTexture": "Curly",    "skinTone": "Deep",   "baseCharacter": "BC-deep",   "localFile": "images/mannequins/bases/MAN-09.png" },
+  { "mannequinId": "MAN-10", "hairTexture": "Coily",    "skinTone": "Light",  "baseCharacter": "BC-light",  "localFile": "images/mannequins/bases/MAN-10.png" },
+  { "mannequinId": "MAN-11", "hairTexture": "Coily",    "skinTone": "Medium", "baseCharacter": "BC-medium", "localFile": "images/mannequins/bases/MAN-11.png" },
+  { "mannequinId": "MAN-12", "hairTexture": "Coily",    "skinTone": "Deep",   "baseCharacter": "BC-deep",   "localFile": "images/mannequins/bases/MAN-12.png" }
+]

@@ -1,0 +1,42 @@
+{
+  "palette": {
+    "background": {
+      "primary": "#ede8e0",
+      "secondary": "#f5f2ed",
+      "name": "Warm Beige"
+    },
+    "accent": {
+      "gold": "#c9a050",
+      "gold_dark": "#b8922d",
+      "name": "Gold/Bronze"
+    },
+    "dark": {
+      "charcoal": "#1c1a18",
+      "charcoal_light": "#333333",
+      "name": "Charcoal Brown"
+    },
+    "teal": {
+      "primary": "#2d4a35",
+      "secondary": "#1c3a2e",
+      "name": "Dark Teal/Green"
+    },
+    "neutral": {
+      "white": "#ffffff",
+      "light_gray": "#f9f7f3",
+      "medium_gray": "#999999",
+      "dark_gray": "#666666"
+    },
+    "semantic": {
+      "success": "#2d4a35",
+      "error": "#d32f2f",
+      "warning": "#f57c00"
+    }
+  },
+  "usage": {
+    "background": "Primary page background (warm, inviting)",
+    "accent": "Buttons, highlights, call-to-action elements",
+    "dark": "Text, headings, dark UI elements",
+    "teal": "Secondary highlights, trusted/secure messaging",
+    "neutral": "Support colors for text hierarchy and subtle UI"
+  }
+}

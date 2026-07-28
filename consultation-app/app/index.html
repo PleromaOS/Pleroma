@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Pleroma — Haircut Consultation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- Boot loader: shown until the app has loaded data and shows the landing screen -->
+  <div id="bootLoader">
+    <img src="images/logos/crest.png" alt="" />
+  </div>
+
+  <!-- App shell: one visible "screen" at a time, no persistent header -->
+  <div class="app-shell">
+
+    <main class="app-main">
+
+      <!-- ============ SCREEN: Landing ============ -->
+      <section class="screen" id="screen-landing" data-screen="landing">
+        <div class="landing">
+          <img class="landing-crest" src="images/logos/crest.png" alt="Pleroma" />
+          <h1 class="landing-title">PLEROMA</h1>
+          <p class="landing-subtitle">Find your next haircut in under a minute.</p>
+
+          <div class="landing-spacer"></div>
+
+          <div class="landing-actions">
+            <button class="btn btn-primary btn-full" id="btnPersonalized">Personalized Consultation</button>
+            <button class="btn btn-secondary btn-full" id="btnQuick">Quick Pick</button>
+          </div>
+
+          <p class="landing-footnote">Scan &middot; Answer &middot; Sit down knowing your cut</p>
+        </div>
+      </section>
+
+      <!-- ============ SCREEN: Quick Pick grid ============ -->
+      <section class="screen" id="screen-quick-grid" data-screen="quick-grid">
+        <div class="screen-topbar">
+          <button class="btn-icon" id="btnQuickBack" aria-label="Back">&larr;</button>
+          <h2 class="screen-title">Quick Pick</h2>
+          <span class="screen-topbar-spacer"></span>
+        </div>
+        <p class="screen-hint">Tap a style to see the full details.</p>
+        <div class="haircut-grid" id="haircutGrid"><!-- cards injected by JS --></div>
+      </section>
+
+      <!-- ============ SCREEN: Quick Pick detail ============ -->
+      <section class="screen" id="screen-quick-detail" data-screen="quick-detail">
+        <div class="screen-topbar">
+          <button class="btn-icon" id="btnDetailBack" aria-label="Back">&larr;</button>
+          <h2 class="screen-title">Style Details</h2>
+          <span class="screen-topbar-spacer"></span>
+        </div>
+        <div class="detail-card" id="detailCard"><!-- detail injected by JS --></div>
+      </section>
+
+      <!-- ============ SCREEN: Texture / refinement question ============ -->
+      <section class="screen" id="screen-question" data-screen="question">
+        <div class="screen-topbar">
+          <button class="btn-icon" id="btnQuestionBack" aria-label="Back">&larr;</button>
+          <div class="progress-wrap">
+            <div class="progress-label" id="progressLabel">Step 1</div>
+            <div class="progress-bar"><div class="progress-bar-fill" id="progressBarFill"></div></div>
+          </div>
+          <span class="screen-topbar-spacer"></span>
+        </div>
+
+        <div class="question-card">
+          <h2 class="question-text" id="questionText">Question text</h2>
+          <!-- choices injected dynamically — binary or multi-grid -->
+          <div class="choice-list" id="choiceList"></div>
+        </div>
+      </section>
+
+      <!-- ============ SCREEN: Family picker ============ -->
+      <section class="screen" id="screen-family-picker" data-screen="family-picker">
+        <div class="screen-topbar">
+          <button class="btn-icon" id="btnFamilyBack" aria-label="Back">&larr;</button>
+          <div class="progress-wrap">
+            <div class="progress-label" id="familyProgressLabel">Choose a style family</div>
+            <div class="progress-bar"><div class="progress-bar-fill" id="familyProgressBarFill" style="width:40%"></div></div>
+          </div>
+          <span class="screen-topbar-spacer"></span>
+        </div>
+        <div class="question-card">
+          <h2 class="question-text">Which of these shapes appeals to you?</h2>
+          <p class="question-hint">Pick the silhouette that feels right — we&rsquo;ll dial in the details next.</p>
+          <div class="family-grid" id="familyGrid"><!-- family cards injected by JS --></div>
+        </div>
+      </section>
+
+      <!-- ============ SCREEN: Results ============ -->
+      <section class="screen" id="screen-results" data-screen="results">
+        <div class="results-label">Your Cut</div>
+        <div class="result-scroll">
+          <div id="resultSpec"><!-- image + title + spec table + upsell injected by JS --></div>
+          <div class="result-actions">
+            <button class="btn btn-primary btn-full" id="btnShowBarber">Show My Barber</button>
+            <button class="btn btn-secondary btn-full" id="btnRateIt">Rate This Result</button>
+            <button class="btn btn-ghost btn-full" id="btnStartOver">Start Over</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ SCREEN: Feedback ============ -->
+      <section class="screen" id="screen-feedback" data-screen="feedback">
+        <div class="feedback">
+          <div class="feedback-spacer"></div>
+          <h1 class="feedback-title">How&rsquo;d we do?</h1>
+          <p class="feedback-subtitle">Did this match what you had in mind?</p>
+          <div class="feedback-spacer-lg"></div>
+          <div class="feedback-actions" id="feedbackChoices"><!-- injected by JS --></div>
+          <div class="feedback-spacer"></div>
+          <button class="btn btn-ghost" id="btnFeedbackSkip">Skip</button>
+        </div>
+      </section>
+
+      <!-- ============ SCREEN: Show Barber ============ -->
+      <section class="screen" id="screen-barber" data-screen="barber">
+        <div class="screen-topbar">
+          <button class="btn-icon" id="btnBarberBack" aria-label="Back">&larr;</button>
+          <h2 class="screen-title">Show Your Barber</h2>
+          <span class="screen-topbar-spacer"></span>
+        </div>
+        <div class="result-scroll" id="barberSpec"><!-- injected by JS --></div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="js/scoring.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/haircuts-data.js"></script>
+  <script src="js/supabase.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
