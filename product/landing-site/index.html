@@ -2050,62 +2050,80 @@ const _sections=[
   {el:document.getElementById('waitlist'),   light:true,  id:'waitlist'},
 ].filter(s=>s.el);
 
-// ── JS SCROLL CONTROLLER
+// ── JS SCROLL CONTROLLER (desktop wheel + mobile touch)
 (function(){
-  // Skip on mobile (touch will handle naturally)
-  if(!window.matchMedia('(hover:hover)').matches) return;
-
   let curIdx=0;
   let painBeat=0;
   const PAIN_IDX=1;
   const PAIN_BEATS=3;
   let locked=false;
-  const COOLDOWN=850;
+  const COOLDOWN=900;
 
   function lockFor(ms){locked=true;setTimeout(()=>locked=false,ms);}
 
   function goSection(idx){
     idx=Math.max(0,Math.min(_sections.length-1,idx));
     curIdx=idx;
-    _sections[idx].el.scrollIntoView({behavior:'smooth',block:'start'});
+    const top=_sections[idx].el.getBoundingClientRect().top+window.scrollY;
+    window.scrollTo({top,behavior:'smooth'});
     lockFor(COOLDOWN);
-    // reset pain beat when navigating away
     if(idx!==PAIN_IDX)painBeat=0;
   }
 
-  function onWheel(e){
+  function navigate(down){
     if(locked)return;
-    const down=e.deltaY>0;
-
     if(curIdx===PAIN_IDX){
       if(down&&painBeat<PAIN_BEATS-1){
-        // advance pain beat
-        painBeat++;
-        setBeat(painBeat);
-        lockFor(COOLDOWN);
-        return;
+        painBeat++;setBeat(painBeat);lockFor(COOLDOWN);return;
       }
       if(!down&&painBeat>0){
-        painBeat--;
-        setBeat(painBeat);
-        lockFor(COOLDOWN);
-        return;
+        painBeat--;setBeat(painBeat);lockFor(COOLDOWN);return;
       }
     }
     goSection(curIdx+(down?1:-1));
   }
 
+  // ── Desktop: wheel
   window.addEventListener('wheel',e=>{
     e.preventDefault();
-    onWheel(e);
+    navigate(e.deltaY>0);
   },{passive:false});
 
-  // Keep curIdx in sync when user uses keyboard or anchor links
+  // ── Mobile: touch swipe
+  let _ty0=0,_tt0=0;
+
+  document.addEventListener('touchstart',e=>{
+    _ty0=e.touches[0].clientY;
+    _tt0=Date.now();
+  },{passive:true});
+
+  document.addEventListener('touchmove',e=>{
+    // Allow scroll inside elements that have their own scroll (e.g. phones-row)
+    let node=e.target;
+    while(node&&node!==document.body){
+      const s=getComputedStyle(node);
+      if(['auto','scroll'].includes(s.overflowX)||['auto','scroll'].includes(s.overflowY))return;
+      node=node.parentElement;
+    }
+    e.preventDefault();
+  },{passive:false});
+
+  document.addEventListener('touchend',e=>{
+    const dy=_ty0-e.changedTouches[0].clientY;
+    const dt=Date.now()-_tt0;
+    const velocity=Math.abs(dy)/dt;
+    // Trigger on meaningful swipe: 40px OR fast flick
+    if(Math.abs(dy)>40||velocity>0.4){
+      navigate(dy>0);
+    }
+  },{passive:true});
+
+  // Sync curIdx on keyboard / anchor navigation
   const syncObs=new IntersectionObserver(entries=>{
     entries.forEach(e=>{
       if(!e.isIntersecting)return;
       const i=_sections.findIndex(s=>s.el===e.target);
-      if(i>=0)curIdx=i;
+      if(i>=0){curIdx=i;}
     });
   },{threshold:0.6});
   _sections.forEach(s=>syncObs.observe(s.el));
