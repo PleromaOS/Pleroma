@@ -277,21 +277,21 @@ nav.dim .nav-logo{color:var(--bg)}
 .owner-copy-c .section-kicker{display:block;margin-bottom:16px}
 .owner-copy-c h2{font-family:'DM Serif Display',Georgia,serif;font-size:clamp(22px,3vw,40px);line-height:1.15;color:var(--dark);margin-bottom:10px}
 .owner-copy-c p{font-size:15px;color:#666;line-height:1.7;max-width:440px;margin:0 auto}
-.phones-row{display:flex;gap:20px;justify-content:center;align-items:flex-start;flex-wrap:nowrap}
-/* Cinematic stagger — middle phone raised */
-.phones-row .ph-frame:nth-child(2){margin-top:-32px}
+.phones-row{display:flex;gap:20px;justify-content:center;align-items:center;flex-wrap:nowrap}
 /* Phone bottom labels */
 .phones-bottom{display:flex;gap:20px;justify-content:center;width:100%}
-.ph-label-wrap{width:178px;display:flex;flex-direction:column;align-items:center;gap:4px}
+.ph-label-wrap{width:160px;display:flex;flex-direction:column;align-items:center;gap:4px}
 .ph-label{text-align:center;font-size:10px;color:#aaa;letter-spacing:2px;text-transform:uppercase}
 .ph-label-sub{text-align:center;font-size:11px;color:#bbb;letter-spacing:.2px}
 /* Owner tagline */
 .owner-tagline{font-size:14px;color:#999;text-align:center;font-style:italic;max-width:480px;line-height:1.6}
-@media(max-width:680px){.phones-row{gap:10px}.ph-frame{width:150px}.phones-bottom{gap:10px}.ph-label-wrap{width:150px}}
-@media(max-width:520px){.phones-row{gap:8px}.ph-frame{width:130px}.phones-bottom{gap:8px}.ph-label-wrap{width:130px}}
+@media(max-width:680px){.phones-row{gap:10px}.ph-frame{width:140px}.phones-bottom{gap:10px}.ph-label-wrap{width:140px}}
+@media(max-width:520px){.phones-row{gap:8px}.ph-frame{width:120px}.phones-bottom{gap:8px}.ph-label-wrap{width:120px}}
 /* Phone frame */
-.ph-frame{width:178px;background:#111;border-radius:28px;padding:3px;box-shadow:0 28px 70px rgba(0,0,0,.22),0 0 0 1px rgba(255,255,255,.07);flex-shrink:0;opacity:0;transform:translateY(48px);transition:opacity .75s var(--ease),transform .75s var(--ease)}
+.ph-frame{width:160px;background:#111;border-radius:28px;padding:3px;box-shadow:0 28px 70px rgba(0,0,0,.22),0 0 0 1px rgba(255,255,255,.07);flex-shrink:0;opacity:0;transform:translateY(48px);transition:opacity .75s var(--ease),transform .75s var(--ease)}
 .ph-frame.ph-in{opacity:1;transform:none}
+/* Cinematic stagger — middle phone raised via transform (doesn't affect layout) */
+.ph-frame:nth-child(2).ph-in{transform:translateY(-24px)}
 .ph-inner{background:#1b1917;border-radius:25px;overflow:hidden}
 .ph-notch-bar{height:20px;background:#0d0c0b;display:flex;align-items:center;justify-content:center}
 .ph-notch{width:46px;height:8px;background:#1b1917;border-radius:0 0 6px 6px}
