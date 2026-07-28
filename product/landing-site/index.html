@@ -89,6 +89,8 @@ nav.dim .nav-logo{color:var(--bg)}
 .lang-btn.active{color:var(--gold)}
 .lang-btn:hover:not(.active){color:rgba(237,232,224,.7)}
 .lang-sep{font-size:11px;color:rgba(237,232,224,.2);user-select:none}
+.refresh-btn{background:none;border:none;color:rgba(237,232,224,.3);font-size:17px;cursor:pointer;padding:4px 6px;line-height:1;transition:color .2s,transform .3s;display:flex;align-items:center}
+.refresh-btn:hover{color:var(--gold);transform:rotate(180deg)}
 
 /* ── BASE BEAT SECTION ── */
 .s-beat{
@@ -269,13 +271,24 @@ nav.dim .nav-logo{color:var(--bg)}
 .fcard-lg-desc{font-size:14px;color:#666;line-height:1.7}
 
 /* ── S9: OWNER PHONES ── */
-.s-owner-beat{background:var(--light)}
-.owner-phones-wrap{max-width:var(--content);width:100%;display:flex;flex-direction:column;align-items:center;gap:24px}
+.s-owner-beat{background:var(--light);height:auto!important;min-height:100vh;overflow:visible!important}
+.owner-phones-wrap{max-width:var(--content);width:100%;display:flex;flex-direction:column;align-items:center;gap:32px;padding:var(--pad-y) 0}
 .owner-copy-c{text-align:center;max-width:580px}
 .owner-copy-c .section-kicker{display:block;margin-bottom:16px}
 .owner-copy-c h2{font-family:'DM Serif Display',Georgia,serif;font-size:clamp(22px,3vw,40px);line-height:1.15;color:var(--dark);margin-bottom:10px}
 .owner-copy-c p{font-size:15px;color:#666;line-height:1.7;max-width:440px;margin:0 auto}
-.phones-row{display:flex;gap:16px;justify-content:center;align-items:flex-start}
+.phones-row{display:flex;gap:20px;justify-content:center;align-items:flex-start;flex-wrap:nowrap}
+/* Cinematic stagger — middle phone raised */
+.phones-row .ph-frame:nth-child(2){margin-top:-32px}
+/* Phone bottom labels */
+.phones-bottom{display:flex;gap:20px;justify-content:center;width:100%}
+.ph-label-wrap{width:178px;display:flex;flex-direction:column;align-items:center;gap:4px}
+.ph-label{text-align:center;font-size:10px;color:#aaa;letter-spacing:2px;text-transform:uppercase}
+.ph-label-sub{text-align:center;font-size:11px;color:#bbb;letter-spacing:.2px}
+/* Owner tagline */
+.owner-tagline{font-size:14px;color:#999;text-align:center;font-style:italic;max-width:480px;line-height:1.6}
+@media(max-width:680px){.phones-row{gap:10px}.ph-frame{width:150px}.phones-bottom{gap:10px}.ph-label-wrap{width:150px}}
+@media(max-width:520px){.phones-row{gap:8px}.ph-frame{width:130px}.phones-bottom{gap:8px}.ph-label-wrap{width:130px}}
 /* Phone frame */
 .ph-frame{width:178px;background:#111;border-radius:28px;padding:3px;box-shadow:0 28px 70px rgba(0,0,0,.22),0 0 0 1px rgba(255,255,255,.07);flex-shrink:0;opacity:0;transform:translateY(48px);transition:opacity .75s var(--ease),transform .75s var(--ease)}
 .ph-frame.ph-in{opacity:1;transform:none}
@@ -352,11 +365,7 @@ nav.dim .nav-logo{color:var(--bg)}
 .ph-return-status{font-size:7px;color:#2d4a35}
 .ph-home-bar{height:14px;background:#0d0c0b;display:flex;align-items:center;justify-content:center}
 .ph-home-line{width:30px;height:3px;border-radius:100px;background:rgba(255,255,255,.15)}
-/* Phone label */
-.ph-label{text-align:center;font-size:11px;color:#aaa;margin-top:10px;letter-spacing:.3px}
 @keyframes dotPend{0%,100%{opacity:1}50%{opacity:.3}}
-@media(max-width:680px){.phones-row{gap:10px}.ph-frame{width:150px}}
-@media(max-width:520px){.phones-row{flex-direction:column;align-items:center}.ph-frame{width:210px}}
 
 /* ── S13: LIVE COUNTER SECTION ── */
 .s-live{
@@ -574,6 +583,7 @@ footer a:hover{color:rgba(237,232,224,.6)}
 <nav id="nav">
   <a class="nav-logo" href="#">Pleroma<span class="logo-os">OS</span></a>
   <div class="nav-right">
+    <button class="refresh-btn" onclick="window.location.reload()" title="Refresh page">↺</button>
     <div class="lang-toggle">
       <button class="lang-btn active" data-lang="en" onclick="setLang('en')">EN</button>
       <span class="lang-sep">·</span>
@@ -907,6 +917,26 @@ footer a:hover{color:rgba(237,232,224,.6)}
       </div>
 
     </div><!-- /phones-row -->
+
+    <!-- PHONE LABELS -->
+    <div class="phones-bottom">
+      <div class="ph-label-wrap">
+        <span class="ph-label">Overview</span>
+        <span class="ph-label-sub">Business at a glance</span>
+      </div>
+      <div class="ph-label-wrap">
+        <span class="ph-label">Schedule</span>
+        <span class="ph-label-sub">Today's appointments</span>
+      </div>
+      <div class="ph-label-wrap">
+        <span class="ph-label">Client health</span>
+        <span class="ph-label-sub">Who needs attention</span>
+      </div>
+    </div>
+
+    <!-- TAGLINE -->
+    <p class="owner-tagline">Everything you need to run a modern salon — in your pocket.</p>
+
   </div><!-- /owner-phones-wrap -->
 </section>
 
