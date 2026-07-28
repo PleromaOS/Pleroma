@@ -268,42 +268,95 @@ nav.dim .nav-logo{color:var(--bg)}
 .fcard-lg-title{font-family:'DM Serif Display',Georgia,serif;font-size:24px;color:var(--dark);margin-bottom:10px;line-height:1.2}
 .fcard-lg-desc{font-size:14px;color:#666;line-height:1.7}
 
-/* ── S12: OWNER DASHBOARD ── */
-.s-owner-beat{background:var(--light);overflow:hidden}
-.owner-beat-inner{max-width:var(--content);width:100%;display:grid;grid-template-columns:1fr 1.1fr;gap:var(--gutter);align-items:center}
-.owner-copy .section-kicker{font-size:10px;letter-spacing:5px;text-transform:uppercase;color:var(--teal);margin-bottom:24px;display:block}
-.owner-copy h2{font-family:'DM Serif Display',Georgia,serif;font-size:clamp(26px,3.5vw,46px);line-height:1.15;color:var(--dark);margin-bottom:24px}
-.owner-copy p{font-size:17px;color:#555;line-height:1.75;max-width:360px;margin-bottom:16px}
-
-/* Mobile-style dashboard */
-.dash-mobile{background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:24px;overflow:hidden;box-shadow:0 12px 56px rgba(0,0,0,.08);max-width:320px;width:100%;transform:scale(0.9);transform-origin:top right}
-@media(max-width:900px){.dash-mobile{transform:none;transform-origin:top center;max-width:360px;margin:0 auto}}
-.dm-bar{height:4px;background:rgba(45,74,53,.06)}
-.dm-header{padding:18px 20px 14px;border-bottom:1px solid rgba(0,0,0,.06);display:flex;justify-content:space-between;align-items:center}
-.dm-title{font-size:12px;font-weight:700;color:var(--dark);letter-spacing:.5px}
-.dm-period{font-size:10px;color:#bbb;letter-spacing:1px;text-transform:uppercase}
-.dm-kpis{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(0,0,0,.05)}
-.dm-kpi{background:#fff;padding:16px 18px}
-.dm-kpi-lbl{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#aaa;margin-bottom:6px}
-.dm-kpi-val{font-family:'DM Serif Display',Georgia,serif;font-size:28px;color:var(--dark);line-height:1}
-.dm-kpi-val.g{color:var(--teal)}
-.dm-kpi-delta{font-size:10px;color:#aaa;margin-top:4px}
-.dm-kpi-delta.up{color:rgba(45,74,53,.75)}
-.dm-section{padding:16px 20px;border-top:1px solid rgba(0,0,0,.05)}
-.dm-section-label{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#bbb;margin-bottom:12px}
-.dm-stylist-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-.dm-stylist-row:last-child{margin-bottom:0}
-.dm-av{width:28px;height:28px;border-radius:50%;background:rgba(45,74,53,.1);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--teal);flex-shrink:0}
-.dm-stylist-name{font-size:12px;font-weight:600;color:var(--dark);flex:1}
-.dm-bar-wrap{width:60px;height:3px;background:rgba(0,0,0,.06);border-radius:100px}
-.dm-bar-fill{height:100%;background:var(--teal);border-radius:100px}
-.dm-pct{font-size:11px;color:var(--dark);margin-left:6px;white-space:nowrap}
-.dm-risk-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-.dm-risk-row:last-child{margin-bottom:0}
-.dm-risk-name{font-size:12px;color:var(--dark);font-weight:500;flex:1}
-.dm-risk-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:100px}
-.dm-risk-badge.high{background:rgba(190,50,30,.1);color:rgba(170,40,20,.85)}
-.dm-risk-badge.med{background:rgba(201,169,110,.14);color:#9a6f2a}
+/* ── S9: OWNER PHONES ── */
+.s-owner-beat{background:var(--light)}
+.owner-phones-wrap{max-width:var(--content);width:100%;display:flex;flex-direction:column;align-items:center;gap:24px}
+.owner-copy-c{text-align:center;max-width:580px}
+.owner-copy-c .section-kicker{display:block;margin-bottom:16px}
+.owner-copy-c h2{font-family:'DM Serif Display',Georgia,serif;font-size:clamp(22px,3vw,40px);line-height:1.15;color:var(--dark);margin-bottom:10px}
+.owner-copy-c p{font-size:15px;color:#666;line-height:1.7;max-width:440px;margin:0 auto}
+.phones-row{display:flex;gap:16px;justify-content:center;align-items:flex-start}
+/* Phone frame */
+.ph-frame{width:178px;background:#111;border-radius:28px;padding:3px;box-shadow:0 28px 70px rgba(0,0,0,.22),0 0 0 1px rgba(255,255,255,.07);flex-shrink:0;opacity:0;transform:translateY(48px);transition:opacity .75s var(--ease),transform .75s var(--ease)}
+.ph-frame.ph-in{opacity:1;transform:none}
+.ph-inner{background:#1b1917;border-radius:25px;overflow:hidden}
+.ph-notch-bar{height:20px;background:#0d0c0b;display:flex;align-items:center;justify-content:center}
+.ph-notch{width:46px;height:8px;background:#1b1917;border-radius:0 0 6px 6px}
+/* Screen content */
+.ph-screen-wrap{background:#ede9e1;overflow:hidden}
+.ph-header{background:#2d4a35;padding:8px 11px 7px;display:flex;justify-content:space-between;align-items:center}
+.ph-logo{font-size:8.5px;font-weight:500;color:rgba(237,232,224,.9);letter-spacing:.4px}
+.ph-logo span{color:#C9A96E}
+.ph-period{font-size:7px;color:rgba(237,232,224,.4);letter-spacing:.5px}
+.ph-body{padding:7px}
+.ph-lbl{font-size:6.5px;letter-spacing:2px;text-transform:uppercase;color:#bbb;margin-bottom:4px;display:block}
+/* KPI grid */
+.ph-kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:6px}
+.ph-kpi{background:#fff;border-radius:6px;padding:6px 7px;border:0.5px solid rgba(0,0,0,.06)}
+.ph-kpi-val{display:block;font-size:17px;font-weight:400;color:#1a1816;line-height:1;font-family:'DM Serif Display',Georgia,serif}
+.ph-kpi-val.g{color:#2d4a35}
+.ph-kpi-lbl{display:block;font-size:6px;color:#bbb;margin-top:2px;letter-spacing:.5px;text-transform:uppercase}
+.ph-kpi-delta{display:block;font-size:6.5px;color:#2d4a35;margin-top:1px}
+.ph-kpi-delta.mute{color:#ccc}
+/* Chart */
+.ph-chart-wrap{background:#fff;border-radius:6px;padding:6px 7px;border:0.5px solid rgba(0,0,0,.06);margin-bottom:6px}
+.ph-bars{display:flex;gap:2.5px;align-items:flex-end;height:26px;margin-top:4px}
+.ph-bar{flex:1;border-radius:1.5px 1.5px 0 0;background:rgba(45,74,53,.13);height:0;transition:height 1.1s var(--ease)}
+.ph-bar.hi{background:#2d4a35}
+.ph-bar.md{background:rgba(45,74,53,.45)}
+/* Stylists */
+.ph-section-lbl{display:block;font-size:6.5px;letter-spacing:2px;text-transform:uppercase;color:#bbb;margin:5px 0 4px}
+.ph-stylist-row{display:flex;align-items:center;gap:4px;padding:4.5px 0;border-bottom:0.5px solid rgba(0,0,0,.05)}
+.ph-stylist-row:last-child{border-bottom:none}
+.ph-av{width:17px;height:17px;border-radius:50%;background:rgba(45,74,53,.12);display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:500;color:#2d4a35;flex-shrink:0;font-family:'DM Serif Display',Georgia,serif}
+.ph-av.hi{background:rgba(190,50,30,.1);color:rgba(170,40,20,.85)}
+.ph-av.med{background:rgba(201,169,110,.12);color:#9a6f2a}
+.ph-sname{font-size:7.5px;font-weight:500;color:#1a1816;flex:1}
+.ph-sbar-wrap{width:30px;height:2px;background:rgba(0,0,0,.06);border-radius:100px}
+.ph-sbar-fill{height:100%;background:#2d4a35;border-radius:100px;width:0;transition:width 1.3s var(--ease)}
+.ph-spct{font-size:7px;color:#666;margin-left:2px}
+/* Appointment rows */
+.ph-apt-row{display:flex;align-items:center;gap:5px;padding:5px 0;border-bottom:0.5px solid rgba(0,0,0,.05);opacity:0;transform:translateX(-10px);transition:opacity .4s ease,transform .4s ease}
+.ph-apt-row.apt-in{opacity:1;transform:none}
+.ph-apt-row:last-child{border-bottom:none}
+.ph-apt-time{font-size:7px;color:#bbb;width:21px;flex-shrink:0}
+.ph-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.ph-dot.ok{background:#2d4a35}
+.ph-dot.pend{background:#C9A96E;animation:dotPend 2.2s ease-in-out infinite}
+.ph-dot.miss{background:rgba(0,0,0,.14)}
+.ph-apt-info{flex:1}
+.ph-apt-name{font-size:7.5px;font-weight:500;color:#1a1816;line-height:1.2}
+.ph-apt-who{font-size:6.5px;color:#bbb}
+.ph-apt-badge{font-size:6.5px;padding:2px 5px;border-radius:100px;flex-shrink:0;white-space:nowrap}
+.ph-apt-badge.brief{background:rgba(45,74,53,.1);color:#2d4a35}
+.ph-apt-badge.wait{background:rgba(201,169,110,.12);color:#9a6f2a}
+/* Summary strip */
+.ph-stats{background:#fff;border-radius:6px;padding:5px 7px;border:0.5px solid rgba(0,0,0,.06);margin-top:5px}
+.ph-stat-row{display:flex;justify-content:space-between;align-items:center;padding:3px 0;border-bottom:0.5px solid rgba(0,0,0,.05)}
+.ph-stat-row:last-child{border-bottom:none}
+.ph-stat-key{font-size:7px;color:#bbb}
+.ph-stat-val{font-size:7.5px;font-weight:500;color:#1a1816}
+.ph-stat-val.g{color:#2d4a35}
+/* Risk cards */
+.ph-risk-card{background:#fff;border-radius:6px;padding:6px 7px;border:0.5px solid rgba(0,0,0,.06);margin-bottom:5px;opacity:0;transform:translateY(10px);transition:opacity .5s ease,transform .5s ease}
+.ph-risk-card.risk-in{opacity:1;transform:none}
+.ph-risk-top{display:flex;align-items:center;gap:4px;margin-bottom:2px}
+.ph-risk-name{font-size:8px;font-weight:500;color:#1a1816;flex:1}
+.ph-risk-badge{font-size:6.5px;padding:2px 5px;border-radius:100px}
+.ph-risk-badge.hi{background:rgba(190,50,30,.1);color:rgba(170,40,20,.8)}
+.ph-risk-badge.med{background:rgba(201,169,110,.12);color:#9a6f2a}
+.ph-risk-sub{font-size:6.5px;color:#bbb;line-height:1.4}
+.ph-risk-action{margin-top:4px;font-size:7px;font-weight:500;color:#2d4a35;border-top:0.5px solid rgba(0,0,0,.05);padding-top:4px}
+.ph-return-row{display:flex;align-items:center;gap:4px;padding:4px 0;border-bottom:0.5px solid rgba(0,0,0,.05)}
+.ph-return-row:last-child{border-bottom:none}
+.ph-return-status{font-size:7px;color:#2d4a35}
+.ph-home-bar{height:14px;background:#0d0c0b;display:flex;align-items:center;justify-content:center}
+.ph-home-line{width:30px;height:3px;border-radius:100px;background:rgba(255,255,255,.15)}
+/* Phone label */
+.ph-label{text-align:center;font-size:11px;color:#aaa;margin-top:10px;letter-spacing:.3px}
+@keyframes dotPend{0%,100%{opacity:1}50%{opacity:.3}}
+@media(max-width:680px){.phones-row{gap:10px}.ph-frame{width:150px}}
+@media(max-width:520px){.phones-row{flex-direction:column;align-items:center}.ph-frame{width:210px}}
 
 /* ── S13: LIVE COUNTER SECTION ── */
 .s-live{
@@ -474,8 +527,6 @@ footer a:hover{color:rgba(237,232,224,.6)}
   .two-col,.beat-inner{grid-template-columns:1fr}
   .pain-vis-col{justify-content:center}
   .pain-copy-col p{max-width:100%}
-  .owner-beat-inner{grid-template-columns:1fr;text-align:center}
-  .owner-copy p{max-width:100%}
   footer{flex-direction:column;text-align:center}
 }
 @media(max-width:600px){
@@ -742,82 +793,121 @@ footer a:hover{color:rgba(237,232,224,.6)}
 </section>
 
 <!-- ══════════════════════════════
-     S9: OWNER DASHBOARD
+     S9: OWNER — 3 PHONE SCREENS
 ══════════════════════════════ -->
 <section class="s-beat s-owner-beat" id="s-owner">
-  <div class="owner-beat-inner">
-    <div class="owner-copy">
-      <span class="section-kicker" data-a="up">For owners</span>
-      <h2 data-a="up" data-d="1">Retention up.<br>Knowledge stays<br>in the building.</h2>
-      <p data-a="up" data-d="2">Every preference, every consultation, every piece of feedback — owned by your salon, not by one person's memory.</p>
-      <p data-a="up" data-d="3">When a stylist leaves, your clients don't have to.</p>
+  <div class="owner-phones-wrap">
+
+    <!-- COPY -->
+    <div class="owner-copy-c" data-a="up">
+      <span class="section-kicker">For owners</span>
+      <h2>Your business,<br>finally in your hands.</h2>
+      <p>Every preference, consultation, and feedback — owned by your salon. When a stylist leaves, your clients don't have to.</p>
     </div>
-    <div data-a="scale" data-d="2" style="display:flex;justify-content:flex-end">
-      <div class="dash-mobile">
-        <div class="dm-bar"></div>
-        <div class="dm-header">
-          <span class="dm-title">PleromaOS Admin</span>
-          <span class="dm-period">This quarter</span>
-        </div>
-        <div class="dm-kpis">
-          <div class="dm-kpi">
-            <div class="dm-kpi-lbl">Retention</div>
-            <div class="dm-kpi-val g" data-count="94" data-suffix="%">—</div>
-            <div class="dm-kpi-delta up">↑ 12 pts</div>
+
+    <!-- 3 PHONES -->
+    <div class="phones-row">
+
+      <!-- PHONE 1: Overview -->
+      <div class="ph-frame" id="ph-0">
+        <div class="ph-inner">
+          <div class="ph-notch-bar"><div class="ph-notch"></div></div>
+          <div class="ph-screen-wrap">
+            <div class="ph-header">
+              <span class="ph-logo">Pleroma<span>OS</span></span>
+              <span class="ph-period">This quarter</span>
+            </div>
+            <div class="ph-body">
+              <span class="ph-lbl">Overview</span>
+              <div class="ph-kpi-grid">
+                <div class="ph-kpi"><span class="ph-kpi-val g" data-target="94" data-suffix="%">0%</span><span class="ph-kpi-lbl">Retention</span><span class="ph-kpi-delta">↑ 12 pts</span></div>
+                <div class="ph-kpi"><span class="ph-kpi-val" data-target="58" data-suffix="s">0s</span><span class="ph-kpi-lbl">Brief time</span><span class="ph-kpi-delta mute">Was 11 min</span></div>
+                <div class="ph-kpi"><span class="ph-kpi-val g" data-target="96" data-suffix="%">0%</span><span class="ph-kpi-lbl">Match rate</span><span class="ph-kpi-delta">↑ sat.</span></div>
+                <div class="ph-kpi"><span class="ph-kpi-val" data-target="127" data-suffix="">0</span><span class="ph-kpi-lbl">Consults</span><span class="ph-kpi-delta">↑ 8%</span></div>
+              </div>
+              <div class="ph-chart-wrap">
+                <span class="ph-lbl" style="margin-bottom:0">Weekly consults</span>
+                <div class="ph-bars">
+                  <div class="ph-bar" data-h="55"></div>
+                  <div class="ph-bar md" data-h="62"></div>
+                  <div class="ph-bar" data-h="48"></div>
+                  <div class="ph-bar md" data-h="72"></div>
+                  <div class="ph-bar hi" data-h="88"></div>
+                  <div class="ph-bar hi" data-h="84"></div>
+                  <div class="ph-bar hi" data-h="100"></div>
+                </div>
+              </div>
+              <span class="ph-section-lbl">Top stylists</span>
+              <div class="ph-stylist-row"><div class="ph-av">M</div><span class="ph-sname">Maya</span><div class="ph-sbar-wrap"><div class="ph-sbar-fill" data-w="97"></div></div><span class="ph-spct">97%</span></div>
+              <div class="ph-stylist-row"><div class="ph-av">D</div><span class="ph-sname">Daan</span><div class="ph-sbar-wrap"><div class="ph-sbar-fill" data-w="94"></div></div><span class="ph-spct">94%</span></div>
+              <div class="ph-stylist-row"><div class="ph-av">S</div><span class="ph-sname">Sophie</span><div class="ph-sbar-wrap"><div class="ph-sbar-fill" data-w="91"></div></div><span class="ph-spct">91%</span></div>
+            </div>
           </div>
-          <div class="dm-kpi">
-            <div class="dm-kpi-lbl">Brief time</div>
-            <div class="dm-kpi-val" data-count="58" data-suffix="s">—</div>
-            <div class="dm-kpi-delta">Was 11 min</div>
-          </div>
-          <div class="dm-kpi">
-            <div class="dm-kpi-lbl">Match rate</div>
-            <div class="dm-kpi-val g" data-count="96" data-suffix="%">—</div>
-            <div class="dm-kpi-delta up">Satisfaction</div>
-          </div>
-          <div class="dm-kpi">
-            <div class="dm-kpi-lbl">Consults</div>
-            <div class="dm-kpi-val" data-count="127" data-suffix="">—</div>
-            <div class="dm-kpi-delta up">↑ 8% month</div>
-          </div>
-        </div>
-        <div class="dm-section">
-          <span class="dm-section-label">Top stylists</span>
-          <div class="dm-stylist-row">
-            <div class="dm-av">M</div>
-            <span class="dm-stylist-name">Maya</span>
-            <div class="dm-bar-wrap"><div class="dm-bar-fill" style="width:97%"></div></div>
-            <span class="dm-pct">97%</span>
-          </div>
-          <div class="dm-stylist-row">
-            <div class="dm-av">D</div>
-            <span class="dm-stylist-name">Daan</span>
-            <div class="dm-bar-wrap"><div class="dm-bar-fill" style="width:94%"></div></div>
-            <span class="dm-pct">94%</span>
-          </div>
-          <div class="dm-stylist-row">
-            <div class="dm-av">S</div>
-            <span class="dm-stylist-name">Sophie</span>
-            <div class="dm-bar-wrap"><div class="dm-bar-fill" style="width:91%"></div></div>
-            <span class="dm-pct">91%</span>
-          </div>
-        </div>
-        <div class="dm-section">
-          <span class="dm-section-label">Clients at risk</span>
-          <div class="dm-risk-row">
-            <div class="dm-av" style="background:rgba(190,50,30,.08);color:rgba(170,40,20,.8)">Y</div>
-            <span class="dm-risk-name">Yasmine B. <span style="font-size:10px;color:#ccc">· 8 wks</span></span>
-            <span class="dm-risk-badge high">High</span>
-          </div>
-          <div class="dm-risk-row">
-            <div class="dm-av" style="background:rgba(201,169,110,.1);color:#9a6f2a">S</div>
-            <span class="dm-risk-name">Sofia M. <span style="font-size:10px;color:#ccc">· 6 wks</span></span>
-            <span class="dm-risk-badge med">Medium</span>
-          </div>
+          <div class="ph-home-bar"><div class="ph-home-line"></div></div>
         </div>
       </div>
-    </div>
-  </div>
+
+      <!-- PHONE 2: Today's Schedule -->
+      <div class="ph-frame" id="ph-1">
+        <div class="ph-inner">
+          <div class="ph-notch-bar"><div class="ph-notch"></div></div>
+          <div class="ph-screen-wrap">
+            <div class="ph-header">
+              <span class="ph-logo">Pleroma<span>OS</span></span>
+              <span class="ph-period">Today · Mon 28</span>
+            </div>
+            <div class="ph-body">
+              <span class="ph-lbl">Appointments</span>
+              <div class="ph-apt-row" id="apt-0"><span class="ph-apt-time">9:00</span><div class="ph-dot ok"></div><div class="ph-apt-info"><div class="ph-apt-name">Amira K.</div><div class="ph-apt-who">Maya</div></div><span class="ph-apt-badge brief">Brief ready</span></div>
+              <div class="ph-apt-row" id="apt-1"><span class="ph-apt-time">10:30</span><div class="ph-dot ok"></div><div class="ph-apt-info"><div class="ph-apt-name">Nadia R.</div><div class="ph-apt-who">Sophie</div></div><span class="ph-apt-badge brief">Brief ready</span></div>
+              <div class="ph-apt-row" id="apt-2"><span class="ph-apt-time">11:15</span><div class="ph-dot pend"></div><div class="ph-apt-info"><div class="ph-apt-name">Tariq V.</div><div class="ph-apt-who">Daan</div></div><span class="ph-apt-badge wait">Awaiting</span></div>
+              <div class="ph-apt-row" id="apt-3"><span class="ph-apt-time">13:00</span><div class="ph-dot miss"></div><div class="ph-apt-info"><div class="ph-apt-name">Sofia M.</div><div class="ph-apt-who">Maya</div></div><span class="ph-apt-badge wait">No brief</span></div>
+              <div class="ph-apt-row" id="apt-4"><span class="ph-apt-time">14:30</span><div class="ph-dot ok"></div><div class="ph-apt-info"><div class="ph-apt-name">Yasmine B.</div><div class="ph-apt-who">Sophie</div></div><span class="ph-apt-badge brief">Brief ready</span></div>
+              <div class="ph-apt-row" id="apt-5"><span class="ph-apt-time">16:00</span><div class="ph-dot pend"></div><div class="ph-apt-info"><div class="ph-apt-name">Leila H.</div><div class="ph-apt-who">Daan</div></div><span class="ph-apt-badge wait">Awaiting</span></div>
+              <div class="ph-stats">
+                <div class="ph-stat-row"><span class="ph-stat-key">Briefs received</span><span class="ph-stat-val g">3 / 6</span></div>
+                <div class="ph-stat-row"><span class="ph-stat-key">Avg. prep time</span><span class="ph-stat-val">52 seconds</span></div>
+                <div class="ph-stat-row"><span class="ph-stat-key">No-shows today</span><span class="ph-stat-val">0</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="ph-home-bar"><div class="ph-home-line"></div></div>
+        </div>
+      </div>
+
+      <!-- PHONE 3: Client Health -->
+      <div class="ph-frame" id="ph-2">
+        <div class="ph-inner">
+          <div class="ph-notch-bar"><div class="ph-notch"></div></div>
+          <div class="ph-screen-wrap">
+            <div class="ph-header">
+              <span class="ph-logo">Pleroma<span>OS</span></span>
+              <span class="ph-period">2 need attention</span>
+            </div>
+            <div class="ph-body">
+              <span class="ph-lbl">Clients at risk</span>
+              <div class="ph-risk-card" id="risk-0">
+                <div class="ph-risk-top"><div class="ph-av hi">Y</div><span class="ph-risk-name">Yasmine B.</span><span class="ph-risk-badge hi">High</span></div>
+                <div class="ph-risk-sub">8 weeks since last visit · Was every 3 wks</div>
+                <div class="ph-risk-action">→ Send re-engagement message</div>
+              </div>
+              <div class="ph-risk-card" id="risk-1">
+                <div class="ph-risk-top"><div class="ph-av med">S</div><span class="ph-risk-name">Sofia M.</span><span class="ph-risk-badge med">Medium</span></div>
+                <div class="ph-risk-sub">6 weeks since last visit · No preference logged</div>
+                <div class="ph-risk-action">→ Log her preferences now</div>
+              </div>
+              <span class="ph-section-lbl">Returning this week</span>
+              <div class="ph-return-row"><div class="ph-av">A</div><span class="ph-sname" style="font-size:7.5px">Amira K.</span><span class="ph-return-status">On time ↩</span></div>
+              <div class="ph-return-row"><div class="ph-av">N</div><span class="ph-sname" style="font-size:7.5px">Nadia R.</span><span class="ph-return-status">On time ↩</span></div>
+              <div class="ph-return-row"><div class="ph-av">T</div><span class="ph-sname" style="font-size:7.5px">Tariq V.</span><span class="ph-return-status">1 wk early ↩</span></div>
+            </div>
+          </div>
+          <div class="ph-home-bar"><div class="ph-home-line"></div></div>
+        </div>
+      </div>
+
+    </div><!-- /phones-row -->
+  </div><!-- /owner-phones-wrap -->
 </section>
 
 <!-- ══════════════════════════════
@@ -1008,28 +1098,71 @@ const obs = new IntersectionObserver(entries=>{
 document.querySelectorAll('[data-a]').forEach(el=>obs.observe(el));
 
 // ══════════════════════════════════════════
-// DASHBOARD COUNTERS
+// PHONE SCREEN ANIMATIONS
 // ══════════════════════════════════════════
-function countUp(el, target, suffix){
-  const dur=1800, step=16;
-  let cur=0, steps=dur/step, inc=target/steps;
-  const t=setInterval(()=>{
-    cur=Math.min(cur+inc,target);
-    el.textContent=Math.floor(cur)+(suffix||'');
-    if(cur>=target)clearInterval(t);
-  },step);
-}
-const dashObs=new IntersectionObserver(entries=>{
-  entries.forEach(e=>{
-    if(!e.isIntersecting)return;
-    e.target.querySelectorAll('[data-count]').forEach(el=>{
-      countUp(el,parseFloat(el.dataset.count),el.dataset.suffix||'');
+(function(){
+  const ownerSec = document.getElementById('s-owner');
+  if(!ownerSec) return;
+  let fired = false;
+
+  function countUp(el, target, suffix, delay){
+    setTimeout(()=>{
+      const dur=1600, step=16;
+      let cur=0;
+      const inc=target/(dur/step);
+      const t=setInterval(()=>{
+        cur=Math.min(cur+inc,target);
+        el.textContent=Math.floor(cur)+(suffix||'');
+        if(cur>=target)clearInterval(t);
+      },step);
+    }, delay||0);
+  }
+
+  function runPhoneAnimations(){
+    if(fired)return; fired=true;
+
+    // ── Stagger phone entrance
+    [0,1,2].forEach(i=>{
+      const ph=document.getElementById('ph-'+i);
+      if(ph) setTimeout(()=>ph.classList.add('ph-in'), i*140);
     });
-    dashObs.unobserve(e.target);
-  });
-},{threshold:.2});
-const dm=document.querySelector('.dash-mobile');
-if(dm)dashObs.observe(dm);
+
+    // ── Screen 1: count up KPIs + grow chart bars + expand stylist bars
+    setTimeout(()=>{
+      document.querySelectorAll('#ph-0 [data-target]').forEach(el=>{
+        countUp(el, parseFloat(el.dataset.target), el.dataset.suffix||'');
+      });
+      document.querySelectorAll('#ph-0 .ph-bar').forEach((bar,i)=>{
+        const h=bar.dataset.h||'50';
+        setTimeout(()=>{ bar.style.height=h+'%'; }, i*80);
+      });
+      document.querySelectorAll('#ph-0 .ph-sbar-fill').forEach((fill,i)=>{
+        setTimeout(()=>{ fill.style.width=(fill.dataset.w||'80')+'%'; }, 400+i*120);
+      });
+    }, 300);
+
+    // ── Screen 2: appointment rows appear one by one
+    setTimeout(()=>{
+      for(let i=0;i<6;i++){
+        const row=document.getElementById('apt-'+i);
+        if(row) setTimeout(()=>row.classList.add('apt-in'), i*120);
+      }
+    }, 500);
+
+    // ── Screen 3: risk cards drop in
+    setTimeout(()=>{
+      ['risk-0','risk-1'].forEach((id,i)=>{
+        const card=document.getElementById(id);
+        if(card) setTimeout(()=>card.classList.add('risk-in'), i*220);
+      });
+    }, 700);
+  }
+
+  // Trigger when owner section enters viewport
+  new IntersectionObserver(entries=>{
+    if(entries[0].isIntersecting) runPhoneAnimations();
+  },{threshold:0.25}).observe(ownerSec);
+})();
 
 // ══════════════════════════════════════════
 // SECTION DEFINITIONS
