@@ -269,14 +269,15 @@ nav.dim .nav-logo{color:var(--bg)}
 .fcard-lg-desc{font-size:14px;color:#666;line-height:1.7}
 
 /* ── S12: OWNER DASHBOARD ── */
-.s-owner-beat{background:var(--light)}
+.s-owner-beat{background:var(--light);overflow:hidden}
 .owner-beat-inner{max-width:var(--content);width:100%;display:grid;grid-template-columns:1fr 1.1fr;gap:var(--gutter);align-items:center}
 .owner-copy .section-kicker{font-size:10px;letter-spacing:5px;text-transform:uppercase;color:var(--teal);margin-bottom:24px;display:block}
 .owner-copy h2{font-family:'DM Serif Display',Georgia,serif;font-size:clamp(26px,3.5vw,46px);line-height:1.15;color:var(--dark);margin-bottom:24px}
 .owner-copy p{font-size:17px;color:#555;line-height:1.75;max-width:360px;margin-bottom:16px}
 
 /* Mobile-style dashboard */
-.dash-mobile{background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:24px;overflow:hidden;box-shadow:0 12px 56px rgba(0,0,0,.08);max-width:360px;width:100%}
+.dash-mobile{background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:24px;overflow:hidden;box-shadow:0 12px 56px rgba(0,0,0,.08);max-width:320px;width:100%;transform:scale(0.9);transform-origin:top right}
+@media(max-width:900px){.dash-mobile{transform:none;transform-origin:top center;max-width:360px;margin:0 auto}}
 .dm-bar{height:4px;background:rgba(45,74,53,.06)}
 .dm-header{padding:18px 20px 14px;border-bottom:1px solid rgba(0,0,0,.06);display:flex;justify-content:space-between;align-items:center}
 .dm-title{font-size:12px;font-weight:700;color:var(--dark);letter-spacing:.5px}
@@ -304,15 +305,39 @@ nav.dim .nav-logo{color:var(--bg)}
 .dm-risk-badge.high{background:rgba(190,50,30,.1);color:rgba(170,40,20,.85)}
 .dm-risk-badge.med{background:rgba(201,169,110,.14);color:#9a6f2a}
 
-/* ── S13: WAITLIST CTA ── */
-.s-cta{
+/* ── S13: LIVE COUNTER SECTION ── */
+.s-live{
   height:100vh;min-height:640px;
   display:flex;align-items:center;justify-content:center;
   padding:var(--pad-y) var(--pad-x);
-  background:var(--bg);position:relative;overflow:hidden;
+  background:var(--teal);position:relative;overflow:hidden;
+}
+.s-live::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 70% at 50% 40%,rgba(255,255,255,.07) 0%,transparent 65%);pointer-events:none}
+.live-section-inner{max-width:560px;width:100%;text-align:center;position:relative;z-index:1}
+.ls-eye{font-size:10px;letter-spacing:6px;text-transform:uppercase;color:rgba(201,169,110,.8);margin-bottom:36px;display:block}
+.ls-big-num{font-family:'DM Serif Display',Georgia,serif;font-size:clamp(96px,16vw,168px);line-height:.88;color:#fff;letter-spacing:-5px;transition:transform .3s var(--ease)}
+.ls-big-num.pulse{transform:scale(1.04)}
+.ls-of{font-size:14px;color:rgba(255,255,255,.4);margin-top:16px;letter-spacing:.5px}
+.ls-bar-track{height:3px;background:rgba(255,255,255,.1);border-radius:100px;overflow:hidden;margin:28px auto 40px;max-width:180px}
+.ls-bar-fill{height:100%;background:var(--gold);border-radius:100px;transition:width 1.6s var(--ease);width:0%}
+.ls-recent{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:52px;min-height:36px}
+.ls-person{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:100px;padding:7px 14px 7px 8px}
+.ls-av{width:22px;height:22px;border-radius:50%;background:rgba(201,169,110,.15);border:1px solid rgba(201,169,110,.28);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--gold);flex-shrink:0;font-family:'DM Serif Display',Georgia,serif}
+.ls-name{font-size:11.5px;color:rgba(255,255,255,.78);font-weight:500}
+.ls-dot{width:5px;height:5px;border-radius:50%;background:#22d3a0;flex-shrink:0;margin-left:4px}
+.ls-cta-btn{display:inline-flex;align-items:center;background:var(--gold);color:var(--dark);padding:18px 52px;border-radius:100px;font-size:16px;font-weight:700;text-decoration:none;transition:background .2s,transform .15s,box-shadow .2s}
+.ls-cta-btn:hover{background:var(--gold-dark);transform:translateY(-2px);box-shadow:0 14px 40px rgba(201,169,110,.28)}
+.ls-fine{font-size:12px;color:rgba(255,255,255,.28);margin-top:20px}
+
+/* ── S14: WAITLIST CTA ── */
+.s-cta{
+  min-height:100vh;height:auto;
+  display:flex;align-items:center;justify-content:center;
+  padding:var(--pad-y) var(--pad-x);
+  background:var(--bg);position:relative;
 }
 .s-cta::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 50% 100%,rgba(45,74,53,.07) 0%,transparent 70%);pointer-events:none}
-.cta-two-col{max-width:var(--content);width:100%;display:grid;grid-template-columns:1fr 1.2fr;gap:var(--gutter);align-items:start;position:relative;z-index:1}
+.cta-center{max-width:540px;width:100%;position:relative;z-index:1}
 
 /* Live panel */
 .cta-live-panel{display:flex;flex-direction:column;gap:24px;padding-top:8px}
@@ -449,16 +474,8 @@ footer a:hover{color:rgba(237,232,224,.6)}
   .two-col,.beat-inner{grid-template-columns:1fr}
   .pain-vis-col{justify-content:center}
   .pain-copy-col p{max-width:100%}
-  .flow-beat-inner{grid-template-columns:1fr;text-align:center}
-  .flow-beat-vis{justify-content:center}
-  .flow-beat-copy p{max-width:100%}
-  .fbc-progress{justify-content:center}
   .owner-beat-inner{grid-template-columns:1fr;text-align:center}
   .owner-copy p{max-width:100%}
-  .dash-mobile{margin:0 auto}
-  .cta-two-col{grid-template-columns:1fr}
-  .cta-live-panel{order:2}
-  .cta-form-panel{order:1}
   footer{flex-direction:column;text-align:center}
 }
 @media(max-width:600px){
@@ -475,9 +492,9 @@ footer a:hover{color:rgba(237,232,224,.6)}
   .pvis-card,.pvis-split{width:100%;max-width:300px;margin:0 auto}
   .pain-vis-col{min-height:0}
   .how-beat-p{font-size:15px}
-  .fcard-lg{max-width:100%}
-  .lc-number{font-size:60px}
-  .live-counter-stage{padding:24px 20px}
+  .ls-big-num{letter-spacing:-3px}
+  .ls-recent{gap:8px}
+  .ls-cta-btn{padding:16px 36px;font-size:14px}
   .cta-h{font-size:clamp(26px,8vw,40px)}
   .email-form{max-width:100%}
   .choices{gap:8px}
@@ -485,10 +502,8 @@ footer a:hover{color:rgba(237,232,224,.6)}
   .progress-dots{right:6px}
   .toast-wrap{bottom:72px;left:12px}
   .toast{max-width:220px;min-width:160px}
-  .s-cta{padding:56px 20px;height:auto;min-height:100vh}
+  .s-cta{padding:56px 20px}
   footer{gap:10px}
-}
-@media(max-width:600px){
   .dm-kpi-val{font-size:22px}
 }
 </style>
@@ -727,114 +742,7 @@ footer a:hover{color:rgba(237,232,224,.6)}
 </section>
 
 <!-- ══════════════════════════════
-     S9: CLIENT FLOW — SCAN
-══════════════════════════════ -->
-<section class="s-beat s-flow-beat-a" id="s-flow-0">
-  <div class="flow-beat-inner">
-    <div class="flow-beat-vis" data-a="right">
-      <div class="fcard-lg">
-        <div class="fcard-lg-vis">
-          <div class="qr-stand">
-            <div class="qr-card-visual">
-              <div class="qr-corner tl"></div><div class="qr-corner tr"></div><div class="qr-corner bl"></div>
-              <div class="qr-dots"></div>
-            </div>
-            <div class="qr-brand">Pleroma<span>OS</span></div>
-            <div class="qr-sub">Scan to start</div>
-          </div>
-        </div>
-        <div class="fcard-lg-body">
-          <div class="fcard-lg-num">01 — Scan</div>
-          <div class="fcard-lg-title">QR code in the waiting area</div>
-          <div class="fcard-lg-desc">Like a restaurant menu on the table. No app to download, no account to create. Phone out, scan, begin.</div>
-        </div>
-      </div>
-    </div>
-    <div class="flow-beat-copy">
-      <span class="fbc-num" data-a="up">The client experience</span>
-      <h2 data-a="up" data-d="1">It feels like ordering<br>in a restaurant.</h2>
-      <p data-a="up" data-d="2">No jargon. No lengthy consultation. They scan a QR code and are guided through choices before they even sit down — no app, no account, no friction.</p>
-      <div class="fbc-progress" data-a="up" data-d="3">
-        <div class="fbc-dot act"></div><div class="fbc-dot"></div><div class="fbc-dot"></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════════════════════════
-     S10: CLIENT FLOW — QUIZ
-══════════════════════════════ -->
-<section class="s-beat s-flow-beat-b" id="s-flow-1">
-  <div class="flow-beat-inner" style="direction:rtl">
-    <div class="flow-beat-vis" data-a="left" style="direction:ltr">
-      <div class="fcard-lg">
-        <div class="fcard-lg-vis">
-          <div class="quiz-mini">
-            <div class="qm-bar"><div class="qm-fill"></div></div>
-            <div class="qm-q">What length do you<br>have in mind?</div>
-            <div class="qm-opts">
-              <div class="qm-opt">Short — just above the ears</div>
-              <div class="qm-opt sel">Medium — to the shoulder</div>
-              <div class="qm-opt">Long — below the shoulder</div>
-            </div>
-          </div>
-        </div>
-        <div class="fcard-lg-body">
-          <div class="fcard-lg-num">02 — Choose</div>
-          <div class="fcard-lg-title">Visual questions, no jargon</div>
-          <div class="fcard-lg-desc">They describe what they want by choosing images — not by finding the right words. Less miscommunication, more certainty.</div>
-        </div>
-      </div>
-    </div>
-    <div class="flow-beat-copy" style="direction:ltr">
-      <span class="fbc-num" data-a="up">The client experience</span>
-      <h2 data-a="up" data-d="1">Images do the talking.<br>Words don't have to.</h2>
-      <p data-a="up" data-d="2">Clients tap through real style visuals instead of trying to describe what they want. The gap between expectation and result closes — before the appointment even starts.</p>
-      <div class="fbc-progress" data-a="up" data-d="3">
-        <div class="fbc-dot"></div><div class="fbc-dot act"></div><div class="fbc-dot"></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════════════════════════
-     S11: CLIENT FLOW — BRIEF
-══════════════════════════════ -->
-<section class="s-beat s-flow-beat-a" id="s-flow-2">
-  <div class="flow-beat-inner">
-    <div class="flow-beat-vis" data-a="right">
-      <div class="fcard-lg">
-        <div class="fcard-lg-vis">
-          <div class="brief-mini">
-            <div class="bm-top"><span class="bm-client">Amira K.</span><span class="bm-stylist">Maya</span></div>
-            <div class="bm-tags">
-              <span class="bm-tag">Medium</span><span class="bm-tag">Smooth &amp; sleek</span>
-              <span class="bm-tag">No colour</span><span class="bm-tag">5cm off</span>
-            </div>
-            <div class="bm-note">No heat at the roots. Last time too short on the sides.</div>
-            <div class="bm-status">Brief received by Maya</div>
-          </div>
-        </div>
-        <div class="fcard-lg-body">
-          <div class="fcard-lg-num">03 — Receive</div>
-          <div class="fcard-lg-title">The stylist has it on screen</div>
-          <div class="fcard-lg-desc">Before the client is even in the chair. Precise, complete, saved — owned by your business forever.</div>
-        </div>
-      </div>
-    </div>
-    <div class="flow-beat-copy">
-      <span class="fbc-num" data-a="up">The client experience</span>
-      <h2 data-a="up" data-d="1">Every appointment<br>starts with clarity.</h2>
-      <p data-a="up" data-d="2">The brief is on screen before the chair is warm. No guessing, no re-consultation. The client feels heard before you've said a word.</p>
-      <div class="fbc-progress" data-a="up" data-d="3">
-        <div class="fbc-dot"></div><div class="fbc-dot"></div><div class="fbc-dot act"></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════════════════════════
-     S12: OWNER DASHBOARD
+     S9: OWNER DASHBOARD
 ══════════════════════════════ -->
 <section class="s-beat s-owner-beat" id="s-owner">
   <div class="owner-beat-inner">
@@ -913,36 +821,32 @@ footer a:hover{color:rgba(237,232,224,.6)}
 </section>
 
 <!-- ══════════════════════════════
-     S13: WAITLIST CTA
+     S10: LIVE COUNTER
+══════════════════════════════ -->
+<section class="s-live" id="s-live">
+  <div class="live-section-inner">
+    <span class="ls-eye" data-a="up">100 founding spots · Netherlands · Fall 2026</span>
+    <div class="ls-big-num" id="lc-number" data-a="scale" data-d="1">—</div>
+    <div class="ls-of">spots remaining</div>
+    <div class="ls-bar-track"><div class="ls-bar-fill" id="lc-fill"></div></div>
+    <div class="ls-recent" id="live-recent" data-a="fade" data-d="2">
+      <!-- populated by JS -->
+    </div>
+    <a class="ls-cta-btn mag" href="#waitlist" data-a="up" data-d="3">Claim Your Founding Spot →</a>
+    <p class="ls-fine" data-a="fade" data-d="4">No credit card · No commitment · We reach out personally</p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════
+     S11: WAITLIST CTA
 ══════════════════════════════ -->
 <section class="s-cta" id="waitlist">
-  <div class="cta-two-col">
-
-    <!-- LIVE PANEL -->
-    <div class="cta-live-panel" data-a="right">
-      <div class="live-counter-stage">
-        <span class="lc-label">Founding spots remaining</span>
-        <div class="lc-number" id="lc-number">—</div>
-        <div class="lc-sub">of 100 founding salons</div>
-        <div class="lc-bar-track"><div class="lc-bar-fill" id="lc-fill"></div></div>
-        <div class="lc-bar-ends"><span>0</span><span>100 salons</span></div>
-      </div>
-      <div class="live-recent" id="live-recent">
-        <span class="lr-label">Recently joined</span>
-        <!-- populated by JS -->
-      </div>
-    </div>
-
-    <!-- FORM PANEL -->
-    <div class="cta-form-panel">
+  <div class="cta-center">
       <span class="cta-eye" data-a="up">Early access · Netherlands · Fall 2026</span>
       <h2 class="cta-h" data-a="up" data-d="1">
         Be the first salon<br>in the Netherlands<br>to <em>get it right.</em>
       </h2>
       <p class="cta-sub" data-a="up" data-d="2">We're launching this fall. Tell us about your salon — 30 seconds.</p>
-      <div class="cred-block" data-a="up" data-d="2">
-        <p>Built by people who've spent <strong>over a decade in this industry</strong> — as stylists, and running multiple salons. We built PleromaOS because we lived this problem on both sides of the chair.</p>
-      </div>
 
       <!-- Survey -->
       <div class="survey" id="survey" data-a="up" data-d="3">
@@ -1017,7 +921,6 @@ footer a:hover{color:rgba(237,232,224,.6)}
         <span>No App Download</span><span class="sep">·</span>
         <span>No Fresha Required</span>
       </div>
-    </div>
   </div>
 </section>
 
@@ -1140,21 +1043,19 @@ const _sections=[
   {el:document.getElementById('s-how-0'), light:true, id:'how0'},
   {el:document.getElementById('s-how-1'), light:true, id:'how1'},
   {el:document.getElementById('s-how-2'), light:true, id:'how2'},
-  {el:document.getElementById('s-flow-0'),light:true, id:'flow0'},
-  {el:document.getElementById('s-flow-1'),light:true, id:'flow1'},
-  {el:document.getElementById('s-flow-2'),light:true, id:'flow2'},
   {el:document.getElementById('s-owner'), light:true, id:'owner'},
-  {el:document.getElementById('waitlist'),light:true, id:'waitlist'},
+  {el:document.getElementById('s-live'),  light:false,id:'live'},
 ].filter(s=>s.el);
 
 // ══════════════════════════════════════════
 // JS SCROLL CONTROLLER
 // ══════════════════════════════════════════
 (function(){
-  let curIdx=0, locked=false;
+  let curIdx=0, locked=false, freeScroll=false;
   const COOLDOWN=900;
   const _prog=document.getElementById('page-progress');
   const _flash=document.getElementById('section-flash');
+  const _waitlistEl=document.getElementById('waitlist');
 
   function lockFor(ms){locked=true;setTimeout(()=>locked=false,ms);}
 
@@ -1186,16 +1087,42 @@ const _sections=[
 
   function navigate(down){
     if(locked)return;
+    if(freeScroll){
+      // In free-scroll zone; scroll up past top of waitlist → snap back to live section
+      if(!down && _waitlistEl && window.scrollY <= _waitlistEl.offsetTop + 20){
+        freeScroll=false;
+        goSection(_sections.length-1);
+      }
+      return;
+    }
+    if(down && curIdx===_sections.length-1){
+      // At last snap section (s-live) — scroll down → enter waitlist freely
+      if(_waitlistEl){
+        freeScroll=true;
+        _waitlistEl.scrollIntoView({behavior:'smooth'});
+      }
+      return;
+    }
     goSection(curIdx+(down?1:-1));
   }
 
+  // Observe waitlist to detect if user is there (e.g. via nav link)
+  if(_waitlistEl){
+    new IntersectionObserver(([e])=>{if(e.isIntersecting)freeScroll=true;},{threshold:0.15}).observe(_waitlistEl);
+  }
+
   // Desktop wheel
-  window.addEventListener('wheel',e=>{e.preventDefault();navigate(e.deltaY>0);},{passive:false});
+  window.addEventListener('wheel',e=>{
+    if(freeScroll&&e.deltaY>0)return; // Allow native scroll down in form
+    e.preventDefault();
+    navigate(e.deltaY>0);
+  },{passive:false});
 
   // Mobile touch
   let _ty0=0,_tt0=0;
   document.addEventListener('touchstart',e=>{_ty0=e.touches[0].clientY;_tt0=Date.now();},{passive:true});
   document.addEventListener('touchmove',e=>{
+    if(freeScroll)return; // Allow native scroll in form
     let node=e.target;
     while(node&&node!==document.body){
       const s=getComputedStyle(node);
@@ -1268,20 +1195,20 @@ function updateCounter(count){
 function renderRecentJoiners(data){
   const wrap=document.getElementById('live-recent');
   if(!wrap)return;
-  const named=data.filter(r=>r.name).slice(0,3);
+  const named=data.filter(r=>r.name).slice(0,4);
   if(!named.length)return;
   const cities=['Amsterdam','Rotterdam','Utrecht','Den Haag','Eindhoven','Haarlem'];
-  const list=named.map((r,i)=>{
+  const pills=named.map((r,i)=>{
     const init=(r.name||'?').split(' ').map(n=>n[0]||'').join('').slice(0,2).toUpperCase();
+    const firstName=r.name.split(' ')[0];
     const city=cities[i%cities.length];
-    return `<div class="lr-item">
-      <div class="lr-av">${init}</div>
-      <span class="lr-name">${r.name}</span>
-      <span class="lr-time">${city}</span>
-      <div class="lr-dot"></div>
+    return `<div class="ls-person">
+      <div class="ls-av">${init}</div>
+      <span class="ls-name">${firstName} · ${city}</span>
+      <div class="ls-dot"></div>
     </div>`;
   }).join('');
-  wrap.innerHTML=`<span class="lr-label">Recently joined</span>${list}`;
+  wrap.innerHTML=pills;
 }
 
 (async function fetchWaitlist(){
@@ -1402,7 +1329,7 @@ finalForm.addEventListener('submit',async e=>{
   celebrateJoin(fd.get('name')||'You');
 });
 
-// ── Live counter pulse on input focus
+// ── Live counter pulse on input focus (pulses the big number in s-live)
 ['inp-name','inp-email'].forEach(id=>{
   const inp=document.getElementById(id);
   if(inp) inp.addEventListener('focus',()=>{
@@ -1548,9 +1475,6 @@ function setLang(lang){
   si('#s-how-1 .how-beat-h',t.how1H);si('#s-how-1 .how-beat-p',t.how1P);
   si('#s-how-2 .how-beat-h',t.how2H);si('#s-how-2 .how-beat-p',t.how2P);
   // Flow
-  si('#s-flow-0 h2',t.flow0H);si('#s-flow-0 .flow-beat-copy p',t.flow0P);
-  si('#s-flow-1 h2',t.flow1H);si('#s-flow-1 .flow-beat-copy p',t.flow1P);
-  si('#s-flow-2 h2',t.flow2H);si('#s-flow-2 .flow-beat-copy p',t.flow2P);
   // Owner
   si('.owner-copy .section-kicker',t.ownerKicker);
   si('.owner-copy h2',t.ownerH);
