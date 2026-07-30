@@ -147,7 +147,7 @@ nav.dim .nav-logo{color:var(--bg)}
 /* Billboard coloring utility */
 .w-gold{color:var(--gold)}
 /* Chapter marker */
-.s-chapter{height:100vh;min-height:640px;display:flex;align-items:center;justify-content:center;background:var(--dark);padding:var(--pad-y) var(--pad-x)}
+.s-chapter{height:62vh;min-height:380px;display:flex;align-items:center;justify-content:center;background:var(--dark);padding:var(--pad-y) var(--pad-x)}
 .chapter-inner{text-align:center;max-width:600px}
 .chapter-eyebrow{font-size:10px;letter-spacing:6px;text-transform:uppercase;color:var(--on-dark-mute);margin-bottom:28px}
 .chapter-h{font-family:'DM Serif Display',Georgia,serif;font-size:clamp(28px,5vw,58px);line-height:1.1;color:var(--bg)}
@@ -662,9 +662,9 @@ footer a:hover{color:rgba(237,232,224,.6)}
 <section class="s-beat s-pain-beat" id="s-pain-0">
   <div class="beat-inner two-col">
     <div class="pain-copy-col">
-      <span class="beat-kicker" data-a="up">01 · Client retention</span>
-      <h2 data-a="up" data-d="1">Clients who leave<br><span class="w-gold">without saying why.</span></h2>
-      <p data-a="up" data-d="2">Someone booked, came in, and never came back. Was it the haircut? Did life just get in the way? Right now <span class="w-gold">there's no way to know.</span></p>
+      <span class="beat-kicker" data-a="up">01 · They leave without a word</span>
+      <h2 data-a="up" data-d="1">A client disappears,<br><span class="w-gold">and you never know why.</span></h2>
+      <p data-a="up" data-d="2">They booked. They came. <span class="w-gold">They never came back.</span> The cut? The experience? Someone else? <span class="w-gold">You have no way to find out.</span></p>
       <div class="beat-progress" data-a="up" data-d="3">
         <div class="bp-dot act"></div><div class="bp-dot"></div><div class="bp-dot"></div>
       </div>
@@ -689,9 +689,9 @@ footer a:hover{color:rgba(237,232,224,.6)}
 <section class="s-beat s-pain-beat" id="s-pain-1">
   <div class="beat-inner two-col">
     <div class="pain-copy-col">
-      <span class="beat-kicker" data-a="up">02 · Knowledge loss</span>
-      <h2 data-a="up" data-d="1">The knowledge you should own,<br><span class="w-gold">but never wrote down.</span></h2>
-      <p data-a="up" data-d="2">Your best stylist has 30 clients memorised — their length, their texture, the colour they react to. All of that lives in their head. And if they leave tomorrow, <span class="w-gold">it walks out with them.</span></p>
+      <span class="beat-kicker" data-a="up">02 · The knowledge walks out the door</span>
+      <h2 data-a="up" data-d="1">Everything you know about your clients<br><span class="w-gold">lives in one person's head.</span></h2>
+      <p data-a="up" data-d="2">Length, texture, the colour they react to — <span class="w-gold">thirty clients worth of data,</span> memorised by one stylist. <span class="w-gold">When they leave, so does all of it.</span></p>
       <div class="beat-progress" data-a="up" data-d="3">
         <div class="bp-dot"></div><div class="bp-dot act"></div><div class="bp-dot"></div>
       </div>
@@ -721,9 +721,9 @@ footer a:hover{color:rgba(237,232,224,.6)}
 <section class="s-beat s-pain-beat" id="s-pain-2">
   <div class="beat-inner two-col">
     <div class="pain-copy-col">
-      <span class="beat-kicker" data-a="up">03 · Staff turnover</span>
-      <h2 data-a="up" data-d="1">Your stylist knows the end result.<br><span class="w-gold">Your business should too.</span></h2>
-      <p data-a="up" data-d="2">Your best stylist carries a clear picture of what each client's hair should look like when they leave. That knowledge — built over dozens of appointments — lives in their memory alone. <span class="w-gold">PleromaOS makes sure it lives in your business too.</span></p>
+      <span class="beat-kicker" data-a="up">03 · When they go, clients follow</span>
+      <h2 data-a="up" data-d="1">Your clients are loyal to your stylist.<br><span class="w-gold">Not to your salon.</span></h2>
+      <p data-a="up" data-d="2">That brief in their head — built over years — <span class="w-gold">isn't written down anywhere.</span> So when they move on, clients move on with them.</p>
       <div class="beat-progress" data-a="up" data-d="3">
         <div class="bp-dot"></div><div class="bp-dot"></div><div class="bp-dot act"></div>
       </div>
@@ -1104,6 +1104,10 @@ footer a:hover{color:rgba(237,232,224,.6)}
 <div class="toast-wrap" id="toast-wrap"></div>
 
 <script>
+// Force scroll to top on every load — no browser scroll restoration
+if(history.scrollRestoration) history.scrollRestoration='manual';
+window.scrollTo(0,0);
+
 // ══════════════════════════════════════════
 // INTRO SCREEN
 // ══════════════════════════════════════════
@@ -1597,12 +1601,12 @@ const T={
     hookGap:'PleromaOS gives every client a simple way to show<br>exactly what they have in mind — before they sit down.<br><strong>Your stylist gets a clear brief. Your business keeps the record.</strong>',
     btnGold:'Get Early Access',btnGhost:'See what holds salons back →',scrollCue:'Scroll',
     hookGap:'<span class="hook-gap-long">PleromaOS gives every client a simple way to show exactly what they have in mind — before they sit down.<br></span><strong>Your stylist gets a clear brief. Your business keeps the record.</strong>',
-    pain0Kicker:'01 · Client retention',pain0H:'Clients who leave<br><span class="w-gold">without saying why.</span>',
-    pain0P:'Someone booked, came in, and never came back. Was it the haircut? Did life just get in the way? Right now <span class="w-gold">there\'s no way to know.</span>',
-    pain1Kicker:'02 · Knowledge loss',pain1H:'The knowledge you should own,<br><span class="w-gold">but never wrote down.</span>',
-    pain1P:'Your best stylist has 30 clients memorised — their length, their texture, the colour they react to. All of that lives in their head. And if they leave tomorrow, <span class="w-gold">it walks out with them.</span>',
-    pain2Kicker:'03 · Staff turnover',pain2H:'Your stylist knows the end result.<br><span class="w-gold">Your business should too.</span>',
-    pain2P:'Your best stylist carries a clear picture of what each client\'s hair should look like when they leave. That knowledge — built over dozens of appointments — lives in their memory alone. <span class="w-gold">PleromaOS makes sure it lives in your business too.</span>',
+    pain0Kicker:'01 · They leave without a word',pain0H:'A client disappears,<br><span class="w-gold">and you never know why.</span>',
+    pain0P:'They booked. They came. <span class="w-gold">They never came back.</span> The cut? The experience? Someone else? <span class="w-gold">You have no way to find out.</span>',
+    pain1Kicker:'02 · The knowledge walks out the door',pain1H:'Everything you know about your clients<br><span class="w-gold">lives in one person\'s head.</span>',
+    pain1P:'Length, texture, the colour they react to — <span class="w-gold">thirty clients worth of data,</span> memorised by one stylist. <span class="w-gold">When they leave, so does all of it.</span>',
+    pain2Kicker:'03 · When they go, clients follow',pain2H:'Your clients are loyal to your stylist.<br><span class="w-gold">Not to your salon.</span>',
+    pain2P:'That brief in their head — built over years — <span class="w-gold">isn\'t written down anywhere.</span> So when they move on, clients move on with them.',
     revEye:'Introducing PleromaOS',revH:'It doesn\'t have to<br>start with a guess.',
     revSub:'PleromaOS makes sure your client and your stylist walk into every appointment with the same picture in mind — and keeps that picture on record, forever.',
     revSlogan:'The craft you know. The future you need.',
@@ -1632,12 +1636,12 @@ const T={
     hookGap:'PleromaOS geeft elke klant een eenvoudige manier om te laten zien<br>wat ze in gedachten hebben — vóórdat ze gaan zitten.<br><strong>Jouw stylist krijgt een duidelijke briefing. Jouw bedrijf bewaart het altijd.</strong>',
     btnGold:'Vroeg Toegang',btnGhost:'Zie wat salons tegenhoudt →',scrollCue:'Scroll',
     hookGap:'<span class="hook-gap-long">PleromaOS geeft elke klant een eenvoudige manier om te laten zien wat ze in gedachten hebben — vóórdat ze gaan zitten.<br></span><strong>Jouw stylist krijgt een duidelijke briefing. Jouw bedrijf bewaart het altijd.</strong>',
-    pain0Kicker:'01 · Klantbehoud',pain0H:'Klanten die vertrekken<br><span class="w-gold">zonder te zeggen waarom.</span>',
-    pain0P:'Iemand boekte, kwam langs, en is nooit meer teruggekomen. Was het de knipbeurt? Had het leven gewoon de overhand? <span class="w-gold">Op dit moment is er geen manier om dat te weten.</span>',
-    pain1Kicker:'02 · Kenniserosie',pain1H:'De kennis die van jou zou moeten zijn,<br><span class="w-gold">maar nooit is opgeschreven.</span>',
-    pain1P:'Je beste stylist heeft 30 klanten gememoriseerd — hun lengte, hun structuur, de kleur waar ze op reageren. Dat zit allemaal in hun hoofd. En als ze morgen vertrekken, <span class="w-gold">gaat het mee.</span>',
-    pain2Kicker:'03 · Personeelsverloop',pain2H:'Jouw stylist kent het eindresultaat.<br><span class="w-gold">Jouw bedrijf zou dat ook moeten weten.</span>',
-    pain2P:'Je beste stylist heeft een helder beeld van hoe het haar van elke klant eruit moet zien als ze weggaan. Die kennis — opgebouwd over tientallen afspraken — leeft alleen in hun geheugen. <span class="w-gold">PleromaOS zorgt dat het ook in jouw bedrijf leeft.</span>',
+    pain0Kicker:'01 · Ze gaan zonder een woord',pain0H:'Een klant verdwijnt,<br><span class="w-gold">en je weet nooit waarom.</span>',
+    pain0P:'Ze boekten. Ze kwamen. <span class="w-gold">Ze zijn nooit meer teruggekomen.</span> De knipbeurt? De ervaring? Iemand anders? <span class="w-gold">Je hebt geen manier om erachter te komen.</span>',
+    pain1Kicker:'02 · De kennis loopt de deur uit',pain1H:'Alles wat je weet over je klanten<br><span class="w-gold">leeft in één hoofd.</span>',
+    pain1P:'Lengte, structuur, de kleur waar ze op reageren — <span class="w-gold">dertig klanten aan data,</span> gememoriseerd door één stylist. <span class="w-gold">Als ze vertrekken, gaat alles mee.</span>',
+    pain2Kicker:'03 · Als ze gaan, volgen klanten',pain2H:'Je klanten zijn loyaal aan je stylist.<br><span class="w-gold">Niet aan jouw salon.</span>',
+    pain2P:'Die briefing in hun hoofd — opgebouwd over jaren — <span class="w-gold">staat nergens opgeschreven.</span> Dus als ze verder gaan, gaan klanten mee.',
     revEye:'Maak kennis met PleromaOS',revH:'Het hoeft niet te<br>beginnen met gissen.',
     revSub:'PleromaOS zorgt ervoor dat jouw klant en jouw stylist elke afspraak ingaan met hetzelfde beeld voor ogen — en bewaart dat beeld voor altijd.',
     revSlogan:'Het vakmanschap dat je kent. De toekomst die je nodig hebt.',
