@@ -89,8 +89,6 @@ nav.dim .nav-logo{color:var(--bg)}
 .lang-btn.active{color:var(--gold)}
 .lang-btn:hover:not(.active){color:rgba(237,232,224,.7)}
 .lang-sep{font-size:11px;color:rgba(237,232,224,.2);user-select:none}
-.refresh-btn{background:none;border:none;color:rgba(237,232,224,.3);font-size:17px;cursor:pointer;padding:4px 6px;line-height:1;transition:color .2s,transform .3s;display:flex;align-items:center}
-.refresh-btn:hover{color:var(--gold);transform:rotate(180deg)}
 
 /* ── BASE BEAT SECTION ── */
 .s-beat{
@@ -173,7 +171,7 @@ nav.dim .nav-logo{color:var(--bg)}
 .client-row.gone .c-last{font-style:italic;color:rgba(237,232,224,.15)}
 .c-pref{display:block;font-size:10px;color:rgba(237,232,224,.32);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .client-row.fading .c-pref,.client-row.gone .c-pref{color:rgba(237,232,224,.14)}
-.pvc-profile{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.05);font-size:10px;color:rgba(201,169,110,.55);letter-spacing:.02em;cursor:default}
+.pvc-footer-label{margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.05);font-size:9px;color:rgba(201,169,110,.35);letter-spacing:.08em;text-transform:uppercase;text-align:right}
 .pvis-split{display:grid;grid-template-columns:1fr 1px 1fr;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:20px;overflow:hidden;width:300px}
 .split-col{padding:22px 18px}
 .split-col.empty{background:rgba(0,0,0,.12)}
@@ -488,7 +486,7 @@ nav.dim .nav-logo{color:var(--bg)}
 .success-ring{width:56px;height:56px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;font-size:24px;color:#fff;animation:scaleIn .45s var(--ease)}
 .success h3{font-family:'DM Serif Display',Georgia,serif;font-size:24px;color:var(--dark)}
 .success p{font-size:15px;color:#777}
-.cta-trust{margin-top:32px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;opacity:.25}
+.cta-trust{margin-top:32px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;opacity:.65}
 .cta-trust span{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--dark)}
 .cta-trust .sep{color:#bbb;font-size:14px}
 
@@ -599,7 +597,6 @@ footer a:hover{color:rgba(237,232,224,.6)}
 <nav id="nav">
   <a class="nav-logo" href="#">Pleroma<span class="logo-os">OS</span></a>
   <div class="nav-right">
-    <button class="refresh-btn" onclick="window.location.reload()" title="Refresh page">↺</button>
     <div class="lang-toggle">
       <button class="lang-btn active" data-lang="en" onclick="setLang('en')">EN</button>
       <span class="lang-sep">·</span>
@@ -628,7 +625,6 @@ footer a:hover{color:rgba(237,232,224,.6)}
     <a class="btn-ghost" href="#s-how-0">See how it works →</a>
   </div>
   <div class="scroll-cue">
-    <span>Scroll</span>
     <div class="scroll-line"></div>
   </div>
 </section>
@@ -646,12 +642,12 @@ footer a:hover{color:rgba(237,232,224,.6)}
         <div class="client-row fading"><span class="c-dot"></span><div class="c-body"><div class="c-top"><span class="c-name">Nadia R.</span><span class="c-last">5 weeks ago</span></div><span class="c-pref">Shoulder length · no colour</span></div></div>
         <div class="client-row gone"><span class="c-dot"></span><div class="c-body"><div class="c-top"><span class="c-name">Tariq B.</span><span class="c-last">10 weeks ago</span></div><span class="c-pref">No preferences saved</span></div></div>
         <div class="client-row gone"><span class="c-dot"></span><div class="c-body"><div class="c-top"><span class="c-name">Leila H.</span><span class="c-last">Gone</span></div><span class="c-pref">No preferences saved</span></div></div>
-        <div class="pvc-profile"><span>View full client profiles</span><span>→</span></div>
+        <div class="pvc-footer-label">Preview · PleromaOS dashboard</div>
         <div class="pvc-note">You can't see why clients don't come back.</div>
       </div>
     </div>
     <div class="pain-copy-col">
-      <span class="beat-kicker" data-a="up">01 · The problem</span>
+      <span class="beat-kicker" data-a="up">01 · Client retention</span>
       <h2 data-a="up" data-d="1">Clients who leave<br>without saying why.</h2>
       <p data-a="up" data-d="2">Someone booked, came in, and never came back. Was it the haircut? Did life just get in the way? Right now there's no way to know.</p>
       <div class="beat-progress" data-a="up" data-d="3">
@@ -684,9 +680,9 @@ footer a:hover{color:rgba(237,232,224,.6)}
       </div>
     </div>
     <div class="pain-copy-col">
-      <span class="beat-kicker" data-a="up">02 · The problem</span>
+      <span class="beat-kicker" data-a="up">02 · Knowledge loss</span>
       <h2 data-a="up" data-d="1">The knowledge you should own,<br>but never wrote down.</h2>
-      <p data-a="up" data-d="2">Your best stylist has 30 clients memorised — their length, their texture, the colour they react to. All of that lives in her head. And if she leaves tomorrow, it walks out with her.</p>
+      <p data-a="up" data-d="2">Your best stylist has 30 clients memorised — their length, their texture, the colour they react to. All of that lives in their head. And if they leave tomorrow, it walks out with them.</p>
       <div class="beat-progress" data-a="up" data-d="3">
         <div class="bp-dot"></div><div class="bp-dot act"></div><div class="bp-dot"></div>
       </div>
@@ -710,11 +706,11 @@ footer a:hover{color:rgba(237,232,224,.6)}
         <div class="flow-row"><span class="flow-dot leaving"></span><span class="flow-name">Amira K.</span><span class="flow-dest">→ following Maya</span></div>
         <div class="flow-row"><span class="flow-dot leaving"></span><span class="flow-name">Marco V.</span><span class="flow-dest">→ following Maya</span></div>
         <div class="flow-row unknown-row"><span class="flow-dot unknown"></span><span class="flow-name">Nadia R.</span><span class="flow-dest">→ ?</span></div>
-        <div class="pvc-note">When your stylist leaves, her clients often don't stay.</div>
+        <div class="pvc-note">When your stylist leaves, their clients often don't stay.</div>
       </div>
     </div>
     <div class="pain-copy-col">
-      <span class="beat-kicker" data-a="up">03 · The problem</span>
+      <span class="beat-kicker" data-a="up">03 · Staff turnover</span>
       <h2 data-a="up" data-d="1">Your stylist knows the end result.<br>Your business should too.</h2>
       <p data-a="up" data-d="2">Your best stylist carries a clear picture of what each client's hair should look like when they leave. That knowledge — built over dozens of appointments — lives in their memory alone. PleromaOS makes sure it lives in your business too.</p>
       <div class="beat-progress" data-a="up" data-d="3">
@@ -969,7 +965,7 @@ footer a:hover{color:rgba(237,232,224,.6)}
     <div class="ls-recent" id="live-recent" data-a="fade" data-d="2">
       <!-- populated by JS -->
     </div>
-    <a class="ls-cta-btn mag" href="#waitlist" data-a="up" data-d="3">Claim Your Founding Spot →</a>
+    <a class="ls-cta-btn mag" href="#waitlist" data-a="up" data-d="3">Join the Founding List →</a>
     <p class="ls-fine" data-a="fade" data-d="4">No credit card · No commitment · We reach out personally</p>
   </div>
 </section>
@@ -1056,7 +1052,7 @@ footer a:hover{color:rgba(237,232,224,.6)}
         <span>GDPR Compliant</span><span class="sep">·</span>
         <span>Built in the Netherlands</span><span class="sep">·</span>
         <span>No app to download</span><span class="sep">·</span>
-        <span>No Fresha needed</span>
+        <span>Works with any booking system</span>
       </div>
   </div>
 </section>
@@ -1271,6 +1267,7 @@ const _sections=[
     window.scrollTo({top,behavior:'smooth'});
     lockFor(COOLDOWN);
   }
+  window._snapTo=goSection;
 
   function navigate(down){
     if(locked)return;
@@ -1349,11 +1346,11 @@ const _sections=[
 (function(){
   const wrap=document.createElement('div');
   wrap.className='progress-dots';
-  _sections.forEach(s=>{
+  _sections.forEach((s,i)=>{
     const d=document.createElement('div');
     d.className='pdot-nav'+(s.light?' light':'');
     d.title=s.id;
-    d.addEventListener('click',()=>s.el.scrollIntoView({behavior:'smooth'}));
+    d.addEventListener('click',()=>{ if(window._snapTo)window._snapTo(i); else s.el.scrollIntoView({behavior:'smooth'}); });
     wrap.appendChild(d);
   });
   document.body.appendChild(wrap);
@@ -1573,11 +1570,11 @@ const T={
     hookH1:'Your client and your stylist,<br><em>finally on the same page.</em>',
     hookGap:'PleromaOS gives every client a simple way to show<br>exactly what they have in mind — before they sit down.<br><strong>Your stylist gets a clear brief. Your business keeps the record.</strong>',
     btnGold:'Get Early Access',btnGhost:'See how it works →',scrollCue:'Scroll',
-    pain0Kicker:'01 · The problem',pain0H:'Clients who leave<br>without saying why.',
+    pain0Kicker:'01 · Client retention',pain0H:'Clients who leave<br>without saying why.',
     pain0P:'Someone booked, came in, and never came back. Was it the haircut? Did life just get in the way? Right now there\'s no way to know.',
-    pain1Kicker:'02 · The problem',pain1H:'The knowledge you should own,<br>but never wrote down.',
-    pain1P:'Your best stylist has 30 clients memorised — their length, their texture, the colour they react to. All of that lives in her head. And if she leaves tomorrow, it walks out with her.',
-    pain2Kicker:'03 · The problem',pain2H:'Your stylist knows the end result.<br>Your business should too.',
+    pain1Kicker:'02 · Knowledge loss',pain1H:'The knowledge you should own,<br>but never wrote down.',
+    pain1P:'Your best stylist has 30 clients memorised — their length, their texture, the colour they react to. All of that lives in their head. And if they leave tomorrow, it walks out with them.',
+    pain2Kicker:'03 · Staff turnover',pain2H:'Your stylist knows the end result.<br>Your business should too.',
     pain2P:'Your best stylist carries a clear picture of what each client\'s hair should look like when they leave. That knowledge — built over dozens of appointments — lives in their memory alone. PleromaOS makes sure it lives in your business too.',
     revEye:'Introducing PleromaOS',revH:'It doesn\'t have to<br>start with a guess.',
     revSub:'PleromaOS makes sure your client and your stylist walk into every appointment with the same picture in mind — and keeps that picture on record, forever.',
@@ -1598,7 +1595,7 @@ const T={
     lcLabel:'Founding spots remaining',
     submitBtn:'Claim My Spot →',finePrint:'No credit card. No commitment. We reach out personally.',
     successH:'You\'re on the list.',successP:'We\'ll be in touch before we go live.',
-    trust:['GDPR Compliant','Built in the Netherlands','No App Download','No Fresha Required'],
+    trust:['GDPR Compliant','Built in the Netherlands','No App Download','Works with any booking system'],
     footerCopy:'© 2026 PleromaOS · Amsterdam, Netherlands',footerPrivacy:'Privacy Policy'
   },
   nl:{
@@ -1607,12 +1604,12 @@ const T={
     hookH1:'Jouw klant en jouw stylist,<br><em>eindelijk op één lijn.</em>',
     hookGap:'PleromaOS geeft elke klant een eenvoudige manier om te laten zien<br>wat ze in gedachten hebben — vóórdat ze gaan zitten.<br><strong>Jouw stylist krijgt een duidelijke briefing. Jouw bedrijf bewaart het altijd.</strong>',
     btnGold:'Vroeg Toegang',btnGhost:'Zo werkt het →',scrollCue:'Scroll',
-    pain0Kicker:'01 · Het probleem',pain0H:'Klanten die vertrekken<br>zonder te zeggen waarom.',
+    pain0Kicker:'01 · Klantbehoud',pain0H:'Klanten die vertrekken<br>zonder te zeggen waarom.',
     pain0P:'Iemand boekte, kwam langs, en is nooit meer teruggekomen. Was het de knipbeurt? Had het leven gewoon de overhand? Op dit moment is er geen manier om dat te weten.',
-    pain1Kicker:'02 · Het probleem',pain1H:'De kennis die van jou zou moeten zijn,<br>maar nooit is opgeschreven.',
-    pain1P:'Je beste stylist heeft 30 klanten in haar hoofd — hun lengte, hun structuur, de kleur waar ze op reageren. Dat zit allemaal in haar geheugen. En als ze morgen vertrekt, gaat het met haar mee.',
-    pain2Kicker:'03 · Het probleem',pain2H:'Jouw stylist kent het eindresultaat.<br>Jouw bedrijf zou dat ook moeten weten.',
-    pain2P:'Je beste stylist heeft een helder beeld van hoe het haar van elke klant eruit moet zien als ze weggaan. Die kennis — opgebouwd over tientallen afspraken — leeft alleen in haar geheugen. PleromaOS zorgt dat het ook in jouw bedrijf leeft.',
+    pain1Kicker:'02 · Kenniserosie',pain1H:'De kennis die van jou zou moeten zijn,<br>maar nooit is opgeschreven.',
+    pain1P:'Je beste stylist heeft 30 klanten gememoriseerd — hun lengte, hun structuur, de kleur waar ze op reageren. Dat zit allemaal in hun hoofd. En als ze morgen vertrekken, gaat het mee.',
+    pain2Kicker:'03 · Personeelsverloop',pain2H:'Jouw stylist kent het eindresultaat.<br>Jouw bedrijf zou dat ook moeten weten.',
+    pain2P:'Je beste stylist heeft een helder beeld van hoe het haar van elke klant eruit moet zien als ze weggaan. Die kennis — opgebouwd over tientallen afspraken — leeft alleen in hun geheugen. PleromaOS zorgt dat het ook in jouw bedrijf leeft.',
     revEye:'Maak kennis met PleromaOS',revH:'Het hoeft niet te<br>beginnen met gissen.',
     revSub:'PleromaOS zorgt ervoor dat jouw klant en jouw stylist elke afspraak ingaan met hetzelfde beeld voor ogen — en bewaart dat beeld voor altijd.',
     revSlogan:'Het vakmanschap dat je kent. De toekomst die je nodig hebt.',
@@ -1632,7 +1629,7 @@ const T={
     lcLabel:'Oprichtingsplekken beschikbaar',
     submitBtn:'Reserveer mijn plek →',finePrint:'Geen creditcard. Geen verplichtingen. We nemen persoonlijk contact op.',
     successH:'Je staat op de lijst.',successP:'We nemen contact op voordat we live gaan.',
-    trust:['AVG-compliant','Gebouwd in Nederland','Geen App Downloaden','Geen Fresha Vereist'],
+    trust:['AVG-compliant','Gebouwd in Nederland','Geen App Downloaden','Werkt met elk boekingssysteem'],
     footerCopy:'© 2026 PleromaOS · Amsterdam, Nederland',footerPrivacy:'Privacybeleid'
   }
 };
