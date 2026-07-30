@@ -139,9 +139,9 @@ nav.dim .nav-logo{color:var(--bg)}
 .btn-gold:hover{background:var(--gold-dark);transform:translateY(-2px);box-shadow:0 14px 40px rgba(201,169,110,.4)}
 .btn-ghost{color:rgba(237,232,224,.75);font-size:14px;text-decoration:none;display:flex;align-items:center;gap:6px;transition:color .2s}
 .btn-ghost:hover{color:var(--bg)}
-.scroll-cue{position:absolute;bottom:40px;left:12vw;display:flex;align-items:center;gap:14px;opacity:0;animation:fadeUp .9s 1.4s var(--ease) forwards}
+.scroll-cue{position:absolute;bottom:40px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:10px;opacity:0;animation:fadeUp .9s 1.4s var(--ease) forwards}
 .scroll-cue span{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:rgba(237,232,224,.55)}
-.scroll-line{width:1px;height:48px;background:linear-gradient(to bottom,transparent,rgba(201,169,110,.6));animation:pulse 2.4s ease-in-out infinite}
+.scroll-line{width:1px;height:48px;background:linear-gradient(to bottom,rgba(201,169,110,.5),transparent);animation:pulse 2.4s ease-in-out infinite}
 
 /* ── PAIN BEAT SECTIONS ── */
 .s-pain-beat{background:var(--dark)}
@@ -166,9 +166,14 @@ nav.dim .nav-logo{color:var(--bg)}
 .client-row.gone .c-dot{background:rgba(255,255,255,.1)}
 .client-row.fading{opacity:.65}
 .client-row.gone{opacity:.3}
-.c-name{font-size:13px;color:var(--bg);flex:1;font-weight:500}
+.c-body{flex:1;min-width:0}
+.c-top{display:flex;justify-content:space-between;align-items:baseline;gap:6px}
+.c-name{font-size:13px;color:var(--bg);font-weight:500;flex-shrink:0}
 .c-last{font-size:11px;color:var(--on-dark-faint);white-space:nowrap}
 .client-row.gone .c-last{font-style:italic;color:rgba(237,232,224,.15)}
+.c-pref{display:block;font-size:10px;color:rgba(237,232,224,.32);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.client-row.fading .c-pref,.client-row.gone .c-pref{color:rgba(237,232,224,.14)}
+.pvc-profile{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.05);font-size:10px;color:rgba(201,169,110,.55);letter-spacing:.02em;cursor:default}
 .pvis-split{display:grid;grid-template-columns:1fr 1px 1fr;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:20px;overflow:hidden;width:300px}
 .split-col{padding:22px 18px}
 .split-col.empty{background:rgba(0,0,0,.12)}
@@ -536,20 +541,27 @@ footer a:hover{color:rgba(237,232,224,.6)}
   .two-col,.beat-inner{grid-template-columns:1fr}
   .pain-vis-col{justify-content:center}
   .pain-copy-col p{max-width:100%}
+  .pvis-card,.pvis-split{width:100%;max-width:300px;margin:0 auto}
   footer{flex-direction:column;text-align:center}
+}
+/* Mobile: disable snap scroll layout constraints so natural scroll works */
+@media(max-width:768px){
+  .s-beat{height:auto;min-height:100vh;min-height:100svh;overflow:visible}
+  .s-live{height:auto;min-height:100vh;min-height:100svh}
+  .s-reveal{height:auto;min-height:100vh;min-height:100svh}
+  .progress-dots{display:none}
 }
 @media(max-width:600px){
   .nav-btn{padding:9px 18px;font-size:12px}
   .nav-right{gap:10px}
   .s-hook{align-items:flex-start;text-align:left}
-  .hook-h1{letter-spacing:-1px;font-size:clamp(36px,10vw,56px)}
+  .hook-h1{letter-spacing:-1px;font-size:clamp(32px,9vw,52px)}
   .hook-gap{font-size:15px;margin-bottom:40px}
   .hook-btns{flex-direction:column;align-items:stretch;width:100%;max-width:360px}
   .btn-gold{width:100%;text-align:center;padding:15px 32px;font-size:14px}
-  .scroll-cue{left:var(--pad-x)}
-  .s-beat{padding:72px 20px}
-  .beat-inner{gap:32px}
-  .pvis-card,.pvis-split{width:100%;max-width:300px;margin:0 auto}
+  .s-beat{padding:64px 20px 48px}
+  .beat-inner{gap:28px}
+  .pvis-card,.pvis-split{width:100%}
   .pain-vis-col{min-height:0}
   .how-beat-p{font-size:15px}
   .ls-big-num{letter-spacing:-3px}
@@ -559,12 +571,16 @@ footer a:hover{color:rgba(237,232,224,.6)}
   .email-form{max-width:100%}
   .choices{gap:8px}
   .ch{min-width:100%;max-width:100%}
-  .progress-dots{right:6px}
   .toast-wrap{bottom:72px;left:12px}
   .toast{max-width:220px;min-width:160px}
   .s-cta{padding:56px 20px}
   footer{gap:10px}
   .dm-kpi-val{font-size:22px}
+  .owner-phones-wrap{padding:48px 0 32px}
+  .phones-row{gap:8px}
+  .ph-frame{width:110px;border-radius:20px}
+  .ph-label-wrap{width:110px}
+  .owner-tagline{font-size:13px;padding:0 16px}
 }
 </style>
 </head>
@@ -625,11 +641,12 @@ footer a:hover{color:rgba(237,232,224,.6)}
     <div class="pain-vis-col" data-a="right">
       <div class="pvis-card">
         <div class="pvc-label">Client retention · Last 90 days</div>
-        <div class="client-row active"><span class="c-dot"></span><span class="c-name">Amira K.</span><span class="c-last">3 days ago</span></div>
-        <div class="client-row active"><span class="c-dot"></span><span class="c-name">Nadia R.</span><span class="c-last">2 weeks ago</span></div>
-        <div class="client-row fading"><span class="c-dot"></span><span class="c-name">Sofia M.</span><span class="c-last">6 weeks ago</span></div>
-        <div class="client-row gone"><span class="c-dot"></span><span class="c-name">Yasmine B.</span><span class="c-last">11 weeks ago</span></div>
-        <div class="client-row gone"><span class="c-dot"></span><span class="c-name">Leila H.</span><span class="c-last">Gone</span></div>
+        <div class="client-row active"><span class="c-dot"></span><div class="c-body"><div class="c-top"><span class="c-name">Amira K.</span><span class="c-last">3 days ago</span></div><span class="c-pref">Medium bob · no heat · warm tones</span></div></div>
+        <div class="client-row active"><span class="c-dot"></span><div class="c-body"><div class="c-top"><span class="c-name">Marco V.</span><span class="c-last">1 week ago</span></div><span class="c-pref">High fade · skin on sides · 2cm top</span></div></div>
+        <div class="client-row fading"><span class="c-dot"></span><div class="c-body"><div class="c-top"><span class="c-name">Nadia R.</span><span class="c-last">5 weeks ago</span></div><span class="c-pref">Shoulder length · no colour</span></div></div>
+        <div class="client-row gone"><span class="c-dot"></span><div class="c-body"><div class="c-top"><span class="c-name">Tariq B.</span><span class="c-last">10 weeks ago</span></div><span class="c-pref">No preferences saved</span></div></div>
+        <div class="client-row gone"><span class="c-dot"></span><div class="c-body"><div class="c-top"><span class="c-name">Leila H.</span><span class="c-last">Gone</span></div><span class="c-pref">No preferences saved</span></div></div>
+        <div class="pvc-profile"><span>View full client profiles</span><span>→</span></div>
         <div class="pvc-note">You can't see why clients don't come back.</div>
       </div>
     </div>
@@ -654,9 +671,9 @@ footer a:hover{color:rgba(237,232,224,.6)}
         <div class="split-col">
           <div class="split-lbl">What your stylist knows</div>
           <div class="split-item">Amira · no bleach, ever</div>
-          <div class="split-item">Nadia · 2cm max</div>
-          <div class="split-item">Sofia · hates the dryer</div>
-          <div class="split-item">Yasmine · warm tones only</div>
+          <div class="split-item">Marco · high fade, 2cm top</div>
+          <div class="split-item">Nadia · no heat styling</div>
+          <div class="split-item">Tariq · sensitive scalp</div>
           <div class="split-item">+43 more clients</div>
         </div>
         <div class="split-divider"></div>
@@ -691,8 +708,8 @@ footer a:hover{color:rgba(237,232,224,.6)}
           <span class="staff-badge">Resigned</span>
         </div>
         <div class="flow-row"><span class="flow-dot leaving"></span><span class="flow-name">Amira K.</span><span class="flow-dest">→ following Maya</span></div>
-        <div class="flow-row"><span class="flow-dot leaving"></span><span class="flow-name">Nadia R.</span><span class="flow-dest">→ following Maya</span></div>
-        <div class="flow-row unknown-row"><span class="flow-dot unknown"></span><span class="flow-name">Sofia M.</span><span class="flow-dest">→ ?</span></div>
+        <div class="flow-row"><span class="flow-dot leaving"></span><span class="flow-name">Marco V.</span><span class="flow-dest">→ following Maya</span></div>
+        <div class="flow-row unknown-row"><span class="flow-dot unknown"></span><span class="flow-name">Nadia R.</span><span class="flow-dest">→ ?</span></div>
         <div class="pvc-note">When your stylist leaves, her clients often don't stay.</div>
       </div>
     </div>
@@ -871,7 +888,7 @@ footer a:hover{color:rgba(237,232,224,.6)}
               <div class="ph-apt-row" id="apt-0"><span class="ph-apt-time">9:00</span><div class="ph-dot ok"></div><div class="ph-apt-info"><div class="ph-apt-name">Amira K.</div><div class="ph-apt-who">Maya</div></div><span class="ph-apt-badge brief">Brief ready</span></div>
               <div class="ph-apt-row" id="apt-1"><span class="ph-apt-time">10:30</span><div class="ph-dot ok"></div><div class="ph-apt-info"><div class="ph-apt-name">Nadia R.</div><div class="ph-apt-who">Sophie</div></div><span class="ph-apt-badge brief">Brief ready</span></div>
               <div class="ph-apt-row" id="apt-2"><span class="ph-apt-time">11:15</span><div class="ph-dot pend"></div><div class="ph-apt-info"><div class="ph-apt-name">Tariq V.</div><div class="ph-apt-who">Daan</div></div><span class="ph-apt-badge wait">Awaiting</span></div>
-              <div class="ph-apt-row" id="apt-3"><span class="ph-apt-time">13:00</span><div class="ph-dot miss"></div><div class="ph-apt-info"><div class="ph-apt-name">Sofia M.</div><div class="ph-apt-who">Maya</div></div><span class="ph-apt-badge wait">No brief</span></div>
+              <div class="ph-apt-row" id="apt-3"><span class="ph-apt-time">13:00</span><div class="ph-dot miss"></div><div class="ph-apt-info"><div class="ph-apt-name">Leon K.</div><div class="ph-apt-who">Maya</div></div><span class="ph-apt-badge wait">No brief</span></div>
               <div class="ph-apt-row" id="apt-4"><span class="ph-apt-time">14:30</span><div class="ph-dot ok"></div><div class="ph-apt-info"><div class="ph-apt-name">Yasmine B.</div><div class="ph-apt-who">Sophie</div></div><span class="ph-apt-badge brief">Brief ready</span></div>
               <div class="ph-apt-row" id="apt-5"><span class="ph-apt-time">16:00</span><div class="ph-dot pend"></div><div class="ph-apt-info"><div class="ph-apt-name">Leila H.</div><div class="ph-apt-who">Daan</div></div><span class="ph-apt-badge wait">Awaiting</span></div>
               <div class="ph-stats">
@@ -902,9 +919,9 @@ footer a:hover{color:rgba(237,232,224,.6)}
                 <div class="ph-risk-action">→ Reach out now</div>
               </div>
               <div class="ph-risk-card" id="risk-1">
-                <div class="ph-risk-top"><div class="ph-av med">S</div><span class="ph-risk-name">Sofia M.</span><span class="ph-risk-badge med">Soon</span></div>
+                <div class="ph-risk-top"><div class="ph-av med">M</div><span class="ph-risk-name">Marco V.</span><span class="ph-risk-badge med">Soon</span></div>
                 <div class="ph-risk-sub">6 weeks since last visit · No preference logged</div>
-                <div class="ph-risk-action">→ Add her preferences</div>
+                <div class="ph-risk-action">→ Add his preferences</div>
               </div>
               <span class="ph-section-lbl">Returning this week</span>
               <div class="ph-return-row"><div class="ph-av">A</div><span class="ph-sname" style="font-size:7.5px">Amira K.</span><span class="ph-return-status">On time ↩</span></div>
@@ -1214,13 +1231,20 @@ const _sections=[
 // JS SCROLL CONTROLLER
 // ══════════════════════════════════════════
 (function(){
-  let curIdx=0, locked=false, freeScroll=false;
-  const COOLDOWN=900;
+  // Disable snap on mobile/small screens — natural scroll only
+  if(window.matchMedia('(max-width:768px),(max-height:620px)').matches) return;
+
+  let curIdx=0, locked=false, freeScroll=false, navigating=false;
+  const COOLDOWN=1100;
   const _prog=document.getElementById('page-progress');
   const _flash=document.getElementById('section-flash');
   const _waitlistEl=document.getElementById('waitlist');
+  const _liveEl=document.getElementById('s-live');
 
-  function lockFor(ms){locked=true;setTimeout(()=>locked=false,ms);}
+  function lockFor(ms){
+    locked=true;navigating=true;
+    setTimeout(()=>{locked=false;navigating=false;},ms);
+  }
 
   function fireTransition(){
     _prog.classList.remove('running','fade');
@@ -1250,42 +1274,48 @@ const _sections=[
 
   function navigate(down){
     if(locked)return;
-    if(freeScroll){
-      // In free-scroll zone; scroll up past top of waitlist → snap back to live section
-      if(!down && _waitlistEl && window.scrollY <= _waitlistEl.offsetTop + 20){
-        freeScroll=false;
-        goSection(_sections.length-1);
-      }
-      return;
-    }
+    if(freeScroll) return; // Full native scroll in waitlist — reset handled by liveEl observer
     if(down && curIdx===_sections.length-1){
-      // At last snap section (s-live) — scroll down → enter waitlist freely
       if(_waitlistEl){
         freeScroll=true;
         _waitlistEl.scrollIntoView({behavior:'smooth'});
+        lockFor(COOLDOWN);
       }
       return;
     }
     goSection(curIdx+(down?1:-1));
   }
 
-  // Observe waitlist to detect if user is there (e.g. via nav link)
-  if(_waitlistEl){
-    new IntersectionObserver(([e])=>{if(e.isIntersecting)freeScroll=true;},{threshold:0.15}).observe(_waitlistEl);
+  // When s-live comes back into view (user scrolled up), reset freeScroll
+  if(_liveEl){
+    new IntersectionObserver(([e])=>{
+      if(e.isIntersecting&&freeScroll){freeScroll=false;curIdx=_sections.length-1;}
+    },{threshold:0.45}).observe(_liveEl);
   }
 
-  // Desktop wheel
+  // Waitlist entry — only trigger if genuinely scrolled there (not during nav)
+  if(_waitlistEl){
+    new IntersectionObserver(([e])=>{
+      if(e.isIntersecting&&!navigating)freeScroll=true;
+    },{threshold:0.3}).observe(_waitlistEl);
+  }
+
+  // Wheel — debounced, full native scroll in freeScroll
+  let _wLast=0;
   window.addEventListener('wheel',e=>{
-    if(freeScroll&&e.deltaY>0)return; // Allow native scroll down in form
+    if(freeScroll)return;
     e.preventDefault();
+    const now=Date.now();
+    if(now-_wLast<80)return;
+    _wLast=now;
     navigate(e.deltaY>0);
   },{passive:false});
 
-  // Mobile touch
+  // Touch
   let _ty0=0,_tt0=0;
   document.addEventListener('touchstart',e=>{_ty0=e.touches[0].clientY;_tt0=Date.now();},{passive:true});
   document.addEventListener('touchmove',e=>{
-    if(freeScroll)return; // Allow native scroll in form
+    if(freeScroll)return;
     let node=e.target;
     while(node&&node!==document.body){
       const s=getComputedStyle(node);
@@ -1295,13 +1325,15 @@ const _sections=[
     e.preventDefault();
   },{passive:false});
   document.addEventListener('touchend',e=>{
+    if(freeScroll)return;
     const dy=_ty0-e.changedTouches[0].clientY;
     const dt=Date.now()-_tt0;
     if(Math.abs(dy)>40||Math.abs(dy)/dt>0.4)navigate(dy>0);
   },{passive:true});
 
-  // Sync curIdx on intersection
+  // Sync curIdx — skip during programmatic navigation
   const syncObs=new IntersectionObserver(entries=>{
+    if(navigating)return;
     entries.forEach(e=>{
       if(!e.isIntersecting)return;
       const i=_sections.findIndex(s=>s.el===e.target);
