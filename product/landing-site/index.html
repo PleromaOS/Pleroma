@@ -220,12 +220,13 @@ nav.dim .nav-logo{color:var(--bg)}
   transition:background 1.6s var(--ease2);
 }
 .s-reveal.lit{background:var(--bg)}
-.rev-eye{font-size:10px;letter-spacing:6px;text-transform:uppercase;color:var(--teal);font-weight:700;margin-bottom:32px}
+.rev-eye{font-size:10px;letter-spacing:6px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:32px;animation:goldGlow 2.4s ease-in-out infinite,floatY 3.2s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){.rev-eye,.rev-slogan{animation:none}}
 .rev-h{font-family:'DM Serif Display',Georgia,serif;font-size:clamp(32px,5.5vw,66px);line-height:1.1;max-width:620px;color:var(--bg);margin-bottom:24px;transition:color 1.6s var(--ease2)}
 .s-reveal.lit .rev-h{color:var(--dark)}
 .rev-sub{font-size:19px;color:var(--on-dark);max-width:460px;line-height:1.75;transition:color 1.6s var(--ease2)}
 .s-reveal.lit .rev-sub{color:#555}
-.rev-slogan{margin-top:48px;font-size:13px;letter-spacing:4px;text-transform:uppercase;color:var(--teal);font-weight:700;opacity:1}
+.rev-slogan{margin-top:48px;font-size:13px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);font-weight:700;opacity:1;animation:goldGlow 3s ease-in-out infinite .6s,sloganAttention 4s ease-in-out infinite 1s}
 
 /* ── HOW BEAT SECTIONS ── */
 .s-how-beat{background:var(--bg2)}
@@ -548,6 +549,9 @@ footer a:hover{color:rgba(237,232,224,.6)}
 @keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
 @keyframes pulse{0%,100%{opacity:.15;transform:scaleY(1)}50%{opacity:1;transform:scaleY(1.2)}}
 @keyframes scaleIn{from{transform:scale(.3);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes goldGlow{0%,100%{text-shadow:0 0 14px rgba(201,169,110,.35),0 0 28px rgba(201,169,110,.15)}50%{text-shadow:0 0 26px rgba(201,169,110,.8),0 0 52px rgba(201,169,110,.45),0 0 80px rgba(201,169,110,.2)}}
+@keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@keyframes sloganAttention{0%,100%{letter-spacing:4px;opacity:.9}50%{letter-spacing:5px;opacity:1}}
 
 /* ── SECTION KICKER (shared) ── */
 .section-kicker{font-size:10px;letter-spacing:5px;text-transform:uppercase;color:var(--teal);margin-bottom:24px;display:block}
@@ -722,7 +726,7 @@ footer a:hover{color:rgba(237,232,224,.6)}
   <div class="beat-inner two-col">
     <div class="pain-copy-col">
       <span class="beat-kicker" data-a="up">03 · When they go, clients follow</span>
-      <h2 data-a="up" data-d="1">Your clients are loyal to your stylist.<br><span class="w-gold">Not to your salon.</span></h2>
+      <h2 data-a="up" data-d="1">Your stylist knows the end result.<br><span class="w-gold">Your business should too.</span></h2>
       <p data-a="up" data-d="2">That brief in their head — built over years — <span class="w-gold">isn't written down anywhere.</span> So when they move on, clients move on with them.</p>
       <div class="beat-progress" data-a="up" data-d="3">
         <div class="bp-dot"></div><div class="bp-dot"></div><div class="bp-dot act"></div>
@@ -1605,7 +1609,7 @@ const T={
     pain0P:'They booked. They came. <span class="w-gold">They never came back.</span> The cut? The experience? Someone else? <span class="w-gold">You have no way to find out.</span>',
     pain1Kicker:'02 · The knowledge walks out the door',pain1H:'Everything you know about your clients<br><span class="w-gold">lives in one person\'s head.</span>',
     pain1P:'Length, texture, the colour they react to — <span class="w-gold">thirty clients worth of data,</span> memorised by one stylist. <span class="w-gold">When they leave, so does all of it.</span>',
-    pain2Kicker:'03 · When they go, clients follow',pain2H:'Your clients are loyal to your stylist.<br><span class="w-gold">Not to your salon.</span>',
+    pain2Kicker:'03 · When they go, clients follow',pain2H:'Your stylist knows the end result.<br><span class="w-gold">Your business should too.</span>',
     pain2P:'That brief in their head — built over years — <span class="w-gold">isn\'t written down anywhere.</span> So when they move on, clients move on with them.',
     revEye:'Introducing PleromaOS',revH:'It doesn\'t have to<br>start with a guess.',
     revSub:'PleromaOS makes sure your client and your stylist walk into every appointment with the same picture in mind — and keeps that picture on record, forever.',
@@ -1640,7 +1644,7 @@ const T={
     pain0P:'Ze boekten. Ze kwamen. <span class="w-gold">Ze zijn nooit meer teruggekomen.</span> De knipbeurt? De ervaring? Iemand anders? <span class="w-gold">Je hebt geen manier om erachter te komen.</span>',
     pain1Kicker:'02 · De kennis loopt de deur uit',pain1H:'Alles wat je weet over je klanten<br><span class="w-gold">leeft in één hoofd.</span>',
     pain1P:'Lengte, structuur, de kleur waar ze op reageren — <span class="w-gold">dertig klanten aan data,</span> gememoriseerd door één stylist. <span class="w-gold">Als ze vertrekken, gaat alles mee.</span>',
-    pain2Kicker:'03 · Als ze gaan, volgen klanten',pain2H:'Je klanten zijn loyaal aan je stylist.<br><span class="w-gold">Niet aan jouw salon.</span>',
+    pain2Kicker:'03 · Als ze gaan, volgen klanten',pain2H:'Jouw stylist kent het eindresultaat.<br><span class="w-gold">Jouw bedrijf zou dat ook moeten weten.</span>',
     pain2P:'Die briefing in hun hoofd — opgebouwd over jaren — <span class="w-gold">staat nergens opgeschreven.</span> Dus als ze verder gaan, gaan klanten mee.',
     revEye:'Maak kennis met PleromaOS',revH:'Het hoeft niet te<br>beginnen met gissen.',
     revSub:'PleromaOS zorgt ervoor dat jouw klant en jouw stylist elke afspraak ingaan met hetzelfde beeld voor ogen — en bewaart dat beeld voor altijd.',
