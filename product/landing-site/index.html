@@ -486,58 +486,51 @@ nav.dim .nav-logo{color:var(--bg)}
 .ph-home-line{width:30px;height:3px;border-radius:100px;background:rgba(255,255,255,.15)}
 @keyframes dotPend{0%,100%{opacity:1}50%{opacity:.3}}
 
-/* ── S13: LIVE COUNTER SECTION ── */
+/* ── S6: DESIGN PARTNER CTA ── */
 .s-live{
   height:100vh;min-height:640px;
   display:flex;align-items:center;justify-content:center;
   padding:var(--pad-y) var(--pad-x);
-  background:var(--teal);position:relative;overflow:hidden;
+  background:var(--dark);position:relative;overflow:hidden;
 }
-.s-live::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 70% at 50% 40%,rgba(255,255,255,.07) 0%,transparent 65%);pointer-events:none}
-.live-section-inner{max-width:560px;width:100%;text-align:center;position:relative;z-index:1}
-.ls-eye{font-size:10px;letter-spacing:6px;text-transform:uppercase;color:rgba(201,169,110,.8);margin-bottom:36px;display:block}
-.ls-big-num{font-family:'DM Serif Display',Georgia,serif;font-size:clamp(96px,16vw,168px);line-height:.88;color:#fff;letter-spacing:-5px;transition:transform .3s var(--ease)}
-.ls-big-num.pulse{transform:scale(1.04)}
-.ls-of{font-size:14px;color:rgba(255,255,255,.4);margin-top:16px;letter-spacing:.5px}
-.ls-bar-track{height:3px;background:rgba(255,255,255,.1);border-radius:100px;overflow:hidden;margin:28px auto 40px;max-width:180px}
-.ls-bar-fill{height:100%;background:var(--gold);border-radius:100px;transition:width 1.6s var(--ease);width:0%}
-.ls-recent{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:52px;min-height:36px}
-.ls-person{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:100px;padding:7px 14px 7px 8px}
-.ls-av{width:22px;height:22px;border-radius:50%;background:rgba(201,169,110,.15);border:1px solid rgba(201,169,110,.28);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--gold);flex-shrink:0;font-family:'DM Serif Display',Georgia,serif}
-.ls-name{font-size:11.5px;color:rgba(255,255,255,.78);font-weight:500}
-.ls-dot{width:5px;height:5px;border-radius:50%;background:#22d3a0;flex-shrink:0;margin-left:4px}
-.ls-cta-btn{display:inline-flex;align-items:center;background:var(--gold);color:var(--dark);padding:18px 52px;border-radius:100px;font-size:16px;font-weight:700;text-decoration:none;transition:background .2s,transform .15s,box-shadow .2s}
-.ls-cta-btn:hover{background:var(--gold-dark);transform:translateY(-2px);box-shadow:0 14px 40px rgba(201,169,110,.28)}
-.ls-fine{font-size:12px;color:rgba(255,255,255,.28);margin-top:20px}
+.pt-inner{max-width:520px;width:100%;text-align:center;position:relative;z-index:1}
+.pt-eye{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:28px;display:block}
+.pt-h{font-family:'DM Serif Display',Georgia,serif;font-size:clamp(26px,4vw,42px);line-height:1.15;color:#fff;margin-bottom:20px}
+.pt-h .w-gold{color:var(--gold);font-style:italic}
+.pt-sub{font-size:15px;line-height:1.65;color:rgba(237,232,224,.72);max-width:380px;margin:0 auto 36px}
+.pt-ctas{display:flex;flex-direction:column;align-items:center;gap:12px}
+.pt-btn-primary{display:inline-flex;align-items:center;gap:10px;background:var(--gold);color:var(--dark);padding:17px 36px;border-radius:100px;font-size:15px;font-weight:700;text-decoration:none;transition:background .2s,transform .15s;font-family:'DM Sans',sans-serif;width:100%;max-width:320px;justify-content:center;box-sizing:border-box}
+.pt-btn-primary:hover{background:#b8924e;transform:translateY(-2px)}
+.pt-confirm{font-size:12px;color:rgba(237,232,224,.75);margin:0}
+.pt-or{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:rgba(201,169,110,.65);margin:4px 0}
+.pt-btn-secondary{display:inline-flex;align-items:center;justify-content:center;color:var(--gold);border:1.5px solid var(--gold);background:transparent;padding:14px 32px;border-radius:100px;font-size:13px;font-weight:700;text-decoration:none;transition:background .2s;font-family:'DM Sans',sans-serif;width:100%;max-width:320px;box-sizing:border-box}
+.pt-btn-secondary:hover{background:rgba(201,169,110,.08)}
 
-/* ── S14: WAITLIST CTA ── */
+/* ── S7: WAITLIST FALLBACK ── */
 .s-cta{
   min-height:100vh;height:auto;
   display:flex;align-items:center;justify-content:center;
   padding:var(--pad-y) var(--pad-x);
   background:var(--bg);position:relative;
 }
-.s-cta::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 50% 100%,rgba(45,74,53,.07) 0%,transparent 70%);pointer-events:none}
-.cta-center{max-width:540px;width:100%;position:relative;z-index:1}
-
-/* Live panel */
-.cta-live-panel{display:flex;flex-direction:column;gap:24px;padding-top:8px}
-.live-counter-stage{padding:32px 28px;background:#fff;border:1px solid rgba(0,0,0,.07);border-radius:24px;box-shadow:0 8px 40px rgba(0,0,0,.06)}
-.lc-label{font-size:10px;letter-spacing:5px;text-transform:uppercase;color:var(--teal);margin-bottom:16px;display:block}
-.lc-number{font-family:'DM Serif Display',Georgia,serif;font-size:80px;line-height:1;color:var(--dark);letter-spacing:-3px;transition:transform .3s var(--ease)}
-.lc-number.pulse{transform:scale(1.06)}
-.lc-sub{font-size:13px;color:#aaa;margin:8px 0 20px;letter-spacing:.5px}
-.lc-bar-track{height:4px;background:rgba(45,74,53,.08);border-radius:100px;overflow:hidden;margin-bottom:6px}
-.lc-bar-fill{height:100%;background:var(--teal);border-radius:100px;transition:width 1.6s var(--ease);width:0%}
-.lc-bar-ends{display:flex;justify-content:space-between;font-size:11px;color:#aaa}
-.live-recent{background:#fff;border:1px solid rgba(0,0,0,.07);border-radius:16px;padding:20px 20px 14px;box-shadow:0 4px 16px rgba(0,0,0,.04)}
-.lr-label{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#ccc;margin-bottom:12px;display:block}
-.lr-item{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-.lr-item:last-child{margin-bottom:0}
-.lr-av{width:28px;height:28px;border-radius:50%;background:rgba(201,169,110,.1);border:1px solid rgba(201,169,110,.18);display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',Georgia,serif;font-size:11px;color:var(--gold);flex-shrink:0}
-.lr-name{font-size:12px;color:var(--dark);font-weight:600;flex:1}
-.lr-time{font-size:11px;color:#ccc}
-.lr-dot{width:6px;height:6px;border-radius:50%;background:#22d3a0;flex-shrink:0}
+.wl-card{width:100%;max-width:420px;border-radius:20px;overflow:hidden;box-shadow:0 20px 60px rgba(26,24,22,.1)}
+.wl-topbar{background:var(--dark);padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
+.wl-brand{font-family:'DM Serif Display',Georgia,serif;font-size:16px;color:rgba(237,232,224,.85);letter-spacing:.3px}
+.wl-brand .wl-os{color:var(--gold);font-style:normal}
+.wl-tag{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(201,169,110,.75)}
+.wl-body{background:#ede8e0;padding:40px 32px 48px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.wl-icon-wrap{width:52px;height:52px;border-radius:50%;background:rgba(45,74,53,.1);display:flex;align-items:center;justify-content:center;margin-bottom:20px}
+.wl-h{font-family:'DM Serif Display',Georgia,serif;font-size:24px;color:var(--dark);margin-bottom:10px}
+.wl-sub{font-size:14px;color:#6e6055;max-width:300px;margin-bottom:32px;line-height:1.65}
+.wl-form{display:flex;flex-direction:column;gap:10px;width:100%;max-width:340px}
+.wl-form input{padding:13px 18px;border-radius:100px;border:1px solid rgba(26,24,22,.12);background:#f8f4ef;font-size:13px;color:var(--dark);outline:none;transition:border-color .2s;font-family:'DM Sans',sans-serif}
+.wl-form input:focus{border-color:var(--teal)}
+.wl-form input::placeholder{color:#c4b9ad}
+.wl-submit{padding:14px;border-radius:100px;background:var(--gold);color:var(--dark);border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .2s,transform .15s}
+.wl-submit:hover{background:#b8924e;transform:translateY(-2px)}
+.wl-fine{font-size:12px;color:#6e6055;margin-top:2px}
+.wl-trust{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:24px}
+.wl-pill{font-size:10px;font-weight:700;padding:5px 13px;border-radius:100px;background:rgba(45,74,53,.08);color:var(--teal);border:1px solid rgba(45,74,53,.15)}
 
 /* Celebration overlay */
 .join-celebration{
@@ -566,45 +559,12 @@ nav.dim .nav-logo{color:var(--bg)}
   100%{opacity:0;transform:translateY(100vh) rotate(720deg)}
 }
 
-/* Form panel */
-.cta-form-panel{padding-top:8px}
-.cta-eye{font-size:10px;letter-spacing:6px;text-transform:uppercase;color:var(--teal);margin-bottom:28px;display:block}
-.cta-h{font-family:'DM Serif Display',Georgia,serif;font-size:clamp(28px,4vw,52px);line-height:1.1;color:var(--dark);margin-bottom:20px}
-.cta-h em{font-style:italic;color:var(--teal)}
-.cta-sub{font-size:16px;color:#777;max-width:380px;margin-bottom:28px;line-height:1.7}
-.cred-block{margin-bottom:28px;padding:20px 24px;background:rgba(45,74,53,.05);border:1px solid rgba(45,74,53,.12);border-radius:14px}
-.cred-block p{font-size:14px;color:#555;line-height:1.7}
-.cred-block strong{color:var(--dark);font-weight:600}
-.survey{overflow:hidden}
-.survey-progress{height:2px;background:rgba(28,26,24,.08);border-radius:100px;margin-bottom:32px;overflow:hidden}
-.survey-bar{height:100%;background:var(--teal);border-radius:100px;transition:width .5s var(--ease);width:0%}
-.svc-step{display:none;flex-direction:column;align-items:flex-start;animation:stepIn .5s var(--ease) forwards}
-.svc-step.active{display:flex}
-@keyframes stepIn{from{opacity:0;transform:translateX(28px)}to{opacity:1;transform:none}}
-.step-q{font-family:'DM Serif Display',Georgia,serif;font-size:clamp(16px,2.2vw,21px);color:var(--dark);line-height:1.35;margin-bottom:24px;max-width:420px}
-.choices{display:flex;flex-wrap:wrap;gap:10px}
-.ch{border:1.5px solid rgba(28,26,24,.12);border-radius:12px;background:#fff;padding:14px 18px;cursor:pointer;transition:border-color .2s,background .2s,transform .15s;font-size:13px;color:var(--dark);text-align:left;line-height:1.4;min-width:150px;flex:0 0 auto;position:relative}
-.ch:hover{border-color:var(--teal);background:rgba(45,74,53,.03);transform:translateY(-1px)}
-.ch.selected{border-color:var(--teal);background:rgba(45,74,53,.06)}
-.ch-lbl{font-weight:700;font-size:13px;display:block;margin-bottom:3px}
-.ch-desc{font-size:11px;color:#888;display:block;line-height:1.4}
-.back-btn{background:none;border:none;color:#bbb;font-size:13px;cursor:pointer;margin-bottom:20px;display:flex;align-items:center;gap:6px;transition:color .2s}
-.back-btn:hover{color:var(--dark)}
-.email-form{display:flex;flex-direction:column;gap:10px;width:100%;max-width:380px}
-.email-form input{padding:14px 18px;border:1.5px solid rgba(28,26,24,.14);border-radius:100px;font-size:14px;background:#fff;color:var(--dark);outline:none;transition:border-color .2s,box-shadow .2s;font-family:'DM Sans',sans-serif}
-.email-form input:focus{border-color:var(--teal);box-shadow:0 0 0 4px rgba(45,74,53,.08)}
-.email-form input::placeholder{color:#ccc}
-.submit-btn{padding:14px 28px;border-radius:100px;border:none;background:var(--dark);color:var(--bg);font-size:14px;font-weight:700;cursor:pointer;transition:background .2s,transform .15s,box-shadow .2s;font-family:'DM Sans',sans-serif}
-.submit-btn:hover{background:var(--teal);transform:translateY(-2px);box-shadow:0 10px 28px rgba(45,74,53,.28)}
-.fine{font-size:11px;color:#ccc;text-align:left}
-.success{display:none;flex-direction:column;align-items:flex-start;gap:16px}
+/* Success state */
+.success{display:none;flex-direction:column;align-items:center;gap:16px;text-align:center}
 .success.show{display:flex}
 .success-ring{width:56px;height:56px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;font-size:24px;color:#fff;animation:scaleIn .45s var(--ease)}
 .success h3{font-family:'DM Serif Display',Georgia,serif;font-size:24px;color:var(--dark)}
-.success p{font-size:15px;color:#777}
-.cta-trust{margin-top:32px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;opacity:.65}
-.cta-trust span{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--dark)}
-.cta-trust .sep{color:#bbb;font-size:14px}
+.success p{font-size:15px;color:#6e6055}
 
 /* ── FOOTER ── */
 footer{background:var(--dark);padding:28px var(--pad-x);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;border-top:1px solid rgba(255,255,255,.04)}
@@ -684,8 +644,7 @@ footer a:hover{color:rgba(237,232,224,.6)}
   .ls-big-num{letter-spacing:-3px}
   .ls-recent{gap:8px}
   .ls-cta-btn{padding:16px 36px;font-size:14px}
-  .cta-h{font-size:clamp(26px,8vw,40px)}
-  .email-form{max-width:100%}
+
   .choices{gap:8px}
   .ch{min-width:100%;max-width:100%}
   .toast-wrap{bottom:72px;left:12px}
@@ -1015,106 +974,57 @@ footer a:hover{color:rgba(237,232,224,.6)}
 </section>
 
 <!-- ══════════════════════════════
-     S10: LIVE COUNTER
+     S6: DESIGN PARTNER CTA
 ══════════════════════════════ -->
 <section class="s-live" id="s-live">
-  <div class="live-section-inner">
-    <span class="ls-eye" data-a="up">100 founding spots · Fall 2026</span>
-    <div class="ls-big-num" id="lc-number" data-a="scale" data-d="1">—</div>
-    <div class="ls-of">spots remaining</div>
-    <div class="ls-bar-track"><div class="ls-bar-fill" id="lc-fill"></div></div>
-    <div class="ls-recent" id="live-recent" data-a="fade" data-d="2">
-      <!-- populated by JS -->
+  <div class="pt-inner">
+    <span class="pt-eye" data-a="up">Design Partner Programme · Fall 2026</span>
+    <h2 class="pt-h" data-a="up" data-d="1">Before we launch, we want to talk to <em class="w-gold">salon owners like you.</em></h2>
+    <p class="pt-sub" data-a="up" data-d="2">15 minutes. No pitch. Just us listening to what's broken in your business — so we build the right thing.</p>
+    <div class="pt-ctas" data-a="up" data-d="3">
+      <a class="pt-btn-primary mag" href="https://calendly.com/bryan-pleromaos/30min" target="_blank" rel="noopener">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Book a 15-min call
+      </a>
+      <p class="pt-confirm">Founders reach out within 24hrs to confirm</p>
+      <div class="pt-or">— or —</div>
+      <a class="pt-btn-secondary" href="#waitlist">Not ready? Stay in the loop →</a>
     </div>
-    <a class="ls-cta-btn mag" href="#waitlist" data-a="up" data-d="3">Join the Founding List →</a>
-    <p class="ls-fine" data-a="fade" data-d="4">No credit card · No commitment · We reach out personally</p>
   </div>
 </section>
 
 <!-- ══════════════════════════════
-     S11: WAITLIST CTA
+     S7: WAITLIST FALLBACK
 ══════════════════════════════ -->
 <section class="s-cta" id="waitlist">
-  <div class="cta-center">
-      <span class="cta-eye" data-a="up">Early access · Netherlands · Fall 2026</span>
-      <h2 class="cta-h" data-a="up" data-d="1">
-        Be the first salon<br>in the Netherlands<br>to <em>get it right.</em>
-      </h2>
-      <p class="cta-sub" data-a="up" data-d="2">We're launching this fall. Tell us about your salon — 30 seconds.</p>
-
-      <!-- Survey -->
-      <div class="survey" id="survey" data-a="up" data-d="3">
-        <div class="survey-progress"><div class="survey-bar" id="survey-bar"></div></div>
-
-        <div class="svc-step active" id="step-1">
-          <p class="step-q">What best describes your business?</p>
-          <div class="choices">
-            <button class="ch" onclick="pick('businessType','barbershop',2)"><span class="ch-lbl">Barbershop</span><span class="ch-desc">Men's cuts, fades, beards</span></button>
-            <button class="ch" onclick="pick('businessType','salon',2)"><span class="ch-lbl">Hair salon</span><span class="ch-desc">Women's cuts, colour, styling</span></button>
-            <button class="ch" onclick="pick('businessType','both',2)"><span class="ch-lbl">Mixed / Unisex</span><span class="ch-desc">We serve everyone</span></button>
-          </div>
-        </div>
-
-        <div class="svc-step" id="step-2">
-          <button class="back-btn" onclick="goStep(1)">← Back</button>
-          <p class="step-q">Has a misunderstanding ever cost you a client?</p>
-          <div class="choices">
-            <button class="ch" onclick="pick('feelsReal','yes',3)"><span class="ch-lbl">Yes, definitely</span><span class="ch-desc">It costs us clients</span></button>
-            <button class="ch" onclick="pick('feelsReal','somewhat',3)"><span class="ch-lbl">It happens</span><span class="ch-desc">Not critical, but real</span></button>
-            <button class="ch" onclick="pick('feelsReal','no','3b')"><span class="ch-lbl">Not really</span><span class="ch-desc">We handle it well</span></button>
-          </div>
-        </div>
-
-        <div class="svc-step" id="step-3">
-          <button class="back-btn" onclick="goStep(2)">← Back</button>
-          <p class="step-q">Which part of this matters most to you right now?</p>
-          <div class="choices">
-            <button class="ch" onclick="pick('topFeature','brief',4)"><span class="ch-lbl">Precise brief every time</span><span class="ch-desc">No more guessing or miscommunication</span></button>
-            <button class="ch" onclick="pick('topFeature','history',4)"><span class="ch-lbl">Client history I own</span><span class="ch-desc">Saved forever, even when staff leaves</span></button>
-            <button class="ch" onclick="pick('topFeature','retention',4)"><span class="ch-lbl">Know who's slipping away</span><span class="ch-desc">Before they're gone for good</span></button>
-            <button class="ch" onclick="pick('topFeature','experience',4)"><span class="ch-lbl">Better client experience</span><span class="ch-desc">Something that impresses from the start</span></button>
-          </div>
-        </div>
-
-        <div class="svc-step" id="step-3b">
-          <button class="back-btn" onclick="goStep(2)">← Back</button>
-          <p class="step-q">What's the bigger challenge for your business right now?</p>
-          <div class="choices">
-            <button class="ch" onclick="pick('bigChallenge','newclients',4)"><span class="ch-lbl">Getting new clients</span><span class="ch-desc">Filling the chair, growing the book</span></button>
-            <button class="ch" onclick="pick('bigChallenge','noshows',4)"><span class="ch-lbl">No-shows</span><span class="ch-desc">Empty slots at the last minute</span></button>
-            <button class="ch" onclick="pick('bigChallenge','staff',4)"><span class="ch-lbl">Staff turnover</span><span class="ch-desc">Knowledge walking out the door</span></button>
-            <button class="ch" onclick="pick('bigChallenge','operations',4)"><span class="ch-lbl">Running the business</span><span class="ch-desc">Scheduling, admin, operations</span></button>
-          </div>
-        </div>
-
-        <div class="svc-step" id="step-4">
-          <button class="back-btn" onclick="goStepBack()">← Back</button>
-          <p class="step-q">Last step — where should we send your early access?</p>
-          <form class="email-form" id="final-form">
-            <input type="hidden" name="businessType" id="h-type">
-            <input type="hidden" name="feelsReal"    id="h-real">
-            <input type="hidden" name="topFeature"   id="h-feat">
-            <input type="hidden" name="bigChallenge" id="h-chal">
-            <input type="text"   name="name"  placeholder="Your name (optional)" autocomplete="name" id="inp-name">
-            <input type="email"  name="email" placeholder="you@yoursalon.nl" required autocomplete="email" id="inp-email">
-            <button class="submit-btn mag" type="submit">Claim My Spot →</button>
-            <p class="fine">No credit card. No commitment. We reach out personally.</p>
-          </form>
-        </div>
+  <div class="wl-card" data-a="up">
+    <div class="wl-topbar">
+      <span class="wl-brand">Pleroma<em class="wl-os">OS</em></span>
+      <span class="wl-tag">Stay in the loop</span>
+    </div>
+    <div class="wl-body">
+      <div class="wl-icon-wrap">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2d4a35" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
       </div>
-
+      <h2 class="wl-h">Stay in the loop.</h2>
+      <p class="wl-sub">Not ready for a call? Leave your email and we'll reach out personally before we go live.</p>
+      <form class="wl-form" id="final-form">
+        <input type="text"  name="name"  id="inp-name"  placeholder="Your name (optional)" autocomplete="name">
+        <input type="email" name="email" id="inp-email" placeholder="you@yoursalon.nl" required autocomplete="email">
+        <button class="wl-submit" type="submit">Join the waitlist →</button>
+        <p class="wl-fine">No credit card. No commitment.</p>
+      </form>
       <div class="success" id="success">
         <div class="success-ring">✓</div>
         <h3>You're on the list.</h3>
         <p>We'll be in touch before we go live.</p>
       </div>
-
-      <div class="cta-trust" data-a="up" data-d="4">
-        <span>GDPR Compliant</span><span class="sep">·</span>
-        <span>Built in the Netherlands</span><span class="sep">·</span>
-        <span>No app to download</span><span class="sep">·</span>
-        <span>Works with any booking system</span>
+      <div class="wl-trust">
+        <span class="wl-pill">GDPR Compliant</span>
+        <span class="wl-pill">Built in the Netherlands</span>
+        <span class="wl-pill">Works with any booking system</span>
       </div>
+    </div>
   </div>
 </section>
 
@@ -1130,7 +1040,7 @@ footer a:hover{color:rgba(237,232,224,.6)}
   <div class="jc-ring">
     <span class="jc-emoji">🎉</span>
     <div class="jc-name" id="jc-name">Someone just joined</div>
-    <div class="jc-sub">Just claimed a founding spot</div>
+    <div class="jc-sub">Just joined the waitlist</div>
   </div>
 </div>
 <div class="confetti-wrap" id="confetti-wrap"></div>
@@ -1361,41 +1271,9 @@ const _sections=[
 })();
 
 // ══════════════════════════════════════════
-// LIVE COUNTER + RECENT JOINERS
+// WAITLIST DATA + TOASTS
 // ══════════════════════════════════════════
-const FOUNDING_LIMIT=100;
 let _waitlistData=[];
-
-function updateCounter(count){
-  const num=Math.max(0,FOUNDING_LIMIT-count);
-  const el=document.getElementById('lc-number');
-  if(el){
-    el.textContent=num;
-    el.classList.add('pulse');
-    setTimeout(()=>el.classList.remove('pulse'),350);
-  }
-  const fill=document.getElementById('lc-fill');
-  if(fill) setTimeout(()=>fill.style.width=Math.min(100,Math.round((count/FOUNDING_LIMIT)*100))+'%',400);
-}
-
-function renderRecentJoiners(data){
-  const wrap=document.getElementById('live-recent');
-  if(!wrap)return;
-  const named=data.filter(r=>r.name).slice(0,4);
-  if(!named.length)return;
-  const cities=['Amsterdam','Rotterdam','Utrecht','Den Haag','Eindhoven','Haarlem'];
-  const pills=named.map((r,i)=>{
-    const init=(r.name||'?').split(' ').map(n=>n[0]||'').join('').slice(0,2).toUpperCase();
-    const firstName=r.name.split(' ')[0];
-    const city=cities[i%cities.length];
-    return `<div class="ls-person">
-      <div class="ls-av">${init}</div>
-      <span class="ls-name">${firstName} · ${city}</span>
-      <div class="ls-dot"></div>
-    </div>`;
-  }).join('');
-  wrap.innerHTML=pills;
-}
 
 (async function fetchWaitlist(){
   try{
@@ -1405,8 +1283,6 @@ function renderRecentJoiners(data){
     const data=await res.json();
     if(!Array.isArray(data))return;
     _waitlistData=data;
-    updateCounter(data.length);
-    renderRecentJoiners(data);
     if(data.filter(r=>r.name).length) setTimeout(runToasts,10000);
   }catch(_){}
 })();
@@ -1415,8 +1291,6 @@ function renderRecentJoiners(data){
 sb.channel('waitlist-live')
   .on('postgres_changes',{event:'INSERT',schema:'public',table:'waitlist'},payload=>{
     _waitlistData.unshift(payload.new);
-    updateCounter(_waitlistData.length);
-    renderRecentJoiners(_waitlistData);
     if(payload.new.name) celebrateJoin(payload.new.name);
   })
   .subscribe();
@@ -1465,69 +1339,24 @@ function runToasts(){
   setTimeout(runToasts,13000+Math.random()*5000);
 }
 
-// ══════════════════════════════════════════
-// SURVEY STATE MACHINE
-// ══════════════════════════════════════════
-const state={businessType:null,feelsReal:null,topFeature:null,bigChallenge:null};
-const stepMap={1:'step-1',2:'step-2',3:'step-3','3b':'step-3b',4:'step-4'};
-const pctMap={1:8,2:32,3:60,'3b':60,4:84};
-
-function goStep(key){
-  const cur=document.querySelector('.svc-step.active');
-  if(cur)cur.classList.remove('active');
-  const nxt=document.getElementById(stepMap[key]);
-  if(nxt){nxt.style.animation='none';nxt.offsetHeight;nxt.style.animation='';nxt.classList.add('active');}
-  document.getElementById('survey-bar').style.width=(pctMap[key]||8)+'%';
-}
-function goStepBack(){goStep(state.feelsReal==='no'?'3b':3);}
-function switchProfile(g){
-  document.getElementById('profile-f').style.display=g==='f'?'':'none';
-  document.getElementById('profile-m').style.display=g==='m'?'':'none';
-  document.getElementById('pt-f').classList.toggle('act',g==='f');
-  document.getElementById('pt-m').classList.toggle('act',g==='m');
-}
-function pick(field,value,nextStep){
-  state[field]=value;
-  const map={businessType:'h-type',feelsReal:'h-real',topFeature:'h-feat',bigChallenge:'h-chal'};
-  const hid=document.getElementById(map[field]);
-  if(hid)hid.value=value;
-  goStep(nextStep);
-}
-
 // ── Form submit
 const finalForm=document.getElementById('final-form');
-const surveyEl=document.getElementById('survey');
 const successEl=document.getElementById('success');
 
 finalForm.addEventListener('submit',async e=>{
   e.preventDefault();
-  const btn=finalForm.querySelector('.submit-btn');
+  const btn=finalForm.querySelector('.wl-submit');
   btn.textContent='Sending…';btn.disabled=true;
-  document.getElementById('survey-bar').style.width='100%';
   const fd=new FormData(finalForm);
   try{
     await sb.from('waitlist').insert({
-      name:         fd.get('name')||null,
-      email:        fd.get('email'),
-      business_type:state.businessType||null,
-      feels_real:   state.feelsReal||null,
-      top_feature:  state.topFeature||null,
-      big_challenge:state.bigChallenge||null
+      name:  fd.get('name')||null,
+      email: fd.get('email')
     });
   }catch(_){}
-  surveyEl.style.display='none';
+  finalForm.style.display='none';
   successEl.classList.add('show');
-  // Also celebrate own submission
   celebrateJoin(fd.get('name')||'You');
-});
-
-// ── Live counter pulse on input focus (pulses the big number in s-live)
-['inp-name','inp-email'].forEach(id=>{
-  const inp=document.getElementById(id);
-  if(inp) inp.addEventListener('focus',()=>{
-    const num=document.getElementById('lc-number');
-    if(num){num.classList.add('pulse');setTimeout(()=>num.classList.remove('pulse'),400);}
-  });
 });
 
 // ══════════════════════════════════════════
@@ -1583,14 +1412,16 @@ const T={
     flow0H:'It feels like ordering<br>in a restaurant.',flow0P:'No jargon. No lengthy consultation. They scan a QR code and are guided through choices before they even sit down — no app, no account, no friction.',
     flow1H:'Images do the talking.<br>Words don\'t have to.',flow1P:'Clients tap through real style visuals instead of trying to describe what they want. The gap between expectation and result closes — before the appointment even starts.',
     flow2H:'Every appointment<br>starts with clarity.',flow2P:'The brief is on screen before the chair is warm. No guessing, no re-consultation. The client feels heard before you\'ve said a word.',
-    ctaEye:'Early access · Netherlands · Fall 2026',
-    ctaH:'Be the first salon<br>in the Netherlands<br>to <em>get it right.</em>',
-    ctaSub:'We\'re launching this fall. Tell us about your salon — 30 seconds.',
-    credBlock:'Built by people who\'ve spent <strong>over a decade in this industry</strong> — as stylists, and running multiple salons. We built PleromaOS because we lived this problem on both sides of the chair.',
-    lcLabel:'Founding spots remaining',
-    submitBtn:'Claim My Spot →',finePrint:'No credit card. No commitment. We reach out personally.',
+    ptEye:'Design Partner Programme · Fall 2026',
+    ptH:'Before we launch, we want to talk to <em class="w-gold">salon owners like you.</em>',
+    ptSub:'15 minutes. No pitch. Just us listening to what\'s broken in your business — so we build the right thing.',
+    ptConfirm:'Founders reach out within 24hrs to confirm',
+    ptOr:'— or —',
+    ptSecondary:'Not ready? Stay in the loop →',
+    wlH:'Stay in the loop.',
+    wlSub:'Not ready for a call? Leave your email and we\'ll reach out personally before we go live.',
+    wlSubmit:'Join the waitlist →',wlFine:'No credit card. No commitment.',
     successH:'You\'re on the list.',successP:'We\'ll be in touch before we go live.',
-    trust:['GDPR Compliant','Built in the Netherlands','No App Download','Works with any booking system'],
     footerCopy:'© 2026 PleromaOS · Amsterdam, Netherlands',footerPrivacy:'Privacy Policy'
   },
   nl:{
@@ -1612,14 +1443,16 @@ const T={
     flow0H:'Het voelt als bestellen<br>in een restaurant.',flow0P:'Geen vakjargon. Geen lang gesprek vooraf. Ze scannen een QR-code en worden begeleid door keuzes voor ze überhaupt zitten — geen app, geen account, geen gedoe.',
     flow1H:'Beelden doen het werk.<br>Woorden hoeven dat niet.',flow1P:'Klanten tikken door echte stijlafbeeldingen in plaats van te proberen te beschrijven wat ze willen. De kloof tussen verwachting en resultaat sluit — nog voor de afspraak begint.',
     flow2H:'Elke afspraak begint<br>met duidelijkheid.',flow2P:'De briefing staat op het scherm voordat de stoel warm is. Geen gissen, geen her-consultatie. De klant voelt zich gehoord voordat je een woord hebt gezegd.',
-    ctaEye:'Vroege toegang · Nederland · Herfst 2026',
-    ctaH:'Wees de eerste salon<br>in Nederland<br>die het <em>goed doet.</em>',
-    ctaSub:'We lanceren deze herfst. Vertel ons over je salon — 30 seconden.',
-    credBlock:'Gebouwd door mensen die <strong>meer dan tien jaar in deze branche</strong> hebben gewerkt — als stylisten én als eigenaren van meerdere salons. We bouwden PleromaOS omdat we dit probleem aan beide kanten van de stoel hebben meegemaakt.',
-    lcLabel:'Oprichtingsplekken beschikbaar',
-    submitBtn:'Reserveer mijn plek →',finePrint:'Geen creditcard. Geen verplichtingen. We nemen persoonlijk contact op.',
+    ptEye:'Design Partner Programma · Herfst 2026',
+    ptH:'Voor we lanceren, willen we praten met <em class="w-gold">salonhouders zoals jij.</em>',
+    ptSub:'15 minuten. Geen verkooppraatje. Wij luisteren — zodat we het juiste bouwen.',
+    ptConfirm:'Oprichters nemen binnen 24 uur contact op ter bevestiging',
+    ptOr:'— of —',
+    ptSecondary:'Nog niet klaar? Blijf op de hoogte →',
+    wlH:'Blijf op de hoogte.',
+    wlSub:'Nog niet klaar voor een gesprek? Laat je e-mailadres achter en we nemen persoonlijk contact op.',
+    wlSubmit:'Aanmelden voor wachtlijst →',wlFine:'Geen creditcard. Geen verplichtingen.',
     successH:'Je staat op de lijst.',successP:'We nemen contact op voordat we live gaan.',
-    trust:['AVG-compliant','Gebouwd in Nederland','Geen App Downloaden','Werkt met elk boekingssysteem'],
     footerCopy:'© 2026 PleromaOS · Amsterdam, Nederland',footerPrivacy:'Privacybeleid'
   }
 };
@@ -1655,13 +1488,13 @@ function setLang(lang){
   // How
   // Flow
   // Owner
-  // CTA
-  si('.cta-eye',t.ctaEye);si('.cta-h',t.ctaH);si('.cta-sub',t.ctaSub);si('.cred-block p',t.credBlock);
-  si('.lc-label',t.lcLabel);
-  si('.submit-btn',t.submitBtn);si('.fine',t.finePrint);
+  // Partner section
+  si('.pt-eye',t.ptEye);si('.pt-h',t.ptH);si('.pt-sub',t.ptSub);
+  si('.pt-confirm',t.ptConfirm);si('.pt-or',t.ptOr);si('.pt-btn-secondary',t.ptSecondary);
+  // Waitlist fallback
+  si('.wl-h',t.wlH);si('.wl-sub',t.wlSub);
+  si('.wl-submit',t.wlSubmit);si('.wl-fine',t.wlFine);
   si('#success h3',t.successH);si('#success p',t.successP);
-  const trustSpans=qsa('.cta-trust span:not(.sep)');
-  t.trust.forEach((txt,i)=>{if(trustSpans[i])trustSpans[i].textContent=txt});
   si('footer p',t.footerCopy);si('footer a',t.footerPrivacy);
 }
 
