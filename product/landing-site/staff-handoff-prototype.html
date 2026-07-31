@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Staff Handoff Diagram — Prototype v3</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#C9A96E;
+  --card-bg:#1f1d1b;--card-border:rgba(201,169,110,.15);
+  --green:rgba(80,200,120,.85);--green-dim:rgba(80,200,120,.08);--green-border:rgba(80,200,120,.15);
+  --red:rgba(220,60,60,.9);--red-dim:rgba(220,60,60,.08);--red-border:rgba(220,60,60,.18);
+}
+body{
+  background:#111;font-family:'DM Sans',-apple-system,sans-serif;
+  display:flex;align-items:center;justify-content:center;
+  min-height:100vh;padding:40px 24px;-webkit-font-smoothing:antialiased;
+}
+.pvis-card{
+  background:var(--card-bg);border:1px solid var(--card-border);
+  border-radius:20px;padding:20px;width:320px;
+}
+
+/* ── LABEL ── */
+.pvc-label{
+  font-size:9px;letter-spacing:1.8px;text-transform:uppercase;
+  color:rgba(237,232,224,.45);font-weight:700;margin-bottom:14px;
+}
+.pvc-label .brand{color:rgba(237,232,224,.9)}
+.pvc-label .os{color:var(--gold)}
+
+/* ── HANDOFF HEADER — compact horizontal ── */
+.handoff-header{margin-bottom:8px}
+.handoff-row{
+  display:flex;align-items:center;gap:8px;margin-bottom:7px;
+}
+.stylist-pill{
+  flex:1;display:flex;align-items:center;gap:7px;
+  padding:7px 9px;border-radius:10px;
+  background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);
+}
+.stylist-pill.new{
+  background:rgba(201,169,110,.04);border-color:rgba(201,169,110,.18);
+}
+.s-av{
+  width:26px;height:26px;border-radius:50%;flex-shrink:0;
+  font-size:11px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(237,232,224,.06);color:rgba(237,232,224,.3);
+}
+.s-av.new{background:rgba(201,169,110,.15);color:var(--gold)}
+.s-name{font-size:11px;font-weight:600;color:rgba(237,232,224,.4);line-height:1.1}
+.stylist-pill.new .s-name{color:rgba(237,232,224,.9)}
+.s-meta{font-size:9px;color:rgba(237,232,224,.22);margin-top:1px}
+.stylist-pill.new .s-meta{color:rgba(201,169,110,.5)}
+.h-arrow{font-size:13px;color:rgba(201,169,110,.3);flex-shrink:0}
+
+/* Transfer tags — horizontal single line */
+.transfer-tags{
+  display:flex;gap:4px;flex-wrap:wrap;padding-left:2px;
+}
+.ttag{
+  font-size:8px;font-weight:700;letter-spacing:.3px;
+  color:rgba(201,169,110,.45);background:rgba(201,169,110,.06);
+  padding:2px 7px;border-radius:100px;
+}
+
+/* ── OUTREACH — compact ── */
+.outreach-block{
+  background:rgba(201,169,110,.05);border:1px solid rgba(201,169,110,.12);
+  border-radius:10px;padding:9px 11px;margin:12px 0;
+}
+.outreach-top{
+  display:flex;align-items:center;gap:5px;margin-bottom:5px;
+}
+.outreach-title{
+  font-size:9px;font-weight:700;letter-spacing:.6px;
+  text-transform:uppercase;color:var(--gold);
+}
+.outreach-stats{
+  display:flex;gap:6px;margin-left:auto;
+}
+.ostat{font-size:9px;color:rgba(237,232,224,.35);display:flex;align-items:center;gap:3px}
+.ostat-dot{width:5px;height:5px;border-radius:50%;background:rgba(80,200,120,.55)}
+.ostat-dot.sent{background:rgba(201,169,110,.45)}
+.outreach-msg{
+  font-size:10px;color:rgba(237,232,224,.55);font-style:italic;line-height:1.4;
+}
+
+/* ── DIVIDER ── */
+.divider{height:1px;background:rgba(255,255,255,.06);margin:0 0 10px}
+
+/* ── COL HEADERS ── */
+.col-header{display:flex;padding:0 0 5px;margin-bottom:2px}
+.col-h{font-size:8px;letter-spacing:1.2px;text-transform:uppercase;color:rgba(237,232,224,.28);font-weight:700}
+.col-h.right{margin-left:auto}
+
+/* ── CLIENT ROWS ── */
+.hcr{
+  padding:8px 0 8px 12px;
+  border-bottom:1px solid rgba(255,255,255,.04);
+  border-left:2.5px solid rgba(80,200,120,.2);
+  margin-left:-12px;
+}
+.hcr.no-brief{border-left-color:rgba(220,60,60,.35)}
+.hcr:last-of-type{border-bottom:none}
+
+.hcr-top{display:flex;align-items:center;margin-bottom:4px}
+.hcr-name{font-size:13px;font-weight:600;color:rgba(237,232,224,.92);flex:1}
+
+/* Before → After accuracy */
+.hcr-acc{display:flex;align-items:center;gap:3px}
+.acc-before{font-size:10px;font-weight:600;color:rgba(237,232,224,.3)}
+.acc-sep{font-size:9px;color:rgba(237,232,224,.18)}
+.acc-after{font-size:11px;font-weight:700;color:rgba(80,200,120,.85)}
+.acc-none{font-size:11px;font-weight:600;color:rgba(237,232,224,.25)}
+
+/* Meta chips — cadence folded in */
+.hcr-meta{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:0}
+.hcr-chip{
+  font-size:9px;font-weight:600;letter-spacing:.2px;
+  padding:2px 7px;border-radius:100px;
+}
+.hcr-chip.good{background:var(--green-dim);color:rgba(80,200,120,.85);border:1px solid var(--green-border)}
+.hcr-chip.neutral{background:rgba(237,232,224,.05);color:rgba(237,232,224,.38);border:1px solid rgba(237,232,224,.08)}
+.hcr-chip.warn{background:var(--red-dim);color:rgba(220,80,80,.85);border:1px solid var(--red-border)}
+
+/* Quote — only on Amira */
+.hcr-note{
+  font-size:10px;color:rgba(237,232,224,.58);
+  font-style:italic;line-height:1.4;
+  margin-top:4px;
+}
+
+/* ── CALLOUT ── */
+.pvc-note{
+  margin-top:14px;font-size:12px;color:rgba(237,232,224,.8);
+  line-height:1.5;padding-top:12px;border-top:1px solid rgba(255,255,255,.06);
+}
+.w-gold{color:var(--gold)}
+
+.proto-label{color:rgba(237,232,224,.2);font-size:11px;text-align:center;margin-top:20px}
+</style>
+</head>
+<body>
+<div>
+<div class="pvis-card">
+
+  <div class="pvc-label"><span class="brand">Pleroma</span><span class="os">OS</span> · Staff handoff</div>
+
+  <!-- ── Handoff header ── -->
+  <div class="handoff-header">
+    <div class="handoff-row">
+      <div class="stylist-pill">
+        <div class="s-av">M</div>
+        <div>
+          <div class="s-name">Maya</div>
+          <div class="s-meta">Left 14 March</div>
+        </div>
+      </div>
+      <div class="h-arrow">→</div>
+      <div class="stylist-pill new">
+        <div class="s-av new">J</div>
+        <div>
+          <div class="s-name">Jayden</div>
+          <div class="s-meta">Onboarded 17 March</div>
+        </div>
+      </div>
+    </div>
+    <div class="transfer-tags">
+      <span class="ttag">Visual ref</span>
+      <span class="ttag">Specs</span>
+      <span class="ttag">Visit notes</span>
+      <span class="ttag">Full history</span>
+    </div>
+  </div>
+
+  <!-- ── Auto-outreach ── -->
+  <div class="outreach-block">
+    <div class="outreach-top">
+      <span style="font-size:11px">⚡</span>
+      <span class="outreach-title">Auto-outreach · 14 Mar</span>
+      <div class="outreach-stats">
+        <span class="ostat"><span class="ostat-dot sent"></span>3 sent</span>
+        <span class="ostat"><span class="ostat-dot"></span>3 opened</span>
+        <span class="ostat"><span class="ostat-dot"></span>2 confirmed</span>
+      </div>
+    </div>
+    <div class="outreach-msg">"Your next stylist already has your full brief — nothing to explain."</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="col-header">
+    <span class="col-h">Client</span>
+    <span class="col-h right">Accuracy</span>
+  </div>
+
+  <!-- Amira K. -->
+  <div class="hcr">
+    <div class="hcr-top">
+      <span class="hcr-name">Amira K.</span>
+      <span class="hcr-acc">
+        <span class="acc-before">96%</span>
+        <span class="acc-sep">→</span>
+        <span class="acc-after">94%</span>
+      </span>
+    </div>
+    <div class="hcr-meta">
+      <span class="hcr-chip good">First visit · Jayden</span>
+      <span class="hcr-chip neutral">↻ 5 wks · held</span>
+    </div>
+    <div class="hcr-note">"Didn't even have to explain my fringe"</div>
+  </div>
+
+  <!-- Marco V. -->
+  <div class="hcr">
+    <div class="hcr-top">
+      <span class="hcr-name">Marco V.</span>
+      <span class="hcr-acc">
+        <span class="acc-before">81%</span>
+        <span class="acc-sep">→</span>
+        <span class="acc-after">88%</span>
+      </span>
+    </div>
+    <div class="hcr-meta">
+      <span class="hcr-chip good">First visit · Jayden</span>
+      <span class="hcr-chip neutral">↻ 6 wks · held</span>
+    </div>
+  </div>
+
+  <!-- Nadia R. -->
+  <div class="hcr">
+    <div class="hcr-top">
+      <span class="hcr-name">Nadia R.</span>
+      <span class="hcr-acc">
+        <span class="acc-before">94%</span>
+        <span class="acc-sep">→</span>
+        <span class="acc-after">93%</span>
+      </span>
+    </div>
+    <div class="hcr-meta">
+      <span class="hcr-chip good">First visit · Jayden</span>
+      <span class="hcr-chip neutral">↻ 4 wks · held</span>
+    </div>
+  </div>
+
+  <!-- Leila H. — no brief, full opacity -->
+  <div class="hcr no-brief">
+    <div class="hcr-top">
+      <span class="hcr-name">Leila H.</span>
+      <span class="hcr-acc"><span class="acc-none">—</span></span>
+    </div>
+    <div class="hcr-meta">
+      <span class="hcr-chip warn">No brief on file</span>
+      <span class="hcr-chip warn">Did not rebook</span>
+    </div>
+  </div>
+
+  <div class="pvc-note">The brief stays. <span class="w-gold">The client stays.</span></div>
+
+</div>
+<p class="proto-label">Prototype · staff-handoff-prototype.html v3</p>
+</div>
+</body>
+</html>
