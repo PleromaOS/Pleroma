@@ -171,6 +171,10 @@ nav.dim .nav-logo{color:var(--bg)}
 .spec-k{font-size:9px;letter-spacing:.8px;text-transform:uppercase;color:rgba(201,169,110,.6);font-weight:700;flex-shrink:0;width:68px}
 .spec-v{font-size:11px;color:rgba(237,232,224,.75)}
 .pvc-saved{font-size:9px;color:rgba(201,169,110,.4);letter-spacing:.4px;margin-top:4px;display:block}
+/* ── PROFILE GENDER TOGGLE ── */
+.profile-toggle{display:flex;background:rgba(255,255,255,.06);border-radius:100px;padding:3px;width:fit-content;margin:0 auto 16px;border:1px solid rgba(201,169,110,.2)}
+.pt-btn{font-family:'DM Sans',sans-serif;font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;padding:8px 24px;border-radius:100px;border:none;cursor:pointer;background:transparent;color:rgba(237,232,224,.35);transition:background .22s ease,color .22s ease}
+.pt-btn.act{background:var(--gold);color:#1a1816}
 /* S4 solution — staying dot */
 .flow-dot.staying{background:rgba(126,212,146,.75)}
 .pain-copy-col{}
@@ -782,33 +786,70 @@ footer a:hover{color:rgba(237,232,224,.6)}
       </div>
     </div>
     <div class="pain-vis-col" data-a="left">
-      <div class="pvis-card">
-        <div class="pvc-label"><span class="brand">Pleroma</span><span class="logo-os">OS</span> <span>· Client profile</span></div>
-        <div class="client-header">
-          <div class="client-header-left">
-            <div class="brief-client-name">Amira K.</div>
-            <div class="client-since">Client since March 2024 · 7 visits</div>
-            <div class="client-last">Last seen: Maya · 3 wks ago</div>
-          </div>
-          <div class="hair-avatar-col">
-            <div class="hair-avatar">
-              <img src="ref-curtain-bangs-light.png" alt="Curtain bangs · light">
+      <div class="profile-toggle">
+        <button class="pt-btn act" id="pt-f" onclick="switchProfile('f')">Women</button>
+        <button class="pt-btn" id="pt-m" onclick="switchProfile('m')">Men</button>
+      </div>
+      <div id="profile-f">
+        <div class="pvis-card">
+          <div class="pvc-label"><span class="brand">Pleroma</span><span class="logo-os">OS</span> <span>· Client profile</span></div>
+          <div class="client-header">
+            <div class="client-header-left">
+              <div class="brief-client-name">Amira K.</div>
+              <div class="client-since">Client since March 2024 · 7 visits</div>
+              <div class="client-last">Last seen: Maya · 3 wks ago</div>
             </div>
-            <div class="hair-avatar-caption">Visual ref</div>
+            <div class="hair-avatar-col">
+              <div class="hair-avatar">
+                <img src="ref-curtain-bangs-light.png" alt="Curtain bangs · light">
+              </div>
+              <div class="hair-avatar-caption">Visual ref</div>
+            </div>
           </div>
+          <div style="height:1px;background:rgba(255,255,255,.06);margin:0 0 12px"></div>
+          <div class="brief-tags">
+            <span class="brief-tag">Curtain fringe</span>
+            <span class="brief-tag">Balayage</span>
+            <span class="brief-tag">Wavy</span>
+            <span class="brief-tag warn">⚠ Scalp: bleach sensitivity</span>
+          </div>
+          <div class="brief-spec-row"><span class="spec-k">Length</span><span class="spec-v">Mid-back · 2–3 cm off ends</span></div>
+          <div class="brief-spec-row"><span class="spec-k">Technique</span><span class="spec-v">Face-framing layers · centre curtain fringe · eyebrow length</span></div>
+          <div class="brief-spec-row"><span class="spec-k">Colour</span><span class="spec-v">Lvl 8–9 warm blonde · balayage</span></div>
+          <div class="brief-spec-row"><span class="spec-k">Next colour</span><span class="spec-v">~8 wks</span></div>
+          <div class="pvc-note">The <span class="w-gold">data</span> belongs to your <span class="w-gold">business</span> now.<span class="pvc-saved">Saved by PleromaOS · accessible to any stylist</span></div>
         </div>
-        <div style="height:1px;background:rgba(255,255,255,.06);margin:0 0 12px"></div>
-        <div class="brief-tags">
-          <span class="brief-tag">Curtain fringe</span>
-          <span class="brief-tag">Balayage</span>
-          <span class="brief-tag">Wavy</span>
-          <span class="brief-tag warn">⚠ Scalp: bleach sensitivity</span>
+      </div>
+      <div id="profile-m" style="display:none">
+        <div class="pvis-card">
+          <div class="pvc-label"><span class="brand">Pleroma</span><span class="logo-os">OS</span> <span>· Client profile</span></div>
+          <div class="client-header">
+            <div class="client-header-left">
+              <div class="brief-client-name">Marco V.</div>
+              <div class="client-since">Client since Jan 2024 · 9 visits</div>
+              <div class="client-last">Last seen: Jayden · 5 wks ago</div>
+            </div>
+            <div class="hair-avatar-col">
+              <div class="hair-avatar">
+                <img src="ref-fade-sweep-light.png" alt="Low fade · swept-back top">
+              </div>
+              <div class="hair-avatar-caption">Visual ref</div>
+            </div>
+          </div>
+          <div style="height:1px;background:rgba(255,255,255,.06);margin:0 0 12px"></div>
+          <div class="brief-tags">
+            <span class="brief-tag">Low taper fade</span>
+            <span class="brief-tag">Swept-back top</span>
+            <span class="brief-tag">Natural brown</span>
+            <span class="brief-tag warn">⚠ Sensitive hairline</span>
+          </div>
+          <div class="brief-spec-row"><span class="spec-k">Length</span><span class="spec-v">6–7 cm on top · skin fade on sides</span></div>
+          <div class="brief-spec-row"><span class="spec-k">Technique</span><span class="spec-v">Low taper fade · blend to skin · light texturize on top</span></div>
+          <div class="brief-spec-row"><span class="spec-k">Colour</span><span class="spec-v">Natural medium brown · no colour</span></div>
+          <div class="brief-spec-row"><span class="spec-k">Product</span><span class="spec-v">Light-hold pomade · swept back</span></div>
+          <div class="brief-spec-row"><span class="spec-k">Next visit</span><span class="spec-v">~5–6 wks</span></div>
+          <div class="pvc-note">The <span class="w-gold">data</span> belongs to your <span class="w-gold">business</span> now.<span class="pvc-saved">Saved by PleromaOS · accessible to any stylist</span></div>
         </div>
-        <div class="brief-spec-row"><span class="spec-k">Length</span><span class="spec-v">Mid-back · 2–3 cm off ends</span></div>
-        <div class="brief-spec-row"><span class="spec-k">Technique</span><span class="spec-v">Face-framing layers · centre curtain fringe · eyebrow length</span></div>
-        <div class="brief-spec-row"><span class="spec-k">Colour</span><span class="spec-v">Lvl 8–9 warm blonde · balayage</span></div>
-        <div class="brief-spec-row"><span class="spec-k">Next colour</span><span class="spec-v">~8 wks</span></div>
-        <div class="pvc-note">The <span class="w-gold">data</span> belongs to your <span class="w-gold">business</span> now.<span class="pvc-saved">Saved by PleromaOS · accessible to any stylist</span></div>
       </div>
     </div>
   </div>
@@ -1615,6 +1656,12 @@ function goStep(key){
   document.getElementById('survey-bar').style.width=(pctMap[key]||8)+'%';
 }
 function goStepBack(){goStep(state.feelsReal==='no'?'3b':3);}
+function switchProfile(g){
+  document.getElementById('profile-f').style.display=g==='f'?'':'none';
+  document.getElementById('profile-m').style.display=g==='m'?'':'none';
+  document.getElementById('pt-f').classList.toggle('act',g==='f');
+  document.getElementById('pt-m').classList.toggle('act',g==='m');
+}
 function pick(field,value,nextStep){
   state[field]=value;
   const map={businessType:'h-type',feelsReal:'h-real',topFeature:'h-feat',bigChallenge:'h-chal'};
