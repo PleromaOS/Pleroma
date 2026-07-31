@@ -154,13 +154,23 @@ nav.dim .nav-logo{color:var(--bg)}
 .chapter-h{font-family:'DM Serif Display',Georgia,serif;font-size:clamp(28px,5vw,58px);line-height:1.1;color:var(--bg)}
 .chapter-h .w-gold{color:var(--gold)}
 /* Brief card for S3 solution */
-.brief-client-name{font-family:'DM Serif Display',Georgia,serif;font-size:18px;color:var(--bg);margin-bottom:14px}
+.brief-client-name{font-family:'DM Serif Display',Georgia,serif;font-size:20px;color:#fff;letter-spacing:-.3px;line-height:1.1;margin-bottom:4px}
+.client-since{font-size:10px;color:rgba(237,232,224,.4);letter-spacing:.5px}
+.client-last{font-size:10px;color:rgba(201,169,110,.55);letter-spacing:.3px;margin-top:6px}
+.client-header{display:flex;align-items:stretch;justify-content:space-between;margin-bottom:14px;gap:12px}
+.client-header-left{flex:1;min-width:0}
+.hair-avatar-col{display:flex;flex-direction:column;align-items:center;flex-shrink:0}
+.hair-avatar{width:88px;height:110px;border-radius:12px;border:1.5px solid rgba(201,169,110,.15);overflow:hidden;background:#2a2825}
+.hair-avatar img{width:100%;height:100%;object-fit:cover;object-position:center top}
+.hair-avatar-caption{font-size:8px;letter-spacing:1px;text-transform:uppercase;color:rgba(201,169,110,.45);text-align:center;margin-top:4px;font-weight:600}
 .brief-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
-.brief-tag{font-size:10px;font-weight:700;padding:4px 10px;border-radius:100px;background:rgba(45,74,53,.18);color:rgba(45,200,100,.75);border:1px solid rgba(45,200,100,.15)}
-.brief-tag.warn{background:rgba(201,169,110,.1);color:var(--gold);border-color:rgba(201,169,110,.2)}
-.brief-note-item{font-size:11px;color:var(--on-dark-mute);padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04)}
-.brief-note-item:last-of-type{border-bottom:none}
-.brief-saved{font-size:9px;letter-spacing:.06em;color:rgba(237,232,224,.2);text-transform:uppercase;margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,.04)}
+.brief-tag{font-size:10px;padding:4px 10px;border-radius:100px;background:rgba(237,232,224,.07);color:rgba(237,232,224,.8);font-weight:500}
+.brief-tag.warn{background:rgba(180,60,60,.15);color:rgba(255,110,110,.85)}
+.brief-spec-row{display:flex;gap:8px;align-items:baseline;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);line-height:1.3}
+.brief-spec-row:last-of-type{border-bottom:none}
+.spec-k{font-size:9px;letter-spacing:.8px;text-transform:uppercase;color:rgba(201,169,110,.6);font-weight:700;flex-shrink:0;width:68px}
+.spec-v{font-size:11px;color:rgba(237,232,224,.75)}
+.pvc-saved{font-size:9px;color:rgba(201,169,110,.4);letter-spacing:.4px;margin-top:4px;display:block}
 /* S4 solution — staying dot */
 .flow-dot.staying{background:rgba(126,212,146,.75)}
 .pain-copy-col{}
@@ -173,8 +183,10 @@ nav.dim .nav-logo{color:var(--bg)}
 
 /* pvis shared card shell */
 .pvis-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:20px;padding:24px;width:300px}
-.pvc-label{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--on-dark-faint);margin-bottom:20px}
-.pvc-note{margin-top:16px;font-size:12px;color:var(--gold);letter-spacing:.01em;padding-top:14px;border-top:1px solid rgba(255,255,255,.05)}
+.pvc-label{font-size:9px;letter-spacing:1.8px;text-transform:uppercase;color:rgba(237,232,224,.45);font-weight:700;margin-bottom:16px}
+.pvc-label .brand{color:rgba(237,232,224,.9)}
+.pvc-label .logo-os{color:var(--gold)}
+.pvc-note{margin-top:14px;font-size:12px;color:rgba(237,232,224,.8);line-height:1.5;padding-top:12px;border-top:1px solid rgba(255,255,255,.06)}
 .client-row{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.04)}
 .client-row:last-of-type{border-bottom:none}
 .c-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
@@ -703,18 +715,32 @@ footer a:hover{color:rgba(237,232,224,.6)}
     </div>
     <div class="pain-vis-col" data-a="left">
       <div class="pvis-card">
-        <div class="pvc-label">PleromaOS · Client profile</div>
-        <div class="brief-client-name">Amira K.</div>
-        <div class="brief-tags">
-          <span class="brief-tag">Medium bob</span>
-          <span class="brief-tag">No heat</span>
-          <span class="brief-tag">Warm tones</span>
-          <span class="brief-tag warn">No bleach — ever</span>
+        <div class="pvc-label"><span class="brand">Pleroma</span><span class="logo-os">OS</span> <span>· Client profile</span></div>
+        <div class="client-header">
+          <div class="client-header-left">
+            <div class="brief-client-name">Amira K.</div>
+            <div class="client-since">Client since March 2024 · 7 visits</div>
+            <div class="client-last">Last seen: Maya · 3 wks ago</div>
+          </div>
+          <div class="hair-avatar-col">
+            <div class="hair-avatar">
+              <img src="ref-curtain-bangs-light.png" alt="Curtain bangs · light">
+            </div>
+            <div class="hair-avatar-caption">Visual ref</div>
+          </div>
         </div>
-        <div class="brief-note-item">Prefers: soft layers, no fringe</div>
-        <div class="brief-note-item">Sensitive: scalp (right side)</div>
-        <div class="brief-saved">Saved by PleromaOS · accessible to any stylist</div>
-        <div class="pvc-note"><span class="w-gold">The knowledge belongs to your business now.</span></div>
+        <div style="height:1px;background:rgba(255,255,255,.06);margin:0 0 12px"></div>
+        <div class="brief-tags">
+          <span class="brief-tag">Curtain fringe</span>
+          <span class="brief-tag">Balayage</span>
+          <span class="brief-tag">Wavy</span>
+          <span class="brief-tag warn">⚠ Scalp: bleach sensitivity</span>
+        </div>
+        <div class="brief-spec-row"><span class="spec-k">Length</span><span class="spec-v">Mid-back · 2–3 cm off ends</span></div>
+        <div class="brief-spec-row"><span class="spec-k">Technique</span><span class="spec-v">Face-framing layers · centre curtain fringe · eyebrow length</span></div>
+        <div class="brief-spec-row"><span class="spec-k">Colour</span><span class="spec-v">Lvl 8–9 warm blonde · balayage</span></div>
+        <div class="brief-spec-row"><span class="spec-k">Next colour</span><span class="spec-v">~8 wks</span></div>
+        <div class="pvc-note">The <span class="w-gold">data</span> belongs to your <span class="w-gold">business</span> now.<span class="pvc-saved">Saved by PleromaOS · accessible to any stylist</span></div>
       </div>
     </div>
   </div>
