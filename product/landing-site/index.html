@@ -44,6 +44,7 @@ body{font-family:'DM Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-seri
 .intro-letter{
   display:inline-block;opacity:0;transform:translateY(36px);
   transition:opacity .65s var(--ease),transform .65s var(--ease);
+  letter-spacing:-2px;
 }
 .intro-letter.show{opacity:1;transform:none}
 .intro-letter.os{color:var(--gold)}
@@ -314,7 +315,6 @@ nav.dim .nav-logo{color:var(--bg)}
 }
 .s-reveal.lit{background:var(--bg)}
 .rev-eye{font-size:10px;letter-spacing:6px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:32px;animation:goldGlow 2.4s ease-in-out infinite,floatY 3.2s ease-in-out infinite}
-.rev-eye .brand{color:rgba(237,232,224,.9)}
 @media(prefers-reduced-motion:reduce){.rev-eye,.rev-slogan{animation:none}}
 .rev-h{font-family:'DM Serif Display',Georgia,serif;font-size:clamp(32px,5.5vw,66px);line-height:1.1;max-width:620px;color:var(--bg);margin-bottom:24px;transition:color 1.6s var(--ease2)}
 .s-reveal.lit .rev-h{color:var(--dark)}
@@ -1005,7 +1005,7 @@ footer a:hover{color:rgba(237,232,224,.6)}
      S5: REVEAL — MOOD SHIFT
 ══════════════════════════════ -->
 <section class="s-reveal" id="reveal">
-  <p class="rev-eye" data-a="up">Introducing <span class="brand">Pleroma</span><span class="logo-os">OS</span></p>
+  <p class="rev-eye" data-a="up">Introducing PleromaOS</p>
   <h2 class="rev-h" data-a="up" data-d="1">It doesn't have to<br>start with a guess.</h2>
   <p class="rev-sub" data-a="up" data-d="2">Every appointment starts with the same picture in mind. PleromaOS keeps that picture on record — forever.</p>
   <p class="rev-slogan" data-a="fade" data-d="4">The craft you know. The future you need.</p>
@@ -1373,12 +1373,12 @@ window.scrollTo(0,0);
   const slogan = document.getElementById('intro-slogan');
   const screen = document.getElementById('intro-screen');
 
-  // Build letters
-  'PleromaOS'.split('').forEach((l,i)=>{
+  // Build word-groups: "Pleroma" (white) and "OS" (gold) always land together
+  [['Pleroma','',0],['OS',' os',0.3]].forEach(([text,extra,delay])=>{
     const sp = document.createElement('span');
-    sp.className = 'intro-letter' + (i >= 7 ? ' os' : '');
-    sp.textContent = l;
-    sp.style.transitionDelay = (i * 0.1) + 's';
+    sp.className = 'intro-letter' + extra;
+    sp.style.transitionDelay = delay + 's';
+    sp.textContent = text;
     word.appendChild(sp);
   });
 
@@ -1869,7 +1869,7 @@ const T={
     pain1P:'What your stylist knows about your clients <span class="w-gold">leaves with them.</span> With PleromaOS, it stays in your <span class="w-gold">business.</span>',
     pain2Kicker:'03 · Starting over is the fear',pain2H:'Your stylist knows the end result.<br><span class="w-gold">Your business should too.</span>',
     pain2P:'Clients leave because they don\'t trust starting over. <span class="w-gold">With PleromaOS, they never have to.</span>',
-    revEye:'Introducing <span class="brand">Pleroma</span><span class="logo-os">OS</span>',revH:'It doesn\'t have to<br>start with a guess.',
+    revEye:'Introducing PleromaOS',revH:'It doesn\'t have to<br>start with a guess.',
     revSub:'Every appointment starts with the same picture in mind. PleromaOS keeps that picture on record — forever.',
     revSlogan:'The craft you know. The future you need.',
     how0H:'Client scans the QR code',how0P:'In your waiting area, on your booking confirmation, or via WhatsApp. Opens instantly in any browser — no app needed, no account required.',
@@ -1904,7 +1904,7 @@ const T={
     pain1P:'Wat jouw stylist weet over jouw klanten <span class="w-gold">gaat met hen mee.</span> Met PleromaOS blijft het in jouw <span class="w-gold">bedrijf.</span>',
     pain2Kicker:'03 · Opnieuw beginnen is de angst',pain2H:'Jouw stylist kent het eindresultaat.<br><span class="w-gold">Jouw bedrijf zou dat ook moeten weten.</span>',
     pain2P:'Klanten vertrekken omdat ze een nieuw begin niet vertrouwen. <span class="w-gold">Met PleromaOS hoeven ze dat nooit.</span>',
-    revEye:'Maak kennis met <span class="brand">Pleroma</span><span class="logo-os">OS</span>',revH:'Het hoeft niet te<br>beginnen met gissen.',
+    revEye:'Maak kennis met PleromaOS',revH:'Het hoeft niet te<br>beginnen met gissen.',
     revSub:'Elke afspraak begint met hetzelfde beeld voor ogen. PleromaOS bewaart dat beeld — voor altijd.',
     revSlogan:'Het vakmanschap dat je kent. De toekomst die je nodig hebt.',
     how0H:'Klant scant de QR-code',how0P:'In je wachtruimte, op je boekingsbevestiging, of via WhatsApp. Opent direct in elke browser — geen app nodig, geen account vereist.',
