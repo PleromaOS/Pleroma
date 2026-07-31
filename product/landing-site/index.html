@@ -612,6 +612,20 @@ footer a:hover{color:rgba(237,232,224,.6)}
 /* ── SECTION KICKER (shared) ── */
 .section-kicker{font-size:10px;letter-spacing:5px;text-transform:uppercase;color:var(--teal);margin-bottom:24px;display:block}
 
+/* ── PRIVACY MODAL ── */
+.priv-overlay{position:fixed;inset:0;z-index:2000;background:rgba(26,24,22,.82);display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;pointer-events:none;transition:opacity .3s}
+.priv-overlay.open{opacity:1;pointer-events:auto}
+.priv-modal{background:#f5f2ed;border-radius:20px;max-width:540px;width:100%;max-height:82vh;overflow-y:auto;padding:36px 40px;position:relative;color:var(--dark)}
+.priv-close{position:absolute;top:16px;right:20px;background:none;border:none;font-size:24px;color:#9b8d80;cursor:pointer;line-height:1;font-family:'DM Sans',sans-serif}
+.priv-close:hover{color:var(--dark)}
+.priv-modal-h{font-family:'DM Serif Display',Georgia,serif;font-size:24px;color:var(--dark);margin-bottom:6px}
+.priv-modal-date{font-size:11px;color:#b8a898;margin-bottom:28px;letter-spacing:.3px}
+.priv-sec{margin-bottom:20px}
+.priv-sec h3{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--teal);margin-bottom:8px;font-weight:700}
+.priv-sec p{font-size:14px;color:#4a4038;line-height:1.75}
+.priv-sec a{color:var(--teal);text-decoration:underline}
+@media(max-width:600px){.priv-modal{padding:28px 24px;border-radius:16px}}
+
 /* ── RESPONSIVE ── */
 @media(max-width:900px){
   .two-col,.beat-inner{grid-template-columns:1fr}
@@ -667,7 +681,7 @@ footer a:hover{color:rgba(237,232,224,.6)}
   <div class="intro-inner">
     <div class="intro-word" id="intro-word"></div>
     <div class="intro-bar" id="intro-bar"></div>
-    <div class="intro-slogan" id="intro-slogan">The craft you know. The future you need.</div>
+    <div class="intro-slogan" id="intro-slogan" data-en="The craft you know. The future you need." data-nl="Het vakmanschap dat je kent. De toekomst die je nodig hebt.">The craft you know. The future you need.</div>
   </div>
 </div>
 
@@ -710,8 +724,8 @@ footer a:hover{color:rgba(237,232,224,.6)}
 ══════════════════════════════ -->
 <section class="s-chapter" id="s-chapter">
   <div class="chapter-inner">
-    <p class="chapter-eyebrow" data-a="fade">Before the solution</p>
-    <h2 class="chapter-h" data-a="up" data-d="1">Three things that <span class="w-gold">cost you clients.</span></h2>
+    <p class="chapter-eyebrow" data-a="fade" data-en="Before the solution" data-nl="Voor de oplossing">Before the solution</p>
+    <h2 class="chapter-h" data-a="up" data-d="1" data-en="Three things that <span class='w-gold'>cost you clients.</span>" data-nl="Drie dingen die je <span class='w-gold'>klanten kosten.</span>">Three things that <span class="w-gold">cost you clients.</span></h2>
   </div>
 </section>
 
@@ -730,43 +744,43 @@ footer a:hover{color:rgba(237,232,224,.6)}
     </div>
     <div class="pain-vis-col" data-a="left">
       <div class="pvis-card">
-        <div class="pvc-label"><span class="brand">Pleroma</span><span class="logo-os">OS</span> · Client retention</div>
+        <div class="pvc-label"><span class="brand">Pleroma</span><span class="logo-os">OS</span> <span class="pvc-lbl-t" data-en="· Client retention" data-nl="· Klantbehoud">· Client retention</span></div>
         <div class="retention-summary">
-          <span class="rs-alert"><span class="rs-alert-dot"></span>2 at risk · overdue &amp; not rebooked</span>
-          <span class="rs-ok"><span class="rs-ok-dot"></span>3 on track</span>
+          <span class="rs-alert"><span class="rs-alert-dot"></span><span data-en="2 at risk · overdue &amp; not rebooked" data-nl="2 risico · te laat &amp; niet opnieuw geboekt">2 at risk · overdue &amp; not rebooked</span></span>
+          <span class="rs-ok"><span class="rs-ok-dot"></span><span data-en="3 on track" data-nl="3 op schema">3 on track</span></span>
         </div>
         <div class="col-header">
           <span class="col-dot-spacer"></span>
-          <span class="col-h">Client</span>
-          <span class="col-h right">Accuracy</span>
+          <span class="col-h" data-en="Client" data-nl="Klant">Client</span>
+          <span class="col-h right" data-en="Accuracy" data-nl="Nauwkeurigheid">Accuracy</span>
         </div>
-        <div class="ret-tier risk">At risk</div>
+        <div class="ret-tier risk" data-en="At risk" data-nl="Risico">At risk</div>
         <div class="ret-row red">
           <div class="cr-top"><span class="risk-dot red"></span><span class="cr-name">Yasmine B.</span><span class="cr-accuracy low">58% <span class="acc-arrow">↓</span></span></div>
-          <div class="cr-meta"><span class="cr-cadence">Every 4 wks ·</span><span class="cr-signal danger">5 wks overdue</span><span class="cr-signal danger">No rebooking</span></div>
-          <div class="cr-detail">"A bit too short last time" — no reply to outreach</div>
+          <div class="cr-meta"><span class="cr-cadence" data-en="Every 4 wks ·" data-nl="Elke 4 wkn ·">Every 4 wks ·</span><span class="cr-signal danger" data-en="5 wks overdue" data-nl="5 wkn te laat">5 wks overdue</span><span class="cr-signal danger" data-en="No rebooking" data-nl="Niet opnieuw geboekt">No rebooking</span></div>
+          <div class="cr-detail" data-en='"A bit too short last time" — no reply to outreach' data-nl='"Vorige keer iets te kort" — geen reactie op berichtten'>"A bit too short last time" — no reply to outreach</div>
         </div>
         <div class="ret-row red">
           <div class="cr-top"><span class="risk-dot red"></span><span class="cr-name">Leon K.</span><span class="cr-accuracy low">64% <span class="acc-arrow">↓</span></span></div>
-          <div class="cr-meta"><span class="cr-cadence">Every 3 wks ·</span><span class="cr-signal danger">3 wks overdue</span><span class="cr-signal danger">No rebooking</span></div>
-          <div class="cr-detail">"Felt a bit uneven on the left side, not sure if that was me" — last visit note</div>
+          <div class="cr-meta"><span class="cr-cadence" data-en="Every 3 wks ·" data-nl="Elke 3 wkn ·">Every 3 wks ·</span><span class="cr-signal danger" data-en="3 wks overdue" data-nl="3 wkn te laat">3 wks overdue</span><span class="cr-signal danger" data-en="No rebooking" data-nl="Niet opnieuw geboekt">No rebooking</span></div>
+          <div class="cr-detail" data-en='"Felt a bit uneven on the left side, not sure if that was me" — last visit note' data-nl='"Voelde een beetje ongelijk aan de linkerkant" — notitie laatste bezoek'>"Felt a bit uneven on the left side, not sure if that was me" — last visit note</div>
         </div>
-        <div class="ret-tier watch">Watch</div>
+        <div class="ret-tier watch" data-en="Watch" data-nl="Let op">Watch</div>
         <div class="ret-row amber">
           <div class="cr-top"><span class="risk-dot amber"></span><span class="cr-name">Marco V.</span><span class="cr-accuracy mid">81%</span></div>
-          <div class="cr-meta"><span class="cr-cadence">Every 6 wks ·</span><span class="cr-signal warn">Not yet rebooked</span><span class="cr-signal neutral">Fade · textured crop</span></div>
-          <div class="cr-detail">"Keep the fade, maybe a bit shorter on top next time" — last visit note</div>
+          <div class="cr-meta"><span class="cr-cadence" data-en="Every 6 wks ·" data-nl="Elke 6 wkn ·">Every 6 wks ·</span><span class="cr-signal warn" data-en="Not yet rebooked" data-nl="Nog niet opnieuw geboekt">Not yet rebooked</span><span class="cr-signal neutral" data-en="Fade · textured crop" data-nl="Fade · getextureerd">Fade · textured crop</span></div>
+          <div class="cr-detail" data-en='"Keep the fade, maybe a bit shorter on top next time" — last visit note' data-nl='"Fade behouden, misschien iets korter bovenop" — notitie laatste bezoek'>"Keep the fade, maybe a bit shorter on top next time" — last visit note</div>
         </div>
-        <div class="ret-tier ok">On track</div>
+        <div class="ret-tier ok" data-en="On track" data-nl="Op schema">On track</div>
         <div class="ret-row green">
           <div class="cr-top"><span class="risk-dot green"></span><span class="cr-name">Amira K.</span><span class="cr-accuracy high">96%</span></div>
-          <div class="cr-meta"><span class="cr-cadence">On cadence ·</span><span class="cr-signal good">Rebooked · 12 Aug</span><span class="cr-signal neutral">Brief change: + fringe</span></div>
+          <div class="cr-meta"><span class="cr-cadence" data-en="On cadence ·" data-nl="Op schema ·">On cadence ·</span><span class="cr-signal good" data-en="Rebooked · 12 Aug" data-nl="Opnieuw geboekt · 12 aug">Rebooked · 12 Aug</span><span class="cr-signal neutral" data-en="Brief change: + fringe" data-nl="Brief gewijzigd: + pony">Brief change: + fringe</span></div>
         </div>
         <div class="ret-row green">
           <div class="cr-top"><span class="risk-dot green"></span><span class="cr-name">Nadia R.</span><span class="cr-accuracy high">94%</span></div>
-          <div class="cr-meta"><span class="cr-cadence">1 wk early ·</span><span class="cr-signal good">Rebooked · 19 Aug</span></div>
+          <div class="cr-meta"><span class="cr-cadence" data-en="1 wk early ·" data-nl="1 wk vroeg ·">1 wk early ·</span><span class="cr-signal good" data-en="Rebooked · 19 Aug" data-nl="Opnieuw geboekt · 19 aug">Rebooked · 19 Aug</span></div>
         </div>
-        <div class="pvc-note">You know exactly <span class="w-gold">who to reach out to — and why.</span></div>
+        <div class="pvc-note" data-en="You know exactly <span class='w-gold'>who to reach out to — and why.</span>" data-nl="Je weet precies <span class='w-gold'>wie je moet benaderen — en waarom.</span>">You know exactly <span class="w-gold">who to reach out to — and why.</span></div>
       </div>
     </div>
   </div>
@@ -787,68 +801,68 @@ footer a:hover{color:rgba(237,232,224,.6)}
     </div>
     <div class="pain-vis-col" data-a="left">
       <div class="profile-toggle">
-        <button class="pt-btn act" id="pt-f" onclick="switchProfile('f')">Women</button>
-        <button class="pt-btn" id="pt-m" onclick="switchProfile('m')">Men</button>
+        <button class="pt-btn act" id="pt-f" onclick="switchProfile('f')" data-en="Women" data-nl="Vrouwen">Women</button>
+        <button class="pt-btn" id="pt-m" onclick="switchProfile('m')" data-en="Men" data-nl="Mannen">Men</button>
       </div>
       <div id="profile-f">
         <div class="pvis-card">
-          <div class="pvc-label"><span class="brand">Pleroma</span><span class="logo-os">OS</span> <span>· Client profile</span></div>
+          <div class="pvc-label"><span class="brand">Pleroma</span><span class="logo-os">OS</span> <span class="pvc-lbl-t" data-en="· Client profile" data-nl="· Klantprofiel">· Client profile</span></div>
           <div class="client-header">
             <div class="client-header-left">
               <div class="brief-client-name">Amira K.</div>
-              <div class="client-since">Client since March 2024 · 7 visits</div>
-              <div class="client-last">Last seen: Maya · 3 wks ago</div>
+              <div class="client-since" data-en="Client since March 2024 · 7 visits" data-nl="Klant sinds maart 2024 · 7 bezoeken">Client since March 2024 · 7 visits</div>
+              <div class="client-last" data-en="Last seen: Maya · 3 wks ago" data-nl="Laatst gezien: Maya · 3 wkn geleden">Last seen: Maya · 3 wks ago</div>
             </div>
             <div class="hair-avatar-col">
               <div class="hair-avatar">
                 <img src="ref-curtain-bangs-light.png" alt="Curtain bangs · light">
               </div>
-              <div class="hair-avatar-caption">Visual ref</div>
+              <div class="hair-avatar-caption" data-en="Visual ref" data-nl="Visuele ref">Visual ref</div>
             </div>
           </div>
           <div style="height:1px;background:rgba(255,255,255,.06);margin:0 0 12px"></div>
           <div class="brief-tags">
-            <span class="brief-tag">Curtain fringe</span>
+            <span class="brief-tag" data-en="Curtain fringe" data-nl="Gordijn pony">Curtain fringe</span>
             <span class="brief-tag">Balayage</span>
-            <span class="brief-tag">Wavy</span>
-            <span class="brief-tag warn">⚠ Scalp: bleach sensitivity</span>
+            <span class="brief-tag" data-en="Wavy" data-nl="Golvend">Wavy</span>
+            <span class="brief-tag warn" data-en="⚠ Scalp: bleach sensitivity" data-nl="⚠ Hoofdhuid: bleekmiddel gevoeligheid">⚠ Scalp: bleach sensitivity</span>
           </div>
-          <div class="brief-spec-row"><span class="spec-k">Length</span><span class="spec-v">Mid-back · 2–3 cm off ends</span></div>
-          <div class="brief-spec-row"><span class="spec-k">Technique</span><span class="spec-v">Face-framing layers · centre curtain fringe · eyebrow length</span></div>
-          <div class="brief-spec-row"><span class="spec-k">Colour</span><span class="spec-v">Lvl 8–9 warm blonde · balayage</span></div>
-          <div class="brief-spec-row"><span class="spec-k">Next colour</span><span class="spec-v">~8 wks</span></div>
-          <div class="pvc-note">The <span class="w-gold">data</span> belongs to your <span class="w-gold">business</span> now.<span class="pvc-saved">Saved by PleromaOS · accessible to any stylist</span></div>
+          <div class="brief-spec-row"><span class="spec-k" data-en="Length" data-nl="Lengte">Length</span><span class="spec-v" data-en="Mid-back · 2–3 cm off ends" data-nl="Midden rug · 2–3 cm van de punten">Mid-back · 2–3 cm off ends</span></div>
+          <div class="brief-spec-row"><span class="spec-k" data-en="Technique" data-nl="Techniek">Technique</span><span class="spec-v" data-en="Face-framing layers · centre curtain fringe · eyebrow length" data-nl="Gezichtsomlijstende laagjes · centrale gordijn pony · wenkbrauwlengte">Face-framing layers · centre curtain fringe · eyebrow length</span></div>
+          <div class="brief-spec-row"><span class="spec-k" data-en="Colour" data-nl="Kleur">Colour</span><span class="spec-v" data-en="Lvl 8–9 warm blonde · balayage" data-nl="Niv 8–9 warm blond · balayage">Lvl 8–9 warm blonde · balayage</span></div>
+          <div class="brief-spec-row"><span class="spec-k" data-en="Next colour" data-nl="Volgende kleur">Next colour</span><span class="spec-v" data-en="~8 wks" data-nl="~8 wkn">~8 wks</span></div>
+          <div class="pvc-note" data-en="The <span class='w-gold'>data</span> belongs to your <span class='w-gold'>business</span> now.<span class='pvc-saved'>Saved by PleromaOS · accessible to any stylist</span>" data-nl="De <span class='w-gold'>data</span> is nu van jouw <span class='w-gold'>bedrijf</span>.<span class='pvc-saved'>Opgeslagen door PleromaOS · toegankelijk voor elke stylist</span>">The <span class="w-gold">data</span> belongs to your <span class="w-gold">business</span> now.<span class="pvc-saved">Saved by PleromaOS · accessible to any stylist</span></div>
         </div>
       </div>
       <div id="profile-m" style="display:none">
         <div class="pvis-card">
-          <div class="pvc-label"><span class="brand">Pleroma</span><span class="logo-os">OS</span> <span>· Client profile</span></div>
+          <div class="pvc-label"><span class="brand">Pleroma</span><span class="logo-os">OS</span> <span class="pvc-lbl-t" data-en="· Client profile" data-nl="· Klantprofiel">· Client profile</span></div>
           <div class="client-header">
             <div class="client-header-left">
               <div class="brief-client-name">Marco V.</div>
-              <div class="client-since">Client since Jan 2024 · 9 visits</div>
-              <div class="client-last">Last seen: Jayden · 5 wks ago</div>
+              <div class="client-since" data-en="Client since Jan 2024 · 9 visits" data-nl="Klant sinds jan 2024 · 9 bezoeken">Client since Jan 2024 · 9 visits</div>
+              <div class="client-last" data-en="Last seen: Jayden · 5 wks ago" data-nl="Laatst gezien: Jayden · 5 wkn geleden">Last seen: Jayden · 5 wks ago</div>
             </div>
             <div class="hair-avatar-col">
               <div class="hair-avatar">
                 <img src="ref-fade-sweep-light.png" alt="Low fade · swept-back top">
               </div>
-              <div class="hair-avatar-caption">Visual ref</div>
+              <div class="hair-avatar-caption" data-en="Visual ref" data-nl="Visuele ref">Visual ref</div>
             </div>
           </div>
           <div style="height:1px;background:rgba(255,255,255,.06);margin:0 0 12px"></div>
           <div class="brief-tags">
-            <span class="brief-tag">Low taper fade</span>
-            <span class="brief-tag">Swept-back top</span>
-            <span class="brief-tag">Natural brown</span>
-            <span class="brief-tag warn">⚠ Sensitive hairline</span>
+            <span class="brief-tag" data-en="Low taper fade" data-nl="Lage taper fade">Low taper fade</span>
+            <span class="brief-tag" data-en="Swept-back top" data-nl="Naar achteren gekamd">Swept-back top</span>
+            <span class="brief-tag" data-en="Natural brown" data-nl="Natuurlijk bruin">Natural brown</span>
+            <span class="brief-tag warn" data-en="⚠ Sensitive hairline" data-nl="⚠ Gevoelige haarlijn">⚠ Sensitive hairline</span>
           </div>
-          <div class="brief-spec-row"><span class="spec-k">Length</span><span class="spec-v">6–7 cm on top · skin fade on sides</span></div>
-          <div class="brief-spec-row"><span class="spec-k">Technique</span><span class="spec-v">Low taper fade · blend to skin · light texturize on top</span></div>
-          <div class="brief-spec-row"><span class="spec-k">Colour</span><span class="spec-v">Natural medium brown · no colour</span></div>
-          <div class="brief-spec-row"><span class="spec-k">Product</span><span class="spec-v">Light-hold pomade · swept back</span></div>
-          <div class="brief-spec-row"><span class="spec-k">Next visit</span><span class="spec-v">~5–6 wks</span></div>
-          <div class="pvc-note">The <span class="w-gold">data</span> belongs to your <span class="w-gold">business</span> now.<span class="pvc-saved">Saved by PleromaOS · accessible to any stylist</span></div>
+          <div class="brief-spec-row"><span class="spec-k" data-en="Length" data-nl="Lengte">Length</span><span class="spec-v" data-en="6–7 cm on top · skin fade on sides" data-nl="6–7 cm bovenop · huidfade aan de zijkanten">6–7 cm on top · skin fade on sides</span></div>
+          <div class="brief-spec-row"><span class="spec-k" data-en="Technique" data-nl="Techniek">Technique</span><span class="spec-v" data-en="Low taper fade · blend to skin · light texturize on top" data-nl="Lage taper fade · blend naar huid · licht texturiseren bovenop">Low taper fade · blend to skin · light texturize on top</span></div>
+          <div class="brief-spec-row"><span class="spec-k" data-en="Colour" data-nl="Kleur">Colour</span><span class="spec-v" data-en="Natural medium brown · no colour" data-nl="Natuurlijk middenbruin · geen kleur">Natural medium brown · no colour</span></div>
+          <div class="brief-spec-row"><span class="spec-k" data-en="Product" data-nl="Product">Product</span><span class="spec-v" data-en="Light-hold pomade · swept back" data-nl="Licht fixerende pomade · naar achteren">Light-hold pomade · swept back</span></div>
+          <div class="brief-spec-row"><span class="spec-k" data-en="Next visit" data-nl="Volgend bezoek">Next visit</span><span class="spec-v" data-en="~5–6 wks" data-nl="~5–6 wkn">~5–6 wks</span></div>
+          <div class="pvc-note" data-en="The <span class='w-gold'>data</span> belongs to your <span class='w-gold'>business</span> now.<span class='pvc-saved'>Saved by PleromaOS · accessible to any stylist</span>" data-nl="De <span class='w-gold'>data</span> is nu van jouw <span class='w-gold'>bedrijf</span>.<span class='pvc-saved'>Opgeslagen door PleromaOS · toegankelijk voor elke stylist</span>">The <span class="w-gold">data</span> belongs to your <span class="w-gold">business</span> now.<span class="pvc-saved">Saved by PleromaOS · accessible to any stylist</span></div>
         </div>
       </div>
     </div>
@@ -870,46 +884,46 @@ footer a:hover{color:rgba(237,232,224,.6)}
     </div>
     <div class="pain-vis-col" data-a="left">
       <div class="pvis-card">
-        <div class="pvc-label"><span class="brand">Pleroma</span><span class="logo-os">OS</span> · Staff handoff</div>
+        <div class="pvc-label"><span class="brand">Pleroma</span><span class="logo-os">OS</span> <span class="pvc-lbl-t" data-en="· Staff handoff" data-nl="· Personeelsoverdracht">· Staff handoff</span></div>
 
         <div class="handoff-header">
           <div class="handoff-row">
             <div class="stylist-pill">
               <div class="s-av">M</div>
-              <div><div class="s-name">Maya</div><div class="s-meta">Left 14 March</div></div>
+              <div><div class="s-name">Maya</div><div class="s-meta" data-en="Left 14 March" data-nl="Vertrokken 14 maart">Left 14 March</div></div>
             </div>
             <div class="h-arrow">→</div>
             <div class="stylist-pill new">
               <div class="s-av new">J</div>
-              <div><div class="s-name">Jayden</div><div class="s-meta">Onboarded 17 March</div></div>
+              <div><div class="s-name">Jayden</div><div class="s-meta" data-en="Onboarded 17 March" data-nl="Gestart 17 maart">Onboarded 17 March</div></div>
             </div>
           </div>
           <div class="transfer-tags">
-            <span class="ttag">Visual ref</span>
-            <span class="ttag">Specs</span>
-            <span class="ttag">Visit notes</span>
-            <span class="ttag">Full history</span>
+            <span class="ttag" data-en="Visual ref" data-nl="Visuele ref">Visual ref</span>
+            <span class="ttag" data-en="Specs" data-nl="Specificaties">Specs</span>
+            <span class="ttag" data-en="Visit notes" data-nl="Bezoeknotities">Visit notes</span>
+            <span class="ttag" data-en="Full history" data-nl="Volledige geschiedenis">Full history</span>
           </div>
         </div>
 
         <div class="outreach-block">
           <div class="outreach-top">
             <span style="font-size:11px">⚡</span>
-            <span class="outreach-title">Auto-outreach · 14 Mar</span>
+            <span class="outreach-title" data-en="Auto-outreach · 14 Mar" data-nl="Auto-outreach · 14 mrt">Auto-outreach · 14 Mar</span>
             <div class="outreach-stats">
-              <span class="ostat"><span class="ostat-dot sent"></span>3 sent</span>
-              <span class="ostat"><span class="ostat-dot"></span>3 opened</span>
-              <span class="ostat"><span class="ostat-dot"></span>2 confirmed</span>
+              <span class="ostat"><span class="ostat-dot sent"></span><span data-en="3 sent" data-nl="3 verzonden">3 sent</span></span>
+              <span class="ostat"><span class="ostat-dot"></span><span data-en="3 opened" data-nl="3 geopend">3 opened</span></span>
+              <span class="ostat"><span class="ostat-dot"></span><span data-en="2 confirmed" data-nl="2 bevestigd">2 confirmed</span></span>
             </div>
           </div>
-          <div class="outreach-msg">"Your next stylist already has your full brief — nothing to explain."</div>
+          <div class="outreach-msg" data-en='"Your next stylist already has your full brief — nothing to explain."' data-nl='"Je volgende stylist heeft al je volledige brief — niets uit te leggen."'>"Your next stylist already has your full brief — nothing to explain."</div>
         </div>
 
         <div style="height:1px;background:rgba(255,255,255,.06);margin:0 0 10px"></div>
 
         <div class="col-header">
-          <span class="col-h">Client</span>
-          <span class="col-h right">Accuracy</span>
+          <span class="col-h" data-en="Client" data-nl="Klant">Client</span>
+          <span class="col-h right" data-en="Accuracy" data-nl="Nauwkeurigheid">Accuracy</span>
         </div>
 
         <div class="hcr">
@@ -918,10 +932,10 @@ footer a:hover{color:rgba(237,232,224,.6)}
             <span class="hcr-acc"><span class="acc-before">96%</span><span class="acc-sep">→</span><span class="acc-after">94%</span></span>
           </div>
           <div class="hcr-meta">
-            <span class="hcr-chip good">First visit · Jayden</span>
-            <span class="hcr-chip neutral">↻ 5 wks · held</span>
+            <span class="hcr-chip good" data-en="First visit · Jayden" data-nl="Eerste bezoek · Jayden">First visit · Jayden</span>
+            <span class="hcr-chip neutral" data-en="↻ 5 wks · held" data-nl="↻ 5 wkn · behouden">↻ 5 wks · held</span>
           </div>
-          <div class="hcr-note">"Didn't even have to explain my fringe"</div>
+          <div class="hcr-note" data-en='"Didn&apos;t even have to explain my fringe"' data-nl='"Hoefde mijn pony niet eens uit te leggen"'>"Didn't even have to explain my fringe"</div>
         </div>
 
         <div class="hcr">
@@ -930,8 +944,8 @@ footer a:hover{color:rgba(237,232,224,.6)}
             <span class="hcr-acc"><span class="acc-before">81%</span><span class="acc-sep">→</span><span class="acc-after">88%</span></span>
           </div>
           <div class="hcr-meta">
-            <span class="hcr-chip good">First visit · Jayden</span>
-            <span class="hcr-chip neutral">↻ 6 wks · held</span>
+            <span class="hcr-chip good" data-en="First visit · Jayden" data-nl="Eerste bezoek · Jayden">First visit · Jayden</span>
+            <span class="hcr-chip neutral" data-en="↻ 6 wks · held" data-nl="↻ 6 wkn · behouden">↻ 6 wks · held</span>
           </div>
         </div>
 
@@ -941,8 +955,8 @@ footer a:hover{color:rgba(237,232,224,.6)}
             <span class="hcr-acc"><span class="acc-before">94%</span><span class="acc-sep">→</span><span class="acc-after">93%</span></span>
           </div>
           <div class="hcr-meta">
-            <span class="hcr-chip good">First visit · Jayden</span>
-            <span class="hcr-chip neutral">↻ 4 wks · held</span>
+            <span class="hcr-chip good" data-en="First visit · Jayden" data-nl="Eerste bezoek · Jayden">First visit · Jayden</span>
+            <span class="hcr-chip neutral" data-en="↻ 4 wks · held" data-nl="↻ 4 wkn · behouden">↻ 4 wks · held</span>
           </div>
         </div>
 
@@ -952,12 +966,12 @@ footer a:hover{color:rgba(237,232,224,.6)}
             <span class="hcr-acc"><span class="acc-none">—</span></span>
           </div>
           <div class="hcr-meta">
-            <span class="hcr-chip warn">No brief on file</span>
-            <span class="hcr-chip warn">Did not rebook</span>
+            <span class="hcr-chip warn" data-en="No brief on file" data-nl="Geen brief in systeem">No brief on file</span>
+            <span class="hcr-chip warn" data-en="Did not rebook" data-nl="Niet opnieuw geboekt">Did not rebook</span>
           </div>
         </div>
 
-        <div class="pvc-note">The brief stays. <span class="w-gold">The client stays.</span></div>
+        <div class="pvc-note" data-en="The brief stays. <span class='w-gold'>The client stays.</span>" data-nl="De brief blijft. <span class='w-gold'>De klant blijft.</span>">The brief stays. <span class="w-gold">The client stays.</span></div>
       </div>
     </div>
   </div>
@@ -984,7 +998,7 @@ footer a:hover{color:rgba(237,232,224,.6)}
     <div class="pt-ctas" data-a="up" data-d="3">
       <a class="pt-btn-primary mag" href="https://calendly.com/bryan-pleromaos/30min" target="_blank" rel="noopener">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-        Book a 15-min call
+        <span data-en="Book a 15-min call" data-nl="Plan een gesprek van 15 min">Book a 15-min call</span>
       </a>
       <p class="pt-confirm">Founders reach out within 24hrs to confirm</p>
       <div class="pt-or">— or —</div>
@@ -1000,7 +1014,7 @@ footer a:hover{color:rgba(237,232,224,.6)}
   <div class="wl-card" data-a="up">
     <div class="wl-topbar">
       <span class="wl-brand">Pleroma<em class="wl-os">OS</em></span>
-      <span class="wl-tag">Stay in the loop</span>
+      <span class="wl-tag" data-en="Stay in the loop" data-nl="Blijf op de hoogte">Stay in the loop</span>
     </div>
     <div class="wl-body">
       <div class="wl-icon-wrap">
@@ -1020,9 +1034,9 @@ footer a:hover{color:rgba(237,232,224,.6)}
         <p>We'll be in touch before we go live.</p>
       </div>
       <div class="wl-trust">
-        <span class="wl-pill">GDPR Compliant</span>
-        <span class="wl-pill">Built in the Netherlands</span>
-        <span class="wl-pill">Works with any booking system</span>
+        <span class="wl-pill" data-en="GDPR Compliant" data-nl="AVG-compliant">GDPR Compliant</span>
+        <span class="wl-pill" data-en="Built in the Netherlands" data-nl="Gebouwd in Nederland">Built in the Netherlands</span>
+        <span class="wl-pill" data-en="Works with any booking system" data-nl="Werkt met elk boekingssysteem">Works with any booking system</span>
       </div>
     </div>
   </div>
@@ -1032,7 +1046,7 @@ footer a:hover{color:rgba(237,232,224,.6)}
 <footer>
   <div class="f-logo">Pleroma<span class="logo-os f-os">OS</span></div>
   <p>© 2026 PleromaOS · Amsterdam, Netherlands</p>
-  <a href="../../docs/legal/privacy-policy.md">Privacy Policy</a>
+  <a href="#" onclick="showPrivacy();return false;">Privacy Policy</a>
 </footer>
 
 <!-- Celebration overlay -->
@@ -1040,10 +1054,43 @@ footer a:hover{color:rgba(237,232,224,.6)}
   <div class="jc-ring">
     <span class="jc-emoji">🎉</span>
     <div class="jc-name" id="jc-name">Someone just joined</div>
-    <div class="jc-sub">Just joined the waitlist</div>
+    <div class="jc-sub" data-en="Just joined the waitlist" data-nl="Net aangemeld voor de wachtlijst">Just joined the waitlist</div>
   </div>
 </div>
 <div class="confetti-wrap" id="confetti-wrap"></div>
+
+<!-- Privacy Modal -->
+<div class="priv-overlay" id="priv-overlay" onclick="if(event.target===this)hidePrivacy()">
+  <div class="priv-modal">
+    <button class="priv-close" onclick="hidePrivacy()" aria-label="Close">×</button>
+    <h2 class="priv-modal-h">Privacy Policy</h2>
+    <p class="priv-modal-date">Last updated: July 2026</p>
+    <div class="priv-sec">
+      <h3>What we collect</h3>
+      <p>When you join our waitlist or book a call, we collect your name (optional) and email address. Nothing else.</p>
+    </div>
+    <div class="priv-sec">
+      <h3>Why we collect it</h3>
+      <p>Solely to follow up about PleromaOS and keep you informed about our launch. We will not use your data for any other purpose.</p>
+    </div>
+    <div class="priv-sec">
+      <h3>Who has access</h3>
+      <p>Only the PleromaOS founding team. We do not sell, share, or transfer your data to third parties.</p>
+    </div>
+    <div class="priv-sec">
+      <h3>How long we keep it</h3>
+      <p>Until PleromaOS launches or until you ask us to remove your data — whichever comes first.</p>
+    </div>
+    <div class="priv-sec">
+      <h3>Your rights (GDPR / AVG)</h3>
+      <p>You have the right to access, correct, or delete your data at any time. Email us at <a href="mailto:alexanderv071230@gmail.com">alexanderv071230@gmail.com</a> and we will respond within 72 hours.</p>
+    </div>
+    <div class="priv-sec">
+      <h3>Data controller</h3>
+      <p>PleromaOS · Amsterdam, Netherlands · <a href="mailto:alexanderv071230@gmail.com">alexanderv071230@gmail.com</a></p>
+    </div>
+  </div>
+</div>
 
 <div class="page-progress" id="page-progress"></div>
 <div class="section-flash" id="section-flash"></div>
@@ -1308,9 +1355,10 @@ function confetti(){
   }
 }
 function celebrateJoin(name){
+  const lang=document.documentElement.lang||'en';
   const cel=document.getElementById('join-celebration');
   const nm=document.getElementById('jc-name');
-  if(nm) nm.textContent=name+' just joined';
+  if(nm) nm.textContent=name+(lang==='nl'?' is net aangemeld':' just joined');
   cel.classList.add('show');
   confetti();
   setTimeout(()=>cel.classList.remove('show'),3500);
@@ -1322,11 +1370,13 @@ let _toastIdx=0;
 const _cities=['Amsterdam','Rotterdam','Utrecht','Den Haag','Eindhoven','Haarlem','Groningen','Breda','Nijmegen','Tilburg'];
 
 function showToast(name){
+  const lang=document.documentElement.lang||'en';
+  const joinedWord=lang==='nl'?'aangemeld':'joined';
   const init=(name||'?').split(' ').map(n=>n[0]||'').join('').slice(0,2).toUpperCase();
   const city=_cities[Math.floor(Math.random()*_cities.length)];
   const t=document.createElement('div');
   t.className='toast';
-  t.innerHTML=`<div class="toast-av">${init}</div><div style="flex:1"><div class="toast-name">${name}</div><div class="toast-sub">joined · ${city}</div></div><div class="toast-dot"></div>`;
+  t.innerHTML=`<div class="toast-av">${init}</div><div style="flex:1"><div class="toast-name">${name}</div><div class="toast-sub">${joinedWord} · ${city}</div></div><div class="toast-dot"></div>`;
   toastWrap.appendChild(t);
   requestAnimationFrame(()=>requestAnimationFrame(()=>t.classList.add('show')));
   setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),600);},4500);
@@ -1474,7 +1524,6 @@ function setLang(lang){
   si('.hook-gap',t.hookGap);
   si('.btn-gold',t.btnGold);
   si('.btn-ghost',t.btnGhost);
-  si('.scroll-cue span',t.scrollCue);
   // Pain beats
   const painKickers=qsa('#s-pain-0 .beat-kicker,#s-pain-1 .beat-kicker,#s-pain-2 .beat-kicker');
   if(painKickers[0])painKickers[0].innerHTML=t.pain0Kicker;
@@ -1485,9 +1534,6 @@ function setLang(lang){
   si('#s-pain-2 h2',t.pain2H);si('#s-pain-2 p',t.pain2P);
   // Reveal
   si('.rev-eye',t.revEye);si('.rev-h',t.revH);si('.rev-sub',t.revSub);si('.rev-slogan',t.revSlogan);
-  // How
-  // Flow
-  // Owner
   // Partner section
   si('.pt-eye',t.ptEye);si('.pt-h',t.ptH);si('.pt-sub',t.ptSub);
   si('.pt-confirm',t.ptConfirm);si('.pt-or',t.ptOr);si('.pt-btn-secondary',t.ptSecondary);
@@ -1495,13 +1541,25 @@ function setLang(lang){
   si('.wl-h',t.wlH);si('.wl-sub',t.wlSub);
   si('.wl-submit',t.wlSubmit);si('.wl-fine',t.wlFine);
   si('#success h3',t.successH);si('#success p',t.successP);
-  si('footer p',t.footerCopy);si('footer a',t.footerPrivacy);
+  si('footer p',t.footerCopy);si('footer a[href="#"]',t.footerPrivacy);
+  // Swap all data-en / data-nl elements (diagrams, chapter, pills, etc.)
+  qsa('[data-en]').forEach(el=>{
+    const txt=el.dataset[lang]||el.dataset.en;
+    if(txt!==undefined)el.innerHTML=txt;
+  });
 }
 
 setLang(localStorage.getItem('lang')||'en');
 
 // Sound: placeholder — to be implemented with proper audio
 function playChime(){}
+
+// ══════════════════════════════════════════
+// PRIVACY MODAL
+// ══════════════════════════════════════════
+function showPrivacy(){document.getElementById('priv-overlay').classList.add('open');document.body.style.overflow='hidden';}
+function hidePrivacy(){document.getElementById('priv-overlay').classList.remove('open');document.body.style.overflow='';}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')hidePrivacy();});
 </script>
 </body>
 </html>
