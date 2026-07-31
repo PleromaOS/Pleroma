@@ -183,6 +183,7 @@ nav.dim .nav-logo{color:var(--bg)}
 .beat-kicker{font-size:10px;letter-spacing:5px;text-transform:uppercase;color:var(--gold);margin-bottom:32px;display:block}
 .pain-copy-col h2{font-family:'DM Serif Display',Georgia,serif;font-size:clamp(26px,3.5vw,50px);line-height:1.18;color:var(--bg);margin-bottom:24px}
 .pain-copy-col p{font-size:17px;color:var(--on-dark);line-height:1.8;max-width:400px}
+.hook-no-card{font-size:12px;color:rgba(237,232,224,.55);margin:0;letter-spacing:.02em}
 .beat-progress{display:flex;gap:10px;margin-top:48px}
 .bp-dot{width:28px;height:2px;border-radius:2px;background:rgba(237,232,224,.15)}
 .bp-dot.act{background:var(--gold)}
@@ -695,7 +696,7 @@ footer a:hover{color:rgba(237,232,224,.6)}
       <button class="lang-btn active" data-lang="en" onclick="setLang('en')">EN</button>
       <button class="lang-btn" data-lang="nl" onclick="setLang('nl')">NL</button>
     </div>
-    <a class="nav-btn" href="#waitlist">Join Waitlist</a>
+    <a class="nav-btn" href="#s-live">Join the Programme</a>
   </div>
 </nav>
 
@@ -713,8 +714,9 @@ footer a:hover{color:rgba(237,232,224,.6)}
     <strong>Your stylist gets a clear brief. Your business keeps the record.</strong>
   </p>
   <div class="hook-btns">
-    <a class="btn-gold mag" href="#waitlist">Join Waitlist</a>
-    <a class="btn-ghost" href="#s-chapter">See what holds salons back →</a>
+    <a class="btn-gold mag" href="#s-live">Join the Partner Programme</a>
+    <p class="hook-no-card" data-en="No card required. No commitment." data-nl="Geen creditcard. Geen verplichtingen.">No card required. No commitment.</p>
+    <a class="btn-ghost" href="#waitlist">Not ready? Stay in the loop →</a>
   </div>
   <div class="scroll-cue">
     <div class="scroll-line"></div>
@@ -1440,11 +1442,11 @@ if(window.matchMedia('(hover:hover)').matches){
 // ══════════════════════════════════════════
 const T={
   en:{
-    navBtn:'Join Waitlist',
+    navBtn:'Join the Programme',
     hookKicker:'For barbershops &amp; salons',
     hookH1:'Your client and your stylist,<br><em>finally on the same page.</em>',
     hookGap:'PleromaOS gives every client a simple way to show<br>exactly what they have in mind — before they sit down.<br><strong>Your stylist gets a clear brief. Your business keeps the record.</strong>',
-    btnGold:'Join Waitlist',btnGhost:'See what holds salons back →',scrollCue:'Scroll',
+    btnGold:'Join the Partner Programme',btnGhost:'Not ready? Stay in the loop →',scrollCue:'Scroll',
     hookGap:'<span class="hook-gap-long">PleromaOS gives every client a simple way to show exactly what they have in mind — before they sit down.<br></span><strong>Your stylist gets a clear brief. Your business keeps the record.</strong>',
     pain0Kicker:'01 · They leave without a word',pain0H:'A client disappears,<br><span class="w-gold">and you never know why.</span>',
     pain0P:'PleromaOS shows you <span class="w-gold">who\'s slipping</span> — and <span class="w-gold">why.</span>',
@@ -1471,11 +1473,11 @@ const T={
     footerCopy:'© 2026 PleromaOS · Amsterdam, Netherlands',footerPrivacy:'Privacy Policy'
   },
   nl:{
-    navBtn:'Aanmelden',
+    navBtn:'Word Partner',
     hookKicker:'Voor kappers &amp; salons',
     hookH1:'Jouw klant en jouw stylist,<br><em>eindelijk op één lijn.</em>',
     hookGap:'PleromaOS geeft elke klant een eenvoudige manier om te laten zien<br>wat ze in gedachten hebben — vóórdat ze gaan zitten.<br><strong>Jouw stylist krijgt een duidelijke briefing. Jouw bedrijf bewaart het altijd.</strong>',
-    btnGold:'Wachtlijst',btnGhost:'Zie wat salons tegenhoudt →',scrollCue:'Scroll',
+    btnGold:'Word Design Partner',btnGhost:'Nog niet klaar? Blijf op de hoogte →',scrollCue:'Scroll',
     hookGap:'<span class="hook-gap-long">PleromaOS geeft elke klant een eenvoudige manier om te laten zien wat ze in gedachten hebben — vóórdat ze gaan zitten.<br></span><strong>Jouw stylist krijgt een duidelijke briefing. Jouw bedrijf bewaart het altijd.</strong>',
     pain0Kicker:'01 · Ze gaan zonder een woord',pain0H:'Een klant verdwijnt,<br><span class="w-gold">en je weet nooit waarom.</span>',
     pain0P:'PleromaOS laat je zien <span class="w-gold">wie er wegdrijft</span> — en <span class="w-gold">waarom.</span>',
