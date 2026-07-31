@@ -5,6 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PleromaOS — The craft you know. The future you need.</title>
 <meta name="description" content="PleromaOS gives every appointment a precise brief — and gives your business the client data it's never had.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="PleromaOS — Client Briefing Software">
+<meta property="og:description" content="Give every appointment a clear brief. Give your business the client data it's never had.">
+<meta property="og:image" content="https://pleromaos.nl/og-image.png">
+<meta property="og:url" content="https://pleromaos.nl">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="PleromaOS — Client Briefing Software">
+<meta name="twitter:description" content="Give every appointment a clear brief. Give your business the client data it's never had.">
+<meta name="twitter:image" content="https://pleromaos.nl/og-image.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
@@ -644,6 +653,20 @@ footer a:hover{color:rgba(237,232,224,.6)}
   .s-reveal{height:auto;min-height:100vh;min-height:100svh}
   .progress-dots{display:none}
 }
+/* ── SOCIAL PROOF (hero) ── */
+.hook-proof{display:flex;align-items:center;gap:12px;margin-top:24px;opacity:0;animation:fadeUp .9s 1.1s var(--ease) forwards;flex-wrap:wrap}
+.hav-stack{display:flex}
+.hav{width:28px;height:28px;border-radius:50%;background:rgba(201,169,110,.18);border:2px solid rgba(26,24,22,.9);margin-left:-8px;flex-shrink:0}
+.hav:first-child{margin-left:0}
+.hook-proof-txt{font-size:12px;color:var(--gold);letter-spacing:.02em}
+
+/* ── PARTNER SECTION ADDITIONS ── */
+.pt-select{font-size:14px;color:rgba(237,232,224,.82);font-weight:500;max-width:380px;margin:0 auto 28px;line-height:1.65;font-style:italic}
+.pt-urgency{font-size:11px;color:rgba(201,169,110,.65);margin:4px 0;letter-spacing:.01em}
+.pt-contact{margin-top:20px;font-size:12px;color:rgba(237,232,224,.3)}
+.pt-contact a{color:rgba(201,169,110,.45);text-decoration:none;transition:color .2s}
+.pt-contact a:hover{color:var(--gold)}
+
 @media(max-width:600px){
   .nav-btn{padding:9px 18px;font-size:12px}
   .nav-right{gap:10px}
@@ -704,7 +727,7 @@ footer a:hover{color:rgba(237,232,224,.6)}
      S1: HOOK
 ══════════════════════════════ -->
 <section class="s-hook" id="s-hook">
-  <p class="hook-kicker">For barbershops &amp; salons</p>
+  <p class="hook-kicker">Client briefing software</p>
   <h1 class="hook-h1">
     Your client and your stylist,<br>
     <em>finally on the same page.</em>
@@ -717,6 +740,15 @@ footer a:hover{color:rgba(237,232,224,.6)}
     <a class="btn-gold mag" href="#s-live">Join the Partner Programme</a>
     <p class="hook-no-card" data-en="No card required. No commitment." data-nl="Geen creditcard. Geen verplichtingen.">No card required. No commitment.</p>
     <a class="btn-ghost" href="#waitlist">Not ready? Stay in the loop →</a>
+  </div>
+  <div class="hook-proof">
+    <div class="hav-stack">
+      <div class="hav"></div>
+      <div class="hav"></div>
+      <div class="hav"></div>
+      <div class="hav"></div>
+    </div>
+    <span class="hook-proof-txt" data-en="8 salon owners already in conversation" data-nl="8 salonhouders al in gesprek">8 salon owners already in conversation</span>
   </div>
   <div class="scroll-cue">
     <div class="scroll-line"></div>
@@ -754,7 +786,7 @@ footer a:hover{color:rgba(237,232,224,.6)}
         <div class="col-header">
           <span class="col-dot-spacer"></span>
           <span class="col-h" data-en="Client" data-nl="Klant">Client</span>
-          <span class="col-h right" data-en="Accuracy" data-nl="Nauwkeurigheid">Accuracy</span>
+          <span class="col-h right" data-en="Brief match" data-nl="Brief match">Brief match</span>
         </div>
         <div class="ret-tier risk" data-en="At risk" data-nl="Risico">At risk</div>
         <div class="ret-row red">
@@ -921,7 +953,7 @@ footer a:hover{color:rgba(237,232,224,.6)}
 
         <div class="col-header">
           <span class="col-h" data-en="Client" data-nl="Klant">Client</span>
-          <span class="col-h right" data-en="Accuracy" data-nl="Nauwkeurigheid">Accuracy</span>
+          <span class="col-h right" data-en="Brief match" data-nl="Brief match">Brief match</span>
         </div>
 
         <div class="hcr">
@@ -993,15 +1025,17 @@ footer a:hover{color:rgba(237,232,224,.6)}
     <span class="pt-eye" data-a="up">Design Partner Programme · Fall 2026</span>
     <h2 class="pt-h" data-a="up" data-d="1">Before we launch, we want to talk to <em class="w-gold">salon owners like you.</em></h2>
     <p class="pt-sub" data-a="up" data-d="2">15 minutes. No pitch. Just us listening to what's broken in your business — so we build the right thing.</p>
-    <div class="pt-ctas" data-a="up" data-d="3">
+    <p class="pt-select" data-a="up" data-d="3" data-en="We're not selling. We're selecting. The 20 salons we build with get in free." data-nl="Wij verkopen niet. Wij selecteren. De 20 salons die we kiezen, bouwen gratis mee.">We're not selling. We're selecting. The 20 salons we build with get in free.</p>
+    <div class="pt-ctas" data-a="up" data-d="4">
       <a class="pt-btn-primary mag" href="https://calendly.com/bryan-pleromaos/30min" target="_blank" rel="noopener">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
         <span data-en="Book a 15-min call" data-nl="Plan een gesprek van 15 min">Book a 15-min call</span>
       </a>
-      <p class="pt-confirm">Founders reach out within 24hrs to confirm</p>
+      <p class="pt-urgency" data-en="Not every salon that applies will be chosen." data-nl="Niet elke salon die zich aanmeldt wordt gekozen.">Not every salon that applies will be chosen.</p>
       <div class="pt-or">— or —</div>
       <a class="pt-btn-secondary" href="#waitlist">Not ready? Stay in the loop →</a>
     </div>
+    <p class="pt-contact" data-en="Questions? <a href='mailto:Bryan@pleromaos.nl'>Bryan@pleromaos.nl</a>" data-nl="Vragen? <a href='mailto:Bryan@pleromaos.nl'>Bryan@pleromaos.nl</a>">Questions? <a href="mailto:Bryan@pleromaos.nl">Bryan@pleromaos.nl</a></p>
   </div>
 </section>
 
@@ -1443,7 +1477,7 @@ if(window.matchMedia('(hover:hover)').matches){
 const T={
   en:{
     navBtn:'Join the Programme',
-    hookKicker:'For barbershops &amp; salons',
+    hookKicker:'Client briefing software',
     hookH1:'Your client and your stylist,<br><em>finally on the same page.</em>',
     hookGap:'PleromaOS gives every client a simple way to show<br>exactly what they have in mind — before they sit down.<br><strong>Your stylist gets a clear brief. Your business keeps the record.</strong>',
     btnGold:'Join the Partner Programme',btnGhost:'Not ready? Stay in the loop →',scrollCue:'Scroll',
@@ -1474,7 +1508,7 @@ const T={
   },
   nl:{
     navBtn:'Word Partner',
-    hookKicker:'Voor kappers &amp; salons',
+    hookKicker:'Client briefing software',
     hookH1:'Jouw klant en jouw stylist,<br><em>eindelijk op één lijn.</em>',
     hookGap:'PleromaOS geeft elke klant een eenvoudige manier om te laten zien<br>wat ze in gedachten hebben — vóórdat ze gaan zitten.<br><strong>Jouw stylist krijgt een duidelijke briefing. Jouw bedrijf bewaart het altijd.</strong>',
     btnGold:'Word Design Partner',btnGhost:'Nog niet klaar? Blijf op de hoogte →',scrollCue:'Scroll',
@@ -1534,7 +1568,7 @@ function setLang(lang){
   si('.rev-eye',t.revEye);si('.rev-h',t.revH);si('.rev-sub',t.revSub);si('.rev-slogan',t.revSlogan);
   // Partner section
   si('.pt-eye',t.ptEye);si('.pt-h',t.ptH);si('.pt-sub',t.ptSub);
-  si('.pt-confirm',t.ptConfirm);si('.pt-or',t.ptOr);si('.pt-btn-secondary',t.ptSecondary);
+  si('.pt-or',t.ptOr);si('.pt-btn-secondary',t.ptSecondary);
   // Waitlist fallback
   si('.wl-h',t.wlH);si('.wl-sub',t.wlSub);
   si('.wl-submit',t.wlSubmit);si('.wl-fine',t.wlFine);
@@ -1547,7 +1581,9 @@ function setLang(lang){
   });
 }
 
-setLang(localStorage.getItem('lang')||'en');
+const _saved=localStorage.getItem('lang');
+const _browserNL=navigator.language&&navigator.language.toLowerCase().startsWith('nl');
+setLang(_saved||(_browserNL?'nl':'en'));
 
 // Sound: placeholder — to be implemented with proper audio
 function playChime(){}
