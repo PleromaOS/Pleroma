@@ -49,11 +49,12 @@ body{font-family:'DM Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-seri
 .intro-letter.os{color:var(--gold)}
 .intro-slogan{
   font-size:clamp(13px,1.8vw,17px);
-  color:var(--on-dark-mute);letter-spacing:.08em;
+  color:var(--gold);letter-spacing:.08em;
   opacity:0;transition:opacity .9s ease;
-  font-weight:300;
+  font-weight:600;
 }
-.intro-slogan.show{opacity:1}
+.intro-slogan.show{opacity:1;animation:goldGlow 2.4s ease-in-out infinite,floatY 3.2s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){.intro-slogan.show{animation:none}}
 .intro-bar{
   width:0;height:1px;background:rgba(201,169,110,.3);
   margin:20px auto 0;transition:width 1.2s var(--ease);
@@ -727,7 +728,7 @@ footer a:hover{color:rgba(237,232,224,.6)}
     <div class="pain-copy-col">
       <span class="beat-kicker" data-a="up">03 · When they go, clients follow</span>
       <h2 data-a="up" data-d="1">Your stylist knows the end result.<br><span class="w-gold">Your business should too.</span></h2>
-      <p data-a="up" data-d="2">That brief in their head — built over years — <span class="w-gold">isn't written down anywhere.</span> So when they move on, clients move on with them.</p>
+      <p data-a="up" data-d="2">Clients leave because they don't trust starting over. <span class="w-gold">With PleromaOS, they never have to.</span></p>
       <div class="beat-progress" data-a="up" data-d="3">
         <div class="bp-dot"></div><div class="bp-dot"></div><div class="bp-dot act"></div>
       </div>
@@ -1610,7 +1611,7 @@ const T={
     pain1Kicker:'02 · The knowledge walks out the door',pain1H:'Everything you know about your clients<br><span class="w-gold">lives in one person\'s head.</span>',
     pain1P:'Length, texture, the colour they react to — <span class="w-gold">thirty clients worth of data,</span> memorised by one stylist. <span class="w-gold">When they leave, so does all of it.</span>',
     pain2Kicker:'03 · When they go, clients follow',pain2H:'Your stylist knows the end result.<br><span class="w-gold">Your business should too.</span>',
-    pain2P:'That brief in their head — built over years — <span class="w-gold">isn\'t written down anywhere.</span> So when they move on, clients move on with them.',
+    pain2P:'Clients leave because they don\'t trust starting over. <span class="w-gold">With PleromaOS, they never have to.</span>',
     revEye:'Introducing PleromaOS',revH:'It doesn\'t have to<br>start with a guess.',
     revSub:'PleromaOS makes sure your client and your stylist walk into every appointment with the same picture in mind — and keeps that picture on record, forever.',
     revSlogan:'The craft you know. The future you need.',
@@ -1645,7 +1646,7 @@ const T={
     pain1Kicker:'02 · De kennis loopt de deur uit',pain1H:'Alles wat je weet over je klanten<br><span class="w-gold">leeft in één hoofd.</span>',
     pain1P:'Lengte, structuur, de kleur waar ze op reageren — <span class="w-gold">dertig klanten aan data,</span> gememoriseerd door één stylist. <span class="w-gold">Als ze vertrekken, gaat alles mee.</span>',
     pain2Kicker:'03 · Als ze gaan, volgen klanten',pain2H:'Jouw stylist kent het eindresultaat.<br><span class="w-gold">Jouw bedrijf zou dat ook moeten weten.</span>',
-    pain2P:'Die briefing in hun hoofd — opgebouwd over jaren — <span class="w-gold">staat nergens opgeschreven.</span> Dus als ze verder gaan, gaan klanten mee.',
+    pain2P:'Klanten vertrekken omdat ze een nieuw begin niet vertrouwen. <span class="w-gold">Met PleromaOS hoeven ze dat nooit.</span>',
     revEye:'Maak kennis met PleromaOS',revH:'Het hoeft niet te<br>beginnen met gissen.',
     revSub:'PleromaOS zorgt ervoor dat jouw klant en jouw stylist elke afspraak ingaan met hetzelfde beeld voor ogen — en bewaart dat beeld voor altijd.',
     revSlogan:'Het vakmanschap dat je kent. De toekomst die je nodig hebt.',
