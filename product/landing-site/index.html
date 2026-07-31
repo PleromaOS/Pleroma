@@ -73,9 +73,10 @@ nav.dim{background:rgba(26,24,22,.94);backdrop-filter:blur(20px)}
 .nav-logo{
   font-family:'DM Serif Display',Georgia,serif;font-size:20px;letter-spacing:.5px;
   color:rgba(237,232,224,.5);text-decoration:none;transition:color .3s;
+  display:inline-flex;align-items:baseline;
 }
 nav.dim .nav-logo{color:var(--bg)}
-.logo-os{color:var(--gold);font-style:normal}
+.logo-os{color:var(--gold);font-style:normal;letter-spacing:.5px}
 .nav-btn{
   background:var(--gold);color:var(--dark);
   border:none;padding:11px 28px;border-radius:100px;
@@ -315,6 +316,8 @@ nav.dim .nav-logo{color:var(--bg)}
 }
 .s-reveal.lit{background:var(--bg)}
 .rev-eye{font-size:10px;letter-spacing:6px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:32px;animation:goldGlow 2.4s ease-in-out infinite,floatY 3.2s ease-in-out infinite}
+.rev-eye .brand{color:rgba(237,232,224,.9)}
+.s-reveal.lit .rev-eye .brand{color:var(--dark)}
 @media(prefers-reduced-motion:reduce){.rev-eye,.rev-slogan{animation:none}}
 .rev-h{font-family:'DM Serif Display',Georgia,serif;font-size:clamp(32px,5.5vw,66px);line-height:1.1;max-width:620px;color:var(--bg);margin-bottom:24px;transition:color 1.6s var(--ease2)}
 .s-reveal.lit .rev-h{color:var(--dark)}
@@ -343,7 +346,7 @@ nav.dim .nav-logo{color:var(--bg)}
 .qr-corner.tl{top:8px;left:8px}.qr-corner.tr{top:8px;right:8px}.qr-corner.bl{bottom:8px;left:8px}
 .qr-dots{position:absolute;inset:10px;background-image:radial-gradient(circle,#1a1816 1px,transparent 1px),radial-gradient(circle,#1a1816 1px,transparent 1px),radial-gradient(circle,#1a1816 1px,transparent 1px),radial-gradient(circle,#1a1816 1px,transparent 1px),radial-gradient(circle,#1a1816 1px,transparent 1px),radial-gradient(circle,#1a1816 1px,transparent 1px);background-size:8px 8px;background-position:32px 8px,24px 24px,40px 32px,8px 16px,48px 48px,16px 40px;background-repeat:no-repeat;opacity:.5}
 .qr-brand{font-family:'DM Serif Display',Georgia,serif;font-size:13px;color:var(--dark);letter-spacing:.3px}
-.qr-brand span{color:var(--gold)}
+.qr-brand .logo-os{color:var(--gold)}
 .qr-sub{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#bbb}
 
 /* Quiz mini (how-1 visual) */
@@ -415,7 +418,7 @@ nav.dim .nav-logo{color:var(--bg)}
 .ph-screen-wrap{background:#ede9e1;overflow:hidden}
 .ph-header{background:#2d4a35;padding:8px 11px 7px;display:flex;justify-content:space-between;align-items:center}
 .ph-logo{font-size:8.5px;font-weight:500;color:rgba(237,232,224,.9);letter-spacing:.4px}
-.ph-logo span{color:#C9A96E}
+.ph-logo .logo-os{color:#C9A96E}
 .ph-period{font-size:7px;color:rgba(237,232,224,.4);letter-spacing:.5px}
 .ph-body{padding:7px}
 .ph-lbl{font-size:6.5px;letter-spacing:2px;text-transform:uppercase;color:#bbb;margin-bottom:4px;display:block}
@@ -1005,7 +1008,7 @@ footer a:hover{color:rgba(237,232,224,.6)}
      S5: REVEAL — MOOD SHIFT
 ══════════════════════════════ -->
 <section class="s-reveal" id="reveal">
-  <p class="rev-eye" data-a="up">Introducing PleromaOS</p>
+  <p class="rev-eye" data-a="up">Introducing <span class="brand">Pleroma</span><span class="logo-os">OS</span></p>
   <h2 class="rev-h" data-a="up" data-d="1">It doesn't have to<br>start with a guess.</h2>
   <p class="rev-sub" data-a="up" data-d="2">Every appointment starts with the same picture in mind. PleromaOS keeps that picture on record — forever.</p>
   <p class="rev-slogan" data-a="fade" data-d="4">The craft you know. The future you need.</p>
@@ -1030,7 +1033,7 @@ footer a:hover{color:rgba(237,232,224,.6)}
           <div class="qr-corner bl"></div>
           <div class="qr-dots"></div>
         </div>
-        <div class="qr-brand">Pleroma<span>OS</span></div>
+        <div class="qr-brand">Pleroma<span class="logo-os">OS</span></div>
         <div class="qr-sub">Scan to start</div>
       </div>
     </div>
@@ -1118,7 +1121,7 @@ footer a:hover{color:rgba(237,232,224,.6)}
           <div class="ph-notch-bar"><div class="ph-notch"></div></div>
           <div class="ph-screen-wrap">
             <div class="ph-header">
-              <span class="ph-logo">Pleroma<span>OS</span></span>
+              <span class="ph-logo">Pleroma<span class="logo-os">OS</span></span>
               <span class="ph-period">This quarter</span>
             </div>
             <div class="ph-body">
@@ -1157,7 +1160,7 @@ footer a:hover{color:rgba(237,232,224,.6)}
           <div class="ph-notch-bar"><div class="ph-notch"></div></div>
           <div class="ph-screen-wrap">
             <div class="ph-header">
-              <span class="ph-logo">Pleroma<span>OS</span></span>
+              <span class="ph-logo">Pleroma<span class="logo-os">OS</span></span>
               <span class="ph-period">Today · Mon 28</span>
             </div>
             <div class="ph-body">
@@ -1185,7 +1188,7 @@ footer a:hover{color:rgba(237,232,224,.6)}
           <div class="ph-notch-bar"><div class="ph-notch"></div></div>
           <div class="ph-screen-wrap">
             <div class="ph-header">
-              <span class="ph-logo">Pleroma<span>OS</span></span>
+              <span class="ph-logo">Pleroma<span class="logo-os">OS</span></span>
               <span class="ph-period">2 need attention</span>
             </div>
             <div class="ph-body">
@@ -1869,7 +1872,7 @@ const T={
     pain1P:'What your stylist knows about your clients <span class="w-gold">leaves with them.</span> With PleromaOS, it stays in your <span class="w-gold">business.</span>',
     pain2Kicker:'03 · Starting over is the fear',pain2H:'Your stylist knows the end result.<br><span class="w-gold">Your business should too.</span>',
     pain2P:'Clients leave because they don\'t trust starting over. <span class="w-gold">With PleromaOS, they never have to.</span>',
-    revEye:'Introducing PleromaOS',revH:'It doesn\'t have to<br>start with a guess.',
+    revEye:'Introducing <span class="brand">Pleroma</span><span class="logo-os">OS</span>',revH:'It doesn\'t have to<br>start with a guess.',
     revSub:'Every appointment starts with the same picture in mind. PleromaOS keeps that picture on record — forever.',
     revSlogan:'The craft you know. The future you need.',
     how0H:'Client scans the QR code',how0P:'In your waiting area, on your booking confirmation, or via WhatsApp. Opens instantly in any browser — no app needed, no account required.',
@@ -1904,7 +1907,7 @@ const T={
     pain1P:'Wat jouw stylist weet over jouw klanten <span class="w-gold">gaat met hen mee.</span> Met PleromaOS blijft het in jouw <span class="w-gold">bedrijf.</span>',
     pain2Kicker:'03 · Opnieuw beginnen is de angst',pain2H:'Jouw stylist kent het eindresultaat.<br><span class="w-gold">Jouw bedrijf zou dat ook moeten weten.</span>',
     pain2P:'Klanten vertrekken omdat ze een nieuw begin niet vertrouwen. <span class="w-gold">Met PleromaOS hoeven ze dat nooit.</span>',
-    revEye:'Maak kennis met PleromaOS',revH:'Het hoeft niet te<br>beginnen met gissen.',
+    revEye:'Maak kennis met <span class="brand">Pleroma</span><span class="logo-os">OS</span>',revH:'Het hoeft niet te<br>beginnen met gissen.',
     revSub:'Elke afspraak begint met hetzelfde beeld voor ogen. PleromaOS bewaart dat beeld — voor altijd.',
     revSlogan:'Het vakmanschap dat je kent. De toekomst die je nodig hebt.',
     how0H:'Klant scant de QR-code',how0P:'In je wachtruimte, op je boekingsbevestiging, of via WhatsApp. Opent direct in elke browser — geen app nodig, geen account vereist.',
