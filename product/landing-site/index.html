@@ -203,6 +203,44 @@ nav.dim .nav-logo{color:var(--bg)}
 .c-pref{display:block;font-size:10px;color:rgba(237,232,224,.32);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .client-row.fading .c-pref,.client-row.gone .c-pref{color:rgba(237,232,224,.14)}
 .pvc-footer-label{margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.05);font-size:9px;color:rgba(201,169,110,.35);letter-spacing:.08em;text-transform:uppercase;text-align:right}
+/* ── RETENTION DIAGRAM (S2) ── */
+.retention-summary{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,.06)}
+.rs-alert{font-size:11px;font-weight:700;color:rgba(220,60,60,.9);display:flex;align-items:center;gap:6px}
+.rs-alert-dot{width:8px;height:8px;border-radius:50%;background:rgba(220,60,60,.9);box-shadow:0 0 6px rgba(220,60,60,.6);flex-shrink:0}
+.rs-ok{font-size:10px;color:rgba(80,200,120,.65);display:flex;align-items:center;gap:5px}
+.rs-ok-dot{width:7px;height:7px;border-radius:50%;background:rgba(80,200,120,.85);flex-shrink:0}
+.col-header{display:flex;align-items:center;padding:0 0 6px 0;margin-bottom:4px}
+.col-dot-spacer{width:19px;flex-shrink:0}
+.col-h{font-size:8px;letter-spacing:1.2px;text-transform:uppercase;color:rgba(237,232,224,.45);font-weight:700}
+.col-h.right{margin-left:auto}
+.ret-tier{font-size:8px;letter-spacing:1.4px;text-transform:uppercase;font-weight:700;padding:6px 0 4px}
+.ret-tier.risk{color:rgba(220,60,60,.55)}
+.ret-tier.watch{color:rgba(220,155,40,.5);margin-top:8px}
+.ret-tier.ok{color:rgba(80,200,120,.45);margin-top:8px}
+.ret-row{padding:9px 0 9px 12px;border-bottom:1px solid rgba(255,255,255,.04);border-left:2.5px solid transparent;margin-left:-12px}
+.ret-row:last-of-type{border-bottom:none}
+.ret-row.red{border-left-color:rgba(220,60,60,.65)}
+.ret-row.amber{border-left-color:rgba(220,155,40,.4)}
+.ret-row.green{border-left-color:rgba(80,200,120,.2)}
+.cr-top{display:flex;align-items:center;gap:9px;margin-bottom:5px}
+.risk-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.risk-dot.red{background:rgba(220,60,60,.9);box-shadow:0 0 6px rgba(220,60,60,.55)}
+.risk-dot.amber{background:rgba(220,155,40,.9);box-shadow:0 0 5px rgba(220,155,40,.45)}
+.risk-dot.green{background:rgba(80,200,120,.85)}
+.cr-name{font-size:13px;font-weight:600;color:rgba(237,232,224,.92);flex:1}
+.cr-accuracy{font-size:11px;font-weight:700;display:flex;align-items:center;gap:3px}
+.cr-accuracy.high{color:rgba(80,200,120,.85)}
+.cr-accuracy.mid{color:var(--gold)}
+.cr-accuracy.low{color:rgba(220,60,60,.9)}
+.acc-arrow{font-size:9px;opacity:.8}
+.cr-meta{display:flex;gap:5px;align-items:center;padding-left:19px;flex-wrap:wrap;margin-bottom:5px}
+.cr-cadence{font-size:9px;color:rgba(237,232,224,.55);letter-spacing:.2px;flex-shrink:0}
+.cr-signal{font-size:9px;font-weight:600;letter-spacing:.2px;padding:2px 7px;border-radius:100px}
+.cr-signal.danger{background:rgba(220,60,60,.1);color:rgba(220,80,80,.9);border:1px solid rgba(220,60,60,.18)}
+.cr-signal.warn{background:rgba(220,155,40,.09);color:rgba(220,155,40,.9);border:1px solid rgba(220,155,40,.18)}
+.cr-signal.good{background:rgba(80,200,120,.08);color:rgba(80,200,120,.85);border:1px solid rgba(80,200,120,.15)}
+.cr-signal.neutral{background:rgba(237,232,224,.05);color:rgba(237,232,224,.4);border:1px solid rgba(237,232,224,.08)}
+.cr-detail{padding-left:19px;font-size:10px;color:rgba(237,232,224,.65);font-style:italic;line-height:1.45;margin-bottom:4px}
 .pvis-split{display:grid;grid-template-columns:1fr 1px 1fr;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:20px;overflow:hidden;width:300px}
 .split-col{padding:22px 18px}
 .split-col.empty{background:rgba(0,0,0,.12)}
@@ -688,12 +726,42 @@ footer a:hover{color:rgba(237,232,224,.6)}
     </div>
     <div class="pain-vis-col" data-a="left">
       <div class="pvis-card">
-        <div class="pvc-label">PleromaOS · Client retention</div>
-        <div class="client-row active"><span class="c-dot"></span><div class="c-body"><div class="c-top"><span class="c-name">Amira K.</span><span class="c-last">3 days ago</span></div><span class="c-pref">Medium bob · no heat · warm tones</span></div></div>
-        <div class="client-row active"><span class="c-dot"></span><div class="c-body"><div class="c-top"><span class="c-name">Marco V.</span><span class="c-last">1 week ago</span></div><span class="c-pref">High fade · skin on sides · 2cm top</span></div></div>
-        <div class="client-row active"><span class="c-dot"></span><div class="c-body"><div class="c-top"><span class="c-name">Nadia R.</span><span class="c-last">3 weeks ago</span></div><span class="c-pref">Shoulder length · no colour</span></div></div>
-        <div class="client-row active"><span class="c-dot"></span><div class="c-body"><div class="c-top"><span class="c-name">Tariq B.</span><span class="c-last">5 weeks ago</span></div><span class="c-pref">Sensitive scalp · trim only</span></div></div>
-        <div class="client-row active"><span class="c-dot"></span><div class="c-body"><div class="c-top"><span class="c-name">Leila H.</span><span class="c-last">6 weeks ago</span></div><span class="c-pref">Balayage · low maintenance</span></div></div>
+        <div class="pvc-label"><span class="brand">Pleroma</span><span class="logo-os">OS</span> · Client retention</div>
+        <div class="retention-summary">
+          <span class="rs-alert"><span class="rs-alert-dot"></span>2 at risk · overdue &amp; not rebooked</span>
+          <span class="rs-ok"><span class="rs-ok-dot"></span>3 on track</span>
+        </div>
+        <div class="col-header">
+          <span class="col-dot-spacer"></span>
+          <span class="col-h">Client</span>
+          <span class="col-h right">Accuracy</span>
+        </div>
+        <div class="ret-tier risk">At risk</div>
+        <div class="ret-row red">
+          <div class="cr-top"><span class="risk-dot red"></span><span class="cr-name">Yasmine B.</span><span class="cr-accuracy low">58% <span class="acc-arrow">↓</span></span></div>
+          <div class="cr-meta"><span class="cr-cadence">Every 4 wks ·</span><span class="cr-signal danger">5 wks overdue</span><span class="cr-signal danger">No rebooking</span></div>
+          <div class="cr-detail">"A bit too short last time" — no reply to outreach</div>
+        </div>
+        <div class="ret-row red">
+          <div class="cr-top"><span class="risk-dot red"></span><span class="cr-name">Leon K.</span><span class="cr-accuracy low">64% <span class="acc-arrow">↓</span></span></div>
+          <div class="cr-meta"><span class="cr-cadence">Every 3 wks ·</span><span class="cr-signal danger">3 wks overdue</span><span class="cr-signal danger">No rebooking</span></div>
+          <div class="cr-detail">"Felt a bit uneven on the left side, not sure if that was me" — last visit note</div>
+        </div>
+        <div class="ret-tier watch">Watch</div>
+        <div class="ret-row amber">
+          <div class="cr-top"><span class="risk-dot amber"></span><span class="cr-name">Marco V.</span><span class="cr-accuracy mid">81%</span></div>
+          <div class="cr-meta"><span class="cr-cadence">Every 6 wks ·</span><span class="cr-signal warn">Not yet rebooked</span><span class="cr-signal neutral">Fade · textured crop</span></div>
+          <div class="cr-detail">"Keep the fade, maybe a bit shorter on top next time" — last visit note</div>
+        </div>
+        <div class="ret-tier ok">On track</div>
+        <div class="ret-row green">
+          <div class="cr-top"><span class="risk-dot green"></span><span class="cr-name">Amira K.</span><span class="cr-accuracy high">96%</span></div>
+          <div class="cr-meta"><span class="cr-cadence">On cadence ·</span><span class="cr-signal good">Rebooked · 12 Aug</span><span class="cr-signal neutral">Brief change: + fringe</span></div>
+        </div>
+        <div class="ret-row green">
+          <div class="cr-top"><span class="risk-dot green"></span><span class="cr-name">Nadia R.</span><span class="cr-accuracy high">94%</span></div>
+          <div class="cr-meta"><span class="cr-cadence">1 wk early ·</span><span class="cr-signal good">Rebooked · 19 Aug</span></div>
+        </div>
         <div class="pvc-note">You know exactly <span class="w-gold">who to reach out to — and why.</span></div>
       </div>
     </div>
