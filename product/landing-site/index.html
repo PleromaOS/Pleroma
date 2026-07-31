@@ -314,12 +314,13 @@ nav.dim .nav-logo{color:var(--bg)}
 }
 .s-reveal.lit{background:var(--bg)}
 .rev-eye{font-size:10px;letter-spacing:6px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:32px;animation:goldGlow 2.4s ease-in-out infinite,floatY 3.2s ease-in-out infinite}
+.rev-eye .brand{color:rgba(237,232,224,.9)}
 @media(prefers-reduced-motion:reduce){.rev-eye,.rev-slogan{animation:none}}
 .rev-h{font-family:'DM Serif Display',Georgia,serif;font-size:clamp(32px,5.5vw,66px);line-height:1.1;max-width:620px;color:var(--bg);margin-bottom:24px;transition:color 1.6s var(--ease2)}
 .s-reveal.lit .rev-h{color:var(--dark)}
 .rev-sub{font-size:19px;color:var(--on-dark);max-width:460px;line-height:1.75;transition:color 1.6s var(--ease2)}
 .s-reveal.lit .rev-sub{color:#555}
-.rev-slogan{margin-top:48px;font-size:13px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);font-weight:700;opacity:1;animation:goldGlow 3s ease-in-out infinite .6s,sloganAttention 4s ease-in-out infinite 1s}
+.rev-slogan{margin-top:48px;font-size:13px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);font-weight:700;opacity:1;animation:goldGlow 3s ease-in-out infinite .6s}
 
 /* ── HOW BEAT SECTIONS ── */
 .s-how-beat{background:var(--bg2)}
@@ -644,7 +645,6 @@ footer a:hover{color:rgba(237,232,224,.6)}
 @keyframes scaleIn{from{transform:scale(.3);opacity:0}to{transform:scale(1);opacity:1}}
 @keyframes goldGlow{0%,100%{text-shadow:0 0 14px rgba(201,169,110,.35),0 0 28px rgba(201,169,110,.15)}50%{text-shadow:0 0 26px rgba(201,169,110,.8),0 0 52px rgba(201,169,110,.45),0 0 80px rgba(201,169,110,.2)}}
 @keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
-@keyframes sloganAttention{0%,100%{letter-spacing:4px;opacity:.9}50%{letter-spacing:5px;opacity:1}}
 
 /* ── SECTION KICKER (shared) ── */
 .section-kicker{font-size:10px;letter-spacing:5px;text-transform:uppercase;color:var(--teal);margin-bottom:24px;display:block}
@@ -1005,7 +1005,7 @@ footer a:hover{color:rgba(237,232,224,.6)}
      S5: REVEAL — MOOD SHIFT
 ══════════════════════════════ -->
 <section class="s-reveal" id="reveal">
-  <p class="rev-eye" data-a="up">Introducing PleromaOS</p>
+  <p class="rev-eye" data-a="up">Introducing <span class="brand">Pleroma</span><span class="logo-os">OS</span></p>
   <h2 class="rev-h" data-a="up" data-d="1">It doesn't have to<br>start with a guess.</h2>
   <p class="rev-sub" data-a="up" data-d="2">Every appointment starts with the same picture in mind. PleromaOS keeps that picture on record — forever.</p>
   <p class="rev-slogan" data-a="fade" data-d="4">The craft you know. The future you need.</p>
@@ -1869,7 +1869,7 @@ const T={
     pain1P:'What your stylist knows about your clients <span class="w-gold">leaves with them.</span> With PleromaOS, it stays in your <span class="w-gold">business.</span>',
     pain2Kicker:'03 · Starting over is the fear',pain2H:'Your stylist knows the end result.<br><span class="w-gold">Your business should too.</span>',
     pain2P:'Clients leave because they don\'t trust starting over. <span class="w-gold">With PleromaOS, they never have to.</span>',
-    revEye:'Introducing PleromaOS',revH:'It doesn\'t have to<br>start with a guess.',
+    revEye:'Introducing <span class="brand">Pleroma</span><span class="logo-os">OS</span>',revH:'It doesn\'t have to<br>start with a guess.',
     revSub:'Every appointment starts with the same picture in mind. PleromaOS keeps that picture on record — forever.',
     revSlogan:'The craft you know. The future you need.',
     how0H:'Client scans the QR code',how0P:'In your waiting area, on your booking confirmation, or via WhatsApp. Opens instantly in any browser — no app needed, no account required.',
@@ -1904,7 +1904,7 @@ const T={
     pain1P:'Wat jouw stylist weet over jouw klanten <span class="w-gold">gaat met hen mee.</span> Met PleromaOS blijft het in jouw <span class="w-gold">bedrijf.</span>',
     pain2Kicker:'03 · Opnieuw beginnen is de angst',pain2H:'Jouw stylist kent het eindresultaat.<br><span class="w-gold">Jouw bedrijf zou dat ook moeten weten.</span>',
     pain2P:'Klanten vertrekken omdat ze een nieuw begin niet vertrouwen. <span class="w-gold">Met PleromaOS hoeven ze dat nooit.</span>',
-    revEye:'Maak kennis met PleromaOS',revH:'Het hoeft niet te<br>beginnen met gissen.',
+    revEye:'Maak kennis met <span class="brand">Pleroma</span><span class="logo-os">OS</span>',revH:'Het hoeft niet te<br>beginnen met gissen.',
     revSub:'Elke afspraak begint met hetzelfde beeld voor ogen. PleromaOS bewaart dat beeld — voor altijd.',
     revSlogan:'Het vakmanschap dat je kent. De toekomst die je nodig hebt.',
     how0H:'Klant scant de QR-code',how0P:'In je wachtruimte, op je boekingsbevestiging, of via WhatsApp. Opent direct in elke browser — geen app nodig, geen account vereist.',
