@@ -98,6 +98,15 @@ Clicking a navigation element must keep the scroll state consistent.
 If a dot calls `scrollIntoView()` directly instead of routing through the snap controller, `curIdx` falls out of sync and the next scroll gesture may go the wrong direction.
 **Violation found:** Progress dot click handlers bypassed `goSection()`.
 
+### 14. CTA Label Consistency
+When multiple entry points lead to the same destination, they must use the same label. Divergent labels create ambiguity — users wonder if they're different things.
+**Violation found:** Hero button said "Get Early Access", nav button said "Join Waitlist" — both going to `#waitlist`. "Join Waitlist" is accurate; "Get Early Access" overpromises.
+**Rule:** One destination = one label.
+
+### 15. Social Proof Is Not Optional at Zero Stage
+Feature copy and scarcity signals cannot replace peer validation. Salon owners trust other salon owners. At zero-to-one, one attributed testimonial outweighs all feature descriptions. The absence of any human voice on the page is a trust gap — not a minimalism choice.
+**Open issue:** No testimonials, no quotes, no "X salons signed up" anywhere on the page.
+
 ---
 
 ## PleromaOS Section Architecture (reference)
