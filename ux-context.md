@@ -124,6 +124,16 @@ Feature copy and scarcity signals cannot replace peer validation. Salon owners t
 | Live counter | s-live | Scarcity + CTA |
 | Waitlist form | s-waitlist | Survey + Supabase |
 
+### 16. Intro Animations Gate Value for Paid Social Traffic — With Nuance
+Brand intro screens work well for paid social ad traffic because the ad itself does the cold work. Users who click have already seen the brand name and hook — the 3-second intro is a brand moment, not a bounce trap. The risk applies specifically to cold search traffic (zero brand familiarity before landing). For cold search or display placements, suppress the intro via UTM parameter detection.
+**Rule:** Intro animations are acceptable when the referral source has already established brand context. For truly cold landings, skip straight to the value proposition.
+
+### 17. Every CTA Must Answer "What Happens Next?"
+When a CTA requires an action (booking a call, filling a form), the visitor's implicit question after clicking is "then what?" Removing a confusing confirmation line is correct, but the gap must be filled with a clear next-step line immediately adjacent to the button — not left empty.
+**Violation found:** Removing "Founders reach out within 24hrs" without replacing it left no answer to "what happens after I book?"
+**Fix:** "We speak with everyone who books. We choose 20. If that's you, you'll hear from us personally."
+**Rule:** Every CTA must have adjacent copy answering what happens after the click.
+
 ---
 
 ## Open Issues (to address next)
