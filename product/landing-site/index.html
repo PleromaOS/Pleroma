@@ -175,7 +175,7 @@ nav.dim .nav-logo{color:var(--bg)}
 .pvc-saved{font-size:9px;color:rgba(201,169,110,.4);letter-spacing:.4px;margin-top:4px;display:block}
 /* ── PROFILE GENDER TOGGLE ── */
 .profile-toggle{display:flex;background:rgba(255,255,255,.06);border-radius:100px;padding:3px;width:fit-content;margin:0 auto 16px;border:1px solid rgba(201,169,110,.2)}
-.pt-btn{font-family:'DM Sans',sans-serif;font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;padding:8px 24px;border-radius:100px;border:none;cursor:pointer;background:transparent;color:rgba(237,232,224,.35);transition:background .22s ease,color .22s ease}
+.pt-btn{font-family:'DM Sans',sans-serif;font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;padding:8px 24px;border-radius:100px;border:none;cursor:pointer;background:transparent;color:rgba(237,232,224,.6);transition:background .22s ease,color .22s ease}
 .pt-btn.act{background:var(--gold);color:#1a1816}
 /* S4 solution — staying dot */
 .flow-dot.staying{background:rgba(126,212,146,.75)}
@@ -189,7 +189,9 @@ nav.dim .nav-logo{color:var(--bg)}
 
 /* pvis shared card shell */
 .pvis-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:20px;padding:24px;width:300px}
-.pvc-label{font-size:9px;letter-spacing:1.8px;text-transform:uppercase;color:rgba(237,232,224,.45);font-weight:700;margin-bottom:16px}
+/* ── DIAGRAM TRAFFIC SIGN ── */
+.diag-sign{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:12px;max-width:300px;opacity:.85}
+.pvc-label{font-size:9px;letter-spacing:1.8px;text-transform:uppercase;color:rgba(237,232,224,.65);font-weight:700;margin-bottom:16px}
 .pvc-label .brand{color:rgba(237,232,224,.9)}
 .pvc-label .logo-os{color:var(--gold)}
 .pvc-note{margin-top:14px;font-size:12px;color:rgba(237,232,224,.8);line-height:1.5;padding-top:12px;border-top:1px solid rgba(255,255,255,.06)}
@@ -217,12 +219,12 @@ nav.dim .nav-logo{color:var(--bg)}
 .rs-ok-dot{width:7px;height:7px;border-radius:50%;background:rgba(80,200,120,.85);flex-shrink:0}
 .col-header{display:flex;align-items:center;padding:0 0 6px 0;margin-bottom:4px}
 .col-dot-spacer{width:19px;flex-shrink:0}
-.col-h{font-size:8px;letter-spacing:1.2px;text-transform:uppercase;color:rgba(237,232,224,.45);font-weight:700}
+.col-h{font-size:8px;letter-spacing:1.2px;text-transform:uppercase;color:rgba(237,232,224,.65);font-weight:700}
 .col-h.right{margin-left:auto}
 .ret-tier{font-size:8px;letter-spacing:1.4px;text-transform:uppercase;font-weight:700;padding:6px 0 4px}
-.ret-tier.risk{color:rgba(220,60,60,.55)}
-.ret-tier.watch{color:rgba(220,155,40,.5);margin-top:8px}
-.ret-tier.ok{color:rgba(80,200,120,.45);margin-top:8px}
+.ret-tier.risk{color:rgba(220,60,60,.82)}
+.ret-tier.watch{color:rgba(220,155,40,.78);margin-top:8px}
+.ret-tier.ok{color:rgba(80,200,120,.72);margin-top:8px}
 .ret-row{padding:9px 0 9px 12px;border-bottom:1px solid rgba(255,255,255,.04);border-left:2.5px solid transparent;margin-left:-12px}
 .ret-row:last-of-type{border-bottom:none}
 .ret-row.red{border-left-color:rgba(220,60,60,.65)}
@@ -240,13 +242,13 @@ nav.dim .nav-logo{color:var(--bg)}
 .cr-accuracy.low{color:rgba(220,60,60,.9)}
 .acc-arrow{font-size:9px;opacity:.8}
 .cr-meta{display:flex;gap:5px;align-items:center;padding-left:19px;flex-wrap:wrap;margin-bottom:5px}
-.cr-cadence{font-size:9px;color:rgba(237,232,224,.55);letter-spacing:.2px;flex-shrink:0}
+.cr-cadence{font-size:9px;color:rgba(237,232,224,.72);letter-spacing:.2px;flex-shrink:0}
 .cr-signal{font-size:9px;font-weight:600;letter-spacing:.2px;padding:2px 7px;border-radius:100px}
 .cr-signal.danger{background:rgba(220,60,60,.1);color:rgba(220,80,80,.9);border:1px solid rgba(220,60,60,.18)}
 .cr-signal.warn{background:rgba(220,155,40,.09);color:rgba(220,155,40,.9);border:1px solid rgba(220,155,40,.18)}
 .cr-signal.good{background:rgba(80,200,120,.08);color:rgba(80,200,120,.85);border:1px solid rgba(80,200,120,.15)}
-.cr-signal.neutral{background:rgba(237,232,224,.05);color:rgba(237,232,224,.4);border:1px solid rgba(237,232,224,.08)}
-.cr-detail{padding-left:19px;font-size:10px;color:rgba(237,232,224,.65);font-style:italic;line-height:1.45;margin-bottom:4px}
+.cr-signal.neutral{background:rgba(237,232,224,.05);color:rgba(237,232,224,.68);border:1px solid rgba(237,232,224,.12)}
+.cr-detail{padding-left:19px;font-size:10px;color:rgba(237,232,224,.78);font-style:italic;line-height:1.45;margin-bottom:4px}
 /* ── STAFF HANDOFF DIAGRAM (S4) ── */
 .handoff-header{margin-bottom:8px}
 .handoff-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
@@ -254,37 +256,37 @@ nav.dim .nav-logo{color:var(--bg)}
 .stylist-pill.new{background:rgba(201,169,110,.04);border-color:rgba(201,169,110,.18)}
 .s-av{width:26px;height:26px;border-radius:50%;flex-shrink:0;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;background:rgba(237,232,224,.06);color:rgba(237,232,224,.3)}
 .s-av.new{background:rgba(201,169,110,.15);color:var(--gold)}
-.s-name{font-size:11px;font-weight:600;color:rgba(237,232,224,.4);line-height:1.1}
+.s-name{font-size:11px;font-weight:600;color:rgba(237,232,224,.62);line-height:1.1}
 .stylist-pill.new .s-name{color:rgba(237,232,224,.9)}
-.s-meta{font-size:9px;color:rgba(237,232,224,.22);margin-top:1px}
+.s-meta{font-size:9px;color:rgba(237,232,224,.55);margin-top:1px}
 .stylist-pill.new .s-meta{color:rgba(201,169,110,.5)}
 .h-arrow{font-size:13px;color:rgba(201,169,110,.3);flex-shrink:0}
 .transfer-tags{display:flex;gap:4px;flex-wrap:wrap;padding-left:2px}
-.ttag{font-size:8px;font-weight:700;letter-spacing:.3px;color:rgba(201,169,110,.45);background:rgba(201,169,110,.06);padding:2px 7px;border-radius:100px}
+.ttag{font-size:8px;font-weight:700;letter-spacing:.3px;color:rgba(201,169,110,.78);background:rgba(201,169,110,.08);padding:2px 7px;border-radius:100px}
 .outreach-block{background:rgba(201,169,110,.05);border:1px solid rgba(201,169,110,.12);border-radius:10px;padding:9px 11px;margin:12px 0}
 .outreach-top{display:flex;align-items:center;gap:5px;margin-bottom:5px}
 .outreach-title{font-size:9px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--gold)}
 .outreach-stats{display:flex;gap:6px;margin-left:auto}
-.ostat{font-size:9px;color:rgba(237,232,224,.35);display:flex;align-items:center;gap:3px}
+.ostat{font-size:9px;color:rgba(237,232,224,.68);display:flex;align-items:center;gap:3px}
 .ostat-dot{width:5px;height:5px;border-radius:50%;background:rgba(80,200,120,.55)}
 .ostat-dot.sent{background:rgba(201,169,110,.45)}
-.outreach-msg{font-size:10px;color:rgba(237,232,224,.55);font-style:italic;line-height:1.4}
+.outreach-msg{font-size:10px;color:rgba(237,232,224,.78);font-style:italic;line-height:1.4}
 .hcr{padding:8px 0 8px 12px;border-bottom:1px solid rgba(255,255,255,.04);border-left:2.5px solid rgba(80,200,120,.2);margin-left:-12px}
 .hcr.no-brief{border-left-color:rgba(220,60,60,.35)}
 .hcr:last-of-type{border-bottom:none}
 .hcr-top{display:flex;align-items:center;margin-bottom:4px}
 .hcr-name{font-size:13px;font-weight:600;color:rgba(237,232,224,.92);flex:1}
 .hcr-acc{display:flex;align-items:center;gap:3px}
-.acc-before{font-size:10px;font-weight:600;color:rgba(237,232,224,.3)}
+.acc-before{font-size:10px;font-weight:600;color:rgba(237,232,224,.55)}
 .acc-sep{font-size:9px;color:rgba(237,232,224,.18)}
 .acc-after{font-size:11px;font-weight:700;color:rgba(80,200,120,.85)}
 .acc-none{font-size:11px;font-weight:600;color:rgba(237,232,224,.25)}
 .hcr-meta{display:flex;gap:5px;flex-wrap:wrap}
 .hcr-chip{font-size:9px;font-weight:600;letter-spacing:.2px;padding:2px 7px;border-radius:100px}
 .hcr-chip.good{background:rgba(80,200,120,.08);color:rgba(80,200,120,.85);border:1px solid rgba(80,200,120,.15)}
-.hcr-chip.neutral{background:rgba(237,232,224,.05);color:rgba(237,232,224,.38);border:1px solid rgba(237,232,224,.08)}
+.hcr-chip.neutral{background:rgba(237,232,224,.05);color:rgba(237,232,224,.68);border:1px solid rgba(237,232,224,.12)}
 .hcr-chip.warn{background:rgba(220,60,60,.08);color:rgba(220,80,80,.85);border:1px solid rgba(220,60,60,.18)}
-.hcr-note{font-size:10px;color:rgba(237,232,224,.58);font-style:italic;line-height:1.4;margin-top:4px}
+.hcr-note{font-size:10px;color:rgba(237,232,224,.78);font-style:italic;line-height:1.4;margin-top:4px}
 .pvis-split{display:grid;grid-template-columns:1fr 1px 1fr;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:20px;overflow:hidden;width:300px}
 .split-col{padding:22px 18px}
 .split-col.empty{background:rgba(0,0,0,.12)}
@@ -737,12 +739,10 @@ footer a:hover{color:rgba(237,232,224,.6)}
     <div class="pain-copy-col">
       <span class="beat-kicker" data-a="up">01 · They leave without a word</span>
       <h2 data-a="up" data-d="1">A client disappears,<br><span class="w-gold">and you never know why.</span></h2>
-      <p data-a="up" data-d="2">A client disappears. <span class="w-gold">You never know why.</span> PleromaOS shows you <span class="w-gold">who's slipping</span> — and <span class="w-gold">why.</span></p>
-      <div class="beat-progress" data-a="up" data-d="3">
-        <div class="bp-dot act"></div><div class="bp-dot"></div><div class="bp-dot"></div>
-      </div>
+      <p data-a="up" data-d="2">PleromaOS shows you <span class="w-gold">who's slipping</span> — and <span class="w-gold">why.</span></p>
     </div>
     <div class="pain-vis-col" data-a="left">
+      <div class="diag-sign" data-en="Client retention" data-nl="Klantbehoud">Client retention</div>
       <div class="pvis-card">
         <div class="pvc-label"><span class="brand">Pleroma</span><span class="logo-os">OS</span> <span class="pvc-lbl-t" data-en="· Client retention" data-nl="· Klantbehoud">· Client retention</span></div>
         <div class="retention-summary">
@@ -795,11 +795,9 @@ footer a:hover{color:rgba(237,232,224,.6)}
       <span class="beat-kicker" data-a="up">02 · The knowledge walks out the door</span>
       <h2 data-a="up" data-d="1">Everything you know about your clients<br><span class="w-gold">lives in one person's head.</span></h2>
       <p data-a="up" data-d="2">What your stylist knows about your clients <span class="w-gold">leaves with them.</span> With PleromaOS, it stays in your <span class="w-gold">business.</span></p>
-      <div class="beat-progress" data-a="up" data-d="3">
-        <div class="bp-dot"></div><div class="bp-dot act"></div><div class="bp-dot"></div>
-      </div>
     </div>
     <div class="pain-vis-col" data-a="left">
+      <div class="diag-sign" data-en="Client knowledge" data-nl="Klantkennis">Client knowledge</div>
       <div class="profile-toggle">
         <button class="pt-btn act" id="pt-f" onclick="switchProfile('f')" data-en="Women" data-nl="Vrouwen">Women</button>
         <button class="pt-btn" id="pt-m" onclick="switchProfile('m')" data-en="Men" data-nl="Mannen">Men</button>
@@ -878,11 +876,9 @@ footer a:hover{color:rgba(237,232,224,.6)}
       <span class="beat-kicker" data-a="up">03 · Starting over is the fear</span>
       <h2 data-a="up" data-d="1">Your stylist knows the end result.<br><span class="w-gold">Your business should too.</span></h2>
       <p data-a="up" data-d="2">Clients leave because they don't trust starting over. <span class="w-gold">With PleromaOS, they never have to.</span></p>
-      <div class="beat-progress" data-a="up" data-d="3">
-        <div class="bp-dot"></div><div class="bp-dot"></div><div class="bp-dot act"></div>
-      </div>
     </div>
     <div class="pain-vis-col" data-a="left">
+      <div class="diag-sign" data-en="Staff handoff" data-nl="Personeelsoverdracht">Staff handoff</div>
       <div class="pvis-card">
         <div class="pvc-label"><span class="brand">Pleroma</span><span class="logo-os">OS</span> <span class="pvc-lbl-t" data-en="· Staff handoff" data-nl="· Personeelsoverdracht">· Staff handoff</span></div>
 
@@ -1083,11 +1079,11 @@ footer a:hover{color:rgba(237,232,224,.6)}
     </div>
     <div class="priv-sec">
       <h3>Your rights (GDPR / AVG)</h3>
-      <p>You have the right to access, correct, or delete your data at any time. Email us at <a href="mailto:alexanderv071230@gmail.com">alexanderv071230@gmail.com</a> and we will respond within 72 hours.</p>
+      <p>You have the right to access, correct, or delete your data at any time. Email us at <a href="mailto:Bryan@pleromaos.nl">Bryan@pleromaos.nl</a> and we will respond within 72 hours.</p>
     </div>
     <div class="priv-sec">
       <h3>Data controller</h3>
-      <p>PleromaOS · Amsterdam, Netherlands · <a href="mailto:alexanderv071230@gmail.com">alexanderv071230@gmail.com</a></p>
+      <p>Pleroma<span style="color:var(--gold)">OS</span> · Amsterdam, Netherlands · <a href="mailto:Bryan@pleromaos.nl">Bryan@pleromaos.nl</a></p>
     </div>
   </div>
 </div>
@@ -1451,7 +1447,7 @@ const T={
     btnGold:'Join Waitlist',btnGhost:'See what holds salons back →',scrollCue:'Scroll',
     hookGap:'<span class="hook-gap-long">PleromaOS gives every client a simple way to show exactly what they have in mind — before they sit down.<br></span><strong>Your stylist gets a clear brief. Your business keeps the record.</strong>',
     pain0Kicker:'01 · They leave without a word',pain0H:'A client disappears,<br><span class="w-gold">and you never know why.</span>',
-    pain0P:'A client disappears. <span class="w-gold">You never know why.</span> PleromaOS shows you <span class="w-gold">who\'s slipping</span> — and <span class="w-gold">why.</span>',
+    pain0P:'PleromaOS shows you <span class="w-gold">who\'s slipping</span> — and <span class="w-gold">why.</span>',
     pain1Kicker:'02 · The knowledge walks out the door',pain1H:'Everything you know about your clients<br><span class="w-gold">lives in one person\'s head.</span>',
     pain1P:'What your stylist knows about your clients <span class="w-gold">leaves with them.</span> With PleromaOS, it stays in your <span class="w-gold">business.</span>',
     pain2Kicker:'03 · Starting over is the fear',pain2H:'Your stylist knows the end result.<br><span class="w-gold">Your business should too.</span>',
@@ -1482,7 +1478,7 @@ const T={
     btnGold:'Wachtlijst',btnGhost:'Zie wat salons tegenhoudt →',scrollCue:'Scroll',
     hookGap:'<span class="hook-gap-long">PleromaOS geeft elke klant een eenvoudige manier om te laten zien wat ze in gedachten hebben — vóórdat ze gaan zitten.<br></span><strong>Jouw stylist krijgt een duidelijke briefing. Jouw bedrijf bewaart het altijd.</strong>',
     pain0Kicker:'01 · Ze gaan zonder een woord',pain0H:'Een klant verdwijnt,<br><span class="w-gold">en je weet nooit waarom.</span>',
-    pain0P:'Een klant verdwijnt. <span class="w-gold">Je weet nooit waarom.</span> PleromaOS laat je zien <span class="w-gold">wie er wegdrijft</span> — en <span class="w-gold">waarom.</span>',
+    pain0P:'PleromaOS laat je zien <span class="w-gold">wie er wegdrijft</span> — en <span class="w-gold">waarom.</span>',
     pain1Kicker:'02 · De kennis loopt de deur uit',pain1H:'Alles wat je weet over je klanten<br><span class="w-gold">leeft in één hoofd.</span>',
     pain1P:'Wat jouw stylist weet over jouw klanten <span class="w-gold">gaat met hen mee.</span> Met PleromaOS blijft het in jouw <span class="w-gold">bedrijf.</span>',
     pain2Kicker:'03 · Opnieuw beginnen is de angst',pain2H:'Jouw stylist kent het eindresultaat.<br><span class="w-gold">Jouw bedrijf zou dat ook moeten weten.</span>',
@@ -1553,6 +1549,16 @@ setLang(localStorage.getItem('lang')||'en');
 
 // Sound: placeholder — to be implemented with proper audio
 function playChime(){}
+
+// ══════════════════════════════════════════
+// PROFILE TOGGLE (S3 diagram)
+// ══════════════════════════════════════════
+function switchProfile(gender){
+  document.getElementById('profile-f').style.display=gender==='f'?'':'none';
+  document.getElementById('profile-m').style.display=gender==='m'?'':'none';
+  document.getElementById('pt-f').classList.toggle('act',gender==='f');
+  document.getElementById('pt-m').classList.toggle('act',gender==='m');
+}
 
 // ══════════════════════════════════════════
 // PRIVACY MODAL
