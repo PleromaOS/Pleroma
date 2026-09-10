@@ -1,0 +1,723 @@
+<!--
+  FROZEN - design source only, not the shipping app.
+
+  The live app is product/landing-site/app.html and it is canonical: it has the
+  code gate, the full-bleed phone layout and (from here on) the photo/avatar
+  fork and the AI render. Changes go THERE, not here.
+
+  This file is kept as the clean, ungated reference for the quiz design.
+  Frozen 10 Sep 2026, at the point app.html was cut from it.
+  See docs/HANDOFF-quiz-app.md section 6.
+-->
+<title>Brief Quiz Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap">
+<style>
+:root{
+  --ink:#f4efe6; --ink-2:#b3a894; --ink-3:#908674;
+  --bg:#141210; --panel:#1c1917; --panel-2:#242019; --line:#332c24;
+  --gold:#c9a96e; --gold-lo:#9c8555; --gold-bg:#2a2317;
+  --teal:#4a7a5c; --teal-bg:#1a2a1f;
+  --warn:#c98a4e; --hot:#c96b56;
+  --r:14px;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:16px; line-height:1.5; -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+}
+.stage{display:flex;flex-direction:column;align-items:center;padding:22px 16px 0;min-height:100vh}
+.plate{width:100%;max-width:430px;margin-bottom:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.wm{font-family:"Instrument Serif",Georgia,serif;font-size:19px;letter-spacing:-.01em}
+.wm b{font-weight:400}
+.wm span{color:var(--gold);font-weight:400}
+.tagline{font-size:11px;color:var(--ink-3);letter-spacing:.1em;text-transform:uppercase}
+.plate .sp{flex:1}
+.ghost{
+  font:inherit;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;
+  background:transparent;border:1px solid var(--line);color:var(--ink-3);
+  border-radius:99px;padding:5px 11px;cursor:pointer
+}
+.ghost:hover{border-color:var(--gold);color:var(--gold)}
+.ghost.on{background:var(--gold-bg);border-color:var(--gold-lo);color:var(--gold)}
+.ghost:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+/* ── phone ── */
+.phone{
+  width:100%;max-width:430px;background:var(--panel);border:1px solid var(--line);
+  border-radius:26px;overflow:hidden;display:flex;flex-direction:column;
+  height:min(780px,calc(100vh - 130px));box-shadow:0 30px 70px -30px rgba(0,0,0,.8);
+}
+.bar{padding:12px 16px 0;flex:none}
+.prog{height:3px;background:var(--line);border-radius:99px;overflow:hidden}
+.prog i{display:block;height:100%;width:0;background:var(--gold);border-radius:99px;transition:width .3s cubic-bezier(.4,0,.2,1)}
+.crumb{display:flex;align-items:center;gap:10px;padding:9px 2px 0;font-size:11px;color:var(--ink-3)}
+.crumb .step{color:var(--ink-3)}
+.sidchip{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:11px;color:var(--gold-lo);border:1px solid var(--line);border-radius:6px;padding:3px 8px;display:none}
+.sidchip.show{display:inline-block}
+.crumb .sp{flex:1}
+.back{background:none;border:none;color:var(--ink-3);font:inherit;font-size:12px;cursor:pointer;padding:2px 0}
+.back:hover{color:var(--ink)}
+.back[hidden]{visibility:hidden}
+
+.scr{flex:1;overflow-y:auto;padding:14px 18px 20px;scrollbar-width:thin}
+.scr::-webkit-scrollbar{width:5px}
+.scr::-webkit-scrollbar-thumb{background:var(--line);border-radius:9px}
+.q{font-family:"Instrument Serif",Georgia,serif;font-weight:400;font-size:27px;
+   line-height:1.15;letter-spacing:-.01em;margin:6px 0 4px;text-wrap:balance}
+.sub{font-size:13.5px;color:var(--ink-2);margin:0 0 16px}
+
+/* ── option rows ── */
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{
+  display:flex;align-items:baseline;gap:11px;width:100%;text-align:left;
+  background:var(--panel-2);border:1px solid var(--line);border-radius:var(--r);
+  padding:13px 15px;color:var(--ink);font:inherit;cursor:pointer;transition:.14s
+}
+.opt:hover{border-color:var(--gold-lo)}
+.opt.sel{border-color:var(--gold);background:var(--gold-bg)}
+.opt .lb{font-weight:500;font-size:15.5px}
+.opt .ht{font-size:12.5px;color:var(--ink-3);margin-left:auto;text-align:right;max-width:52%}
+.opt.dis{opacity:.45;cursor:not-allowed;background:transparent}
+.opt.dis:hover{border-color:var(--line)}
+.opt.dis .lb{color:var(--ink-3)}
+.opt .why{font-size:11.5px;color:var(--ink-3);margin-left:auto;font-style:italic;text-align:right;max-width:56%}
+.opt.quiet{background:transparent;border-style:dashed}
+.opt.quiet .lb{color:var(--ink-2);font-weight:400}
+.opt.primary{border-color:var(--gold-lo);background:var(--gold-bg)}
+.opt.primary .lb{font-size:16.5px}
+.optwrap{display:flex;flex-direction:column;gap:3px;flex:1;min-width:0}
+.optwrap .cost{font-size:12px;color:var(--gold)}
+.opt.stacked{align-items:center}
+.opt.stacked .ht{margin-left:0;max-width:none;text-align:left;font-size:12.5px;color:var(--ink-2)}
+.opt .pre{font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);
+  border:1px solid var(--gold-lo);border-radius:99px;padding:2px 7px;margin-left:auto;white-space:nowrap}
+
+/* ── style grid ── */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.tile{
+  background:var(--panel-2);border:1px solid var(--line);border-radius:12px;
+  padding:8px 6px 9px;cursor:pointer;color:var(--ink);font:inherit;
+  display:flex;flex-direction:column;align-items:center;gap:5px;transition:.14s
+}
+.tile:hover{border-color:var(--gold-lo)}
+.tile.sel{border-color:var(--gold);background:var(--gold-bg)}
+.tile svg{width:100%;height:auto;display:block}
+.tile .nm{font-size:11px;line-height:1.25;text-align:center;font-weight:500}
+.tile .mn{font-size:8.5px;letter-spacing:.03em;padding:2px 6px;border-radius:99px;white-space:nowrap}
+.mn-low{background:var(--teal-bg);color:var(--teal)}
+.mn-medium{background:var(--gold-bg);color:var(--warn)}
+.mn-high{background:#2e1e1a;color:var(--hot)}
+.mn-variable{background:var(--panel);color:var(--ink-3)}
+.gridnote{font-size:12.5px;color:var(--ink-2);margin:0 0 14px;padding:10px 12px;
+  background:var(--panel-2);border:1px solid var(--line);border-radius:10px;line-height:1.45}
+.ghdr{font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--gold);
+  margin:16px 0 8px;display:flex;align-items:center;gap:9px}
+.ghdr:first-child{margin-top:0}
+.ghdr::after{content:'';flex:1;height:1px;background:var(--line)}
+.gridnote b{color:var(--gold)}
+
+/* ── preview ── */
+.pv{background:var(--panel-2);border:1px solid var(--line);border-radius:var(--r);
+  padding:20px;text-align:center;margin-bottom:14px}
+.pv svg{width:130px;height:auto;margin:0 auto 12px;display:block}
+.pv .t{font-family:"Instrument Serif",Georgia,serif;font-size:22px;margin-bottom:3px}
+.pv .c{font-size:13px;color:var(--ink-2)}
+.swatches{display:flex;gap:9px;justify-content:center;margin-top:14px}
+.sw{width:52px;height:52px;border-radius:50%;border:2px solid var(--line);cursor:pointer;transition:.14s}
+.sw:hover{transform:scale(1.06)}
+.sw.sel{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-bg)}
+.sw-light{background:#e8c9a8}.sw-medium{background:#b07f52}.sw-deep{background:#6b452c}
+
+/* ── summary ── */
+.sum{display:flex;flex-direction:column;gap:2px;margin-bottom:16px}
+.sgrp{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);
+  margin:15px 0 7px;padding-bottom:5px;border-bottom:1px solid var(--line)}
+.sgrp:first-child{margin-top:4px}
+.srow{display:flex;align-items:center;gap:10px;padding:7px 2px;border-bottom:1px solid rgba(51,44,36,.5)}
+.srow dt{font-size:12.5px;color:var(--ink-3);flex:0 0 40%}
+.srow dd{margin:0;font-size:14px;flex:1;font-weight:500}
+.srow button{background:transparent;border:1px solid var(--line);border-radius:8px;
+  color:var(--gold-lo);font:inherit;font-size:12px;cursor:pointer;padding:7px 12px;
+  min-height:34px;flex:none}
+.srow button:hover{border-color:var(--gold);color:var(--gold)}
+.srow dd.empty{color:var(--ink-3);font-weight:400;font-style:italic}
+.flag{background:#2a1f14;border:1px solid #4a3520;border-left:3px solid var(--warn);
+  border-radius:9px;padding:11px 13px;font-size:12.5px;color:var(--ink-2);margin:12px 0}
+.flag b{color:var(--warn)}
+
+/* ── form / cta ── */
+.field{margin-bottom:13px}
+.field label{display:block;font-size:12px;color:var(--ink-3);margin-bottom:6px}
+.field input,.field select{
+  width:100%;background:var(--panel-2);border:1px solid var(--line);border-radius:11px;
+  padding:12px 13px;color:var(--ink);font:inherit;font-size:15px
+}
+.field input:focus,.field select:focus{outline:none;border-color:var(--gold)}
+.field input::placeholder{color:var(--ink-3)}
+.field .err{font-size:12.5px;color:var(--hot);margin-top:6px;display:none}
+.field.bad .err{display:block}
+.field.bad input,.field.bad select{border-color:var(--hot)}
+.cta{
+  width:100%;background:var(--gold);border:none;border-radius:12px;padding:14px;
+  color:#1a1610;font:inherit;font-weight:600;font-size:15.5px;cursor:pointer;margin-top:4px
+}
+.cta:disabled{background:var(--line);color:var(--ink-3);cursor:not-allowed}
+.cta.alt{background:transparent;border:1px solid var(--line);color:var(--ink-2);margin-top:8px}
+.cta.alt:hover{border-color:var(--gold-lo);color:var(--ink)}
+.skip{display:block;width:100%;background:transparent;border:1px solid var(--line);
+  border-radius:12px;color:var(--ink-2);font:inherit;font-size:14px;cursor:pointer;
+  padding:12px;margin-top:10px}
+.skip:hover{border-color:var(--gold-lo);color:var(--ink)}
+.done{text-align:center;padding:36px 10px}
+.done .tick{width:56px;height:56px;border-radius:50%;background:var(--teal-bg);color:var(--teal);
+  display:grid;place-items:center;font-size:26px;margin:0 auto 16px}
+.done h2{font-family:"Instrument Serif",Georgia,serif;font-weight:400;font-size:25px;margin:0 0 8px}
+.done p{color:var(--ink-2);font-size:14px;margin:0 0 20px}
+
+/* ── inspector ── */
+.insp{width:100%;max-width:430px;margin:12px 0 30px;background:var(--panel);
+  border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.insp[hidden]{display:none}
+.insp h3{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);
+  margin:0;padding:12px 15px 9px;border-bottom:1px solid var(--line)}
+.insp .body{padding:13px 15px;font-family:"JetBrains Mono",ui-monospace,monospace;font-size:11.5px;line-height:1.65}
+.insp .kv{display:flex;gap:9px;color:var(--ink-2)}
+.insp .kv b{color:var(--ink-3);font-weight:400;flex:0 0 116px}
+.insp .kv span{color:var(--ink)}
+.insp .sec{margin-top:11px;padding-top:10px;border-top:1px solid var(--line)}
+.insp .sk{color:var(--ink-3)}
+.insp .sk em{color:var(--warn);font-style:normal}
+.insp .path{color:var(--gold-lo);word-break:break-all}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@media (max-width:520px){
+  .stage{padding:12px 10px 0}
+  .phone{border-radius:20px;height:calc(100vh - 108px)}
+  .grid{gap:6px}
+}
+
+</style>
+
+<div class="stage">
+  <div class="plate">
+    <span class="wm"><b>Pleroma</b><span>OS</span></span>
+    <span class="tagline">Prototype</span>
+    <span class="sp"></span>
+    <span class="sidchip" id="sidchip">S0</span>
+    <button class="ghost" id="itog">Show logic</button>
+    <button class="ghost" id="rst">Restart</button>
+  </div>
+
+  <div class="phone">
+    <div class="bar">
+      <div class="prog"><i id="fill"></i></div>
+      <div class="crumb">
+        <button class="back" id="back" hidden>← Back</button>
+        <span class="sp"></span>
+        <span class="step" id="step"></span>
+      </div>
+    </div>
+    <div class="scr" id="scr"></div>
+  </div>
+
+  <div class="insp" id="insp" hidden>
+    <h3>What the quiz is doing</h3>
+    <div class="body" id="ibody"></div>
+  </div>
+</div>
+
+<script>
+const D = {"textures":[{"slug":"straight-fine","label":"Straight & fine"},{"slug":"straight-coarse","label":"Straight & coarse"},{"slug":"wavy","label":"Wavy"},{"slug":"curly","label":"Curly"},{"slug":"coily","label":"Coily / Afro"}],"skinTones":["light","medium","deep"],"lengthCategories":[{"value":"very-short","label":"Very short","order":0},{"value":"short","label":"Short","order":1},{"value":"medium","label":"Medium","order":2},{"value":"medium-long","label":"Medium-long","order":3},{"value":"long","label":"Long","order":4}],"screens":{"S0":{"title":"Are you booking a men's or women's cut?","options":[{"value":"male","label":"Male"},{"value":"female","label":"Female"}]},"S0b":{"title":"What's your hair like?","options":[{"value":"straight-fine","label":"Straight & fine"},{"value":"straight-coarse","label":"Straight & coarse"},{"value":"wavy","label":"Wavy"},{"value":"curly","label":"Curly"},{"value":"coily","label":"Coily / Afro"}]},"S0c":{"title":"Which looks closest to you?","optional":true,"default":"medium","options":[{"value":"light","label":"Light"},{"value":"medium","label":"Medium"},{"value":"deep","label":"Deep"},{"value":"skip","label":"Skip this"}]},"SR":{"title":"How would you like to do this?","options":[{"value":"preset","label":"Choose a famous style","hint":"Pick a classic \u2014 we fill in the details"},{"value":"custom","label":"Build my own style","hint":"Answer a few questions and shape it yourself"}]},"S1":{"title":"What have you got right now?","grid":true,"filtered":false},"S1b":{"title":"Keep it, or try something new?","options":[{"value":"keep","label":"Keep this style"},{"value":"change","label":"Try something different"}]},"S1c":{"title":"What are you going for?","grid":true,"filtered":true},"S2":{"title":"How long is it now?","options":[{"value":"short","label":"Short"},{"value":"normal","label":"Normal"},{"value":"long","label":"Long"},{"value":"very-long","label":"Very long"}],"constrainedBy":"S1"},"S3":{"title":"What do you want to do with the length?","options":[{"value":"keep","label":"Keep it about this length"},{"value":"shorter","label":"Go shorter"},{"value":"longer","label":"Grow it out"}]},"S4":{"title":"Here are three that would suit you","grid":true,"filtered":true,"count":3},"SE":{"title":"How much time do you want to spend styling each day?","options":[{"value":"low","label":"Low","hint":"No product, ready in seconds"},{"value":"medium","label":"Medium","hint":"A little product, a minute or two"},{"value":"high","label":"High","hint":"Product and daily effort \u2014 I don't mind"}]},"S5":{"title":"What happens on the sides?","options":[{"value":"skin-fade","label":"Skin fade","hint":"Taken right down to the skin"},{"value":"close-fade","label":"Close fade","hint":"Very short, but not bare"},{"value":"shadow-fade","label":"Shadow fade","hint":"Soft and subtle"},{"value":"taper","label":"Taper","hint":"Only the sideburn and neckline are blended"},{"value":"undercut","label":"Undercut","hint":"A hard line \u2014 no blending"},{"value":"natural","label":"Natural","hint":"Sides left long"}],"prefillFrom":"defaultSides"},"S6":{"title":"How high does it go?","options":[{"value":"low","label":"Low","hint":"Starts just above the ear"},{"value":"mid","label":"Mid","hint":"Starts around the temple"},{"value":"high","label":"High","hint":"Starts high on the head"},{"value":"barbers-choice","label":"Barber's choice","hint":"Let them decide"}],"showIf":"S5 in fade or taper"},"S7":{"title":"What shape?","options":[{"value":"classic","label":"Classic","hint":"Follows the head straight around"},{"value":"drop","label":"Drop","hint":"Curves down behind the ear"},{"value":"burst","label":"Burst","hint":"Arcs around the ear"},{"value":"barbers-choice","label":"Barber's choice","hint":"Let them decide"}],"showIf":"S5 in fade"},"S8":{"title":"How do you like the edges?","options":[{"value":"sharp","label":"Sharp","hint":"Crisp, defined edges"},{"value":"natural","label":"Natural","hint":"Softer, grown-in edges"}]},"S9":{"title":"And the neckline?","options":[{"value":"square","label":"Square","hint":"Straight across"},{"value":"round","label":"Round","hint":"Curved"},{"value":"tapered","label":"Tapered","hint":"Faded out, no hard edge"},{"value":"barbers-choice","label":"Barber's choice","hint":"Let them decide"}]},"S10":{"title":"What's your beard like right now?","options":[{"value":"none","label":"Clean shaven"},{"value":"stubble","label":"Stubble"},{"value":"short","label":"Short"},{"value":"medium","label":"Medium"},{"value":"full","label":"Full"}]},"S11":{"title":"Does it grow in evenly?","options":[{"value":"even","label":"Even all over"},{"value":"some","label":"A few thinner patches"}],"showIf":"S10 != none"},"S12":{"title":"How thick is it?","options":[{"value":"light","label":"Light"},{"value":"medium","label":"Medium"},{"value":"thick","label":"Thick"}],"showIf":"S10 != none"},"S13":{"title":"Should the beard fade into your hair?","options":[{"value":"yes","label":"Yes \u2014 fade it into the hair"},{"value":"no","label":"No \u2014 keep it separate"}],"showIf":"S10 != none"},"S14":{"title":"Want the edges tidied up?","options":[{"value":"skip","label":"No thanks"},{"value":"yes","label":"Yes \u2014 tidy up the edges"}],"showIf":"S10 == none"},"S14b":{"title":"Sharp or natural?","options":[{"value":"sharp","label":"Sharp","hint":"Crisp, defined edges"},{"value":"natural","label":"Natural","hint":"Softer edges"}],"showIf":"S14 == yes"},"S15":{"title":"Where should the beard stop on your neck?","options":[{"value":"low","label":"Low on the neck"},{"value":"jawline","label":"Along the jawline"},{"value":"natural-blend","label":"Blended, no hard line"}],"showIf":"S10 != none"},"S16b":{"title":"What beard shape?","options":[{"value":"none","label":"No beard"},{"value":"full","label":"Full beard"},{"value":"goatee","label":"Goatee"},{"value":"italian","label":"Italian"},{"value":"chin-strap","label":"Chin strap"}],"showIf":"S10 != none"},"S16c":{"title":"Moustache?","options":[{"value":"none","label":"No moustache"},{"value":"natural","label":"Natural"},{"value":"chevron","label":"Chevron"},{"value":"handlebar","label":"Handlebar"},{"value":"pencil","label":"Pencil"}]},"P1":{"title":"Here's the look","type":"preview"},"S17":{"title":"Your brief","type":"summary","editable":true},"S18":{"title":"Nearly done","type":"submit","fields":["barber","email"],"hardBlock":true}},"fadeTypes":["close-fade","shadow-fade","skin-fade"],"taperTypes":["taper"],"similarFamilies":{"Buzz/Crew":["Buzz/Crew","Crop","Flat Top","Edgar Cut"],"Crop":["Crop","Buzz/Crew","Edgar Cut","Flat Top"],"Pompadour":["Pompadour","Quiff","Classic Men's","Comb Over"],"Quiff":["Quiff","Pompadour","Classic Men's","Comb Over"],"Slick Back":["Slick Back","Pompadour","Classic Men's","Comb Over"],"Comb Over":["Comb Over","Classic Men's","Pompadour"],"Classic Men's":["Classic Men's","Pompadour","Comb Over","Curtains","Quiff"],"Curtains":["Curtains","Wolf Cut","Mullet"],"Wolf Cut":["Wolf Cut","Mullet","Curtains"],"Mullet":["Mullet","Wolf Cut","Curtains"],"Afro/Textured":["Afro/Textured","Mohawk"],"Mohawk":["Mohawk","Afro/Textured"],"Edgar Cut":["Edgar Cut","Crop","Buzz/Crew"],"Flat Top":["Flat Top","Buzz/Crew","Crop"]},"styles":[{"id":"01","slug":"buzz-cut","display":"Buzz Cut","len":"very-short","lenLabel":"Very short","family":"Buzz/Crew","maintenance":"Low","defaultSides":"low-taper","textures":["straight-fine","straight-coarse","wavy","curly","coily"],"allowedCurrentLength":["short"],"presetAnswers":{"S5":"taper","S6":"low","S7":null,"S8":"natural","S9":"tapered","S10":"none","S11":null,"S12":null,"S13":null,"S14":"skip","S14b":null,"S15":null,"S16b":"none","S16c":"none"},"variations":["guard-1","guard-2","guard-3","with-taper"]},{"id":"02","slug":"flat-top","display":"Flat Top","len":"very-short","lenLabel":"Very short","family":"Flat Top","maintenance":"High","defaultSides":"high-fade","textures":["straight-fine","straight-coarse","wavy","curly","coily"],"allowedCurrentLength":["short"],"presetAnswers":{"S5":"skin-fade","S6":"high","S7":"classic","S8":"sharp","S9":"tapered","S10":"none","S11":null,"S12":null,"S13":null,"S14":"skip","S14b":null,"S15":null,"S16b":"none","S16c":"none"},"variations":["classic","high-boxy","tapered"]},{"id":"03","slug":"crew-cut","display":"Crew Cut","len":"short","lenLabel":"Short","family":"Buzz/Crew","maintenance":"Low","defaultSides":"mid-fade","textures":["straight-fine","straight-coarse","wavy","curly","coily"],"allowedCurrentLength":["short","normal"],"presetAnswers":{"S5":"close-fade","S6":"mid","S7":"classic","S8":"sharp","S9":"tapered","S10":"none","S11":null,"S12":null,"S13":null,"S14":"skip","S14b":null,"S15":null,"S16b":"none","S16c":"none"},"variations":["classic","textured-top","longer-top","with-fade"]},{"id":"04","slug":"caesar","display":"Caesar","len":"short","lenLabel":"Short","family":"Buzz/Crew","maintenance":"Low","defaultSides":"low-fade","textures":["straight-fine","straight-coarse","wavy","curly"],"allowedCurrentLength":["short","normal"],"presetAnswers":{"S5":"close-fade","S6":"low","S7":"classic","S8":"sharp","S9":"tapered","S10":"none","S11":null,"S12":null,"S13":null,"S14":"skip","S14b":null,"S15":null,"S16b":"none","S16c":"none"},"variations":["classic","textured","short-fringe"]},{"id":"05","slug":"textured-crop","display":"Textured Crop","len":"short","lenLabel":"Short","family":"Crop","maintenance":"Medium","defaultSides":"mid-fade","textures":["straight-fine","straight-coarse","wavy","curly","coily"],"allowedCurrentLength":["short","normal"],"presetAnswers":{"S5":"close-fade","S6":"mid","S7":"classic","S8":"sharp","S9":"tapered","S10":"none","S11":null,"S12":null,"S13":null,"S14":"skip","S14b":null,"S15":null,"S16b":"none","S16c":"none"},"variations":["short","medium","heavy-fringe","messy"]},{"id":"06","slug":"edgar-cut","display":"Edgar Cut","len":"short","lenLabel":"Short","family":"Edgar Cut","maintenance":"Medium","defaultSides":"high-fade","textures":["straight-fine","straight-coarse","wavy","curly","coily"],"allowedCurrentLength":["short","normal"],"presetAnswers":{"S5":"skin-fade","S6":"high","S7":"classic","S8":"sharp","S9":"tapered","S10":"none","S11":null,"S12":null,"S13":null,"S14":"skip","S14b":null,"S15":null,"S16b":"none","S16c":"none"},"variations":["classic-blunt","textured","high-contrast"]},{"id":"07","slug":"fauxhawk","display":"Fauxhawk","len":"short","lenLabel":"Short","family":"Mohawk","maintenance":"Medium","defaultSides":"mid-fade","textures":["straight-fine","straight-coarse","wavy","curly"],"allowedCurrentLength":["short","normal"],"presetAnswers":{"S5":"close-fade","S6":"mid","S7":"classic","S8":"sharp","S9":"tapered","S10":"none","S11":null,"S12":null,"S13":null,"S14":"skip","S14b":null,"S15":null,"S16b":"none","S16c":"none"},"variations":["subtle","textured","high-contrast"]},{"id":"08","slug":"quiff","display":"Quiff","len":"medium","lenLabel":"Medium","family":"Quiff","maintenance":"High","defaultSides":"mid-fade","textures":["straight-fine","straight-coarse","wavy"],"allowedCurrentLength":["normal"],"presetAnswers":{"S5":"close-fade","S6":"mid","S7":"classic","S8":"sharp","S9":"tapered","S10":"none","S11":null,"S12":null,"S13":null,"S14":"skip","S14b":null,"S15":null,"S16b":"none","S16c":"none"},"variations":["classic","textured","high-volume","low-key"]},{"id":"09","slug":"slick-back","display":"Slick Back","len":"medium","lenLabel":"Medium","family":"Slick Back","maintenance":"High","defaultSides":"mid-fade","textures":["straight-fine","straight-coarse","wavy"],"allowedCurrentLength":["normal"],"presetAnswers":{"S5":"undercut","S6":"mid","S7":null,"S8":"sharp","S9":"tapered","S10":"none","S11":null,"S12":null,"S13":null,"S14":"skip","S14b":null,"S15":null,"S16b":"none","S16c":"none"},"variations":["sleek-classic","textured","undercut","longer"]},{"id":"10","slug":"classic-pompadour","display":"Classic Pompadour","len":"medium","lenLabel":"Medium","family":"Pompadour","maintenance":"High","defaultSides":"low-fade","textures":["straight-fine","straight-coarse","wavy"],"allowedCurrentLength":["normal"],"presetAnswers":{"S5":"close-fade","S6":"low","S7":"classic","S8":"sharp","S9":"tapered","S10":"none","S11":null,"S12":null,"S13":null,"S14":"skip","S14b":null,"S15":null,"S16b":"none","S16c":"none"},"variations":["classic","high-volume","tapered"]},{"id":"11","slug":"modern-pompadour","display":"Modern Pompadour","len":"medium","lenLabel":"Medium","family":"Pompadour","maintenance":"High","defaultSides":"high-fade","textures":["straight-fine","straight-coarse","wavy"],"allowedCurrentLength":["normal"],"presetAnswers":{"S5":"skin-fade","S6":"high","S7":"classic","S8":"sharp","S9":"tapered","S10":"none","S11":null,"S12":null,"S13":null,"S14":"skip","S14b":null,"S15":null,"S16b":"none","S16c":"none"},"variations":["with-fade","textured","sleek"]},{"id":"12","slug":"classic-mens","display":"Classic Men's","len":"medium","lenLabel":"Medium","family":"Classic Men's","maintenance":"Low","defaultSides":"low-taper","textures":["straight-fine","straight-coarse","wavy","curly"],"allowedCurrentLength":["normal"],"presetAnswers":{"S5":"taper","S6":"low","S7":null,"S8":"natural","S9":"tapered","S10":"none","S11":null,"S12":null,"S13":null,"S14":"skip","S14b":null,"S15":null,"S16b":"none","S16c":"none"},"variations":["short","medium","side-part"]},{"id":"13","slug":"comb-over","display":"Comb Over","len":"medium","lenLabel":"Medium","family":"Comb Over","maintenance":"Medium","defaultSides":"low-taper","textures":["straight-fine","straight-coarse","wavy"],"allowedCurrentLength":["normal"],"presetAnswers":{"S5":"taper","S6":"low","S7":null,"S8":"natural","S9":"tapered","S10":"none","S11":null,"S12":null,"S13":null,"S14":"skip","S14b":null,"S15":null,"S16b":"none","S16c":"none"},"variations":["classic","side-part","textured"]},{"id":"14","slug":"comb-over-fade","display":"Comb Over Fade","len":"medium","lenLabel":"Medium","family":"Comb Over","maintenance":"Medium","defaultSides":"mid-fade","textures":["straight-fine","straight-coarse","wavy"],"allowedCurrentLength":["normal"],"presetAnswers":{"S5":"close-fade","S6":"mid","S7":"classic","S8":"sharp","S9":"tapered","S10":"none","S11":null,"S12":null,"S13":null,"S14":"skip","S14b":null,"S15":null,"S16b":"none","S16c":"none"},"variations":["low-fade","mid-fade","high-fade"]},{"id":"15","slug":"curtains","display":"Curtains / Middle Part","len":"medium","lenLabel":"Medium","family":"Curtains","maintenance":"Medium","defaultSides":"natural","textures":["straight-fine","straight-coarse","wavy","curly"],"allowedCurrentLength":["normal"],"presetAnswers":{"S5":"natural","S6":null,"S7":null,"S8":"natural","S9":"tapered","S10":"none","S11":null,"S12":null,"S13":null,"S14":"skip","S14b":null,"S15":null,"S16b":"none","S16c":"none"},"variations":["short","medium","long","textured"]},{"id":"16","slug":"curly-afro","display":"Curly Afro","len":"medium","lenLabel":"Medium","family":"Afro/Textured","maintenance":"Medium","defaultSides":"natural","textures":["curly","coily"],"allowedCurrentLength":["normal"],"presetAnswers":{"S5":"natural","S6":null,"S7":null,"S8":"natural","S9":"tapered","S10":"none","S11":null,"S12":null,"S13":null,"S14":"skip","S14b":null,"S15":null,"S16b":"none","S16c":"none"},"variations":["short","medium","high-volume","tapered"]},{"id":"17","slug":"afro-fade","display":"Afro Fade","len":"medium","lenLabel":"Medium","family":"Afro/Textured","maintenance":"Medium","defaultSides":"mid-fade","textures":["curly","coily"],"allowedCurrentLength":["normal"],"presetAnswers":{"S5":"skin-fade","S6":"mid","S7":"burst","S8":"sharp","S9":"tapered","S10":"none","S11":null,"S12":null,"S13":null,"S14":"skip","S14b":null,"S15":null,"S16b":"none","S16c":"none"},"variations":["low","mid","high","temple-fade"]},{"id":"18","slug":"mohawk","display":"Mohawk","len":"medium","lenLabel":"Medium","family":"Mohawk","maintenance":"High","defaultSides":"high-fade","textures":["straight-fine","straight-coarse","wavy","curly","coily"],"allowedCurrentLength":["normal"],"presetAnswers":{"S5":"skin-fade","S6":"high","S7":"classic","S8":"sharp","S9":"tapered","S10":"none","S11":null,"S12":null,"S13":null,"S14":"skip","S14b":null,"S15":null,"S16b":"none","S16c":"none"},"variations":["classic","wide","narrow"]},{"id":"19","slug":"modern-mullet","display":"Modern Mullet","len":"medium-long","lenLabel":"Medium-long","family":"Mullet","maintenance":"Medium","defaultSides":"mid-fade","textures":["straight-fine","straight-coarse","wavy","curly"],"allowedCurrentLength":["normal","long"],"presetAnswers":{"S5":"taper","S6":"mid","S7":null,"S8":"natural","S9":"round","S10":"none","S11":null,"S12":null,"S13":null,"S14":"skip","S14b":null,"S15":null,"S16b":"none","S16c":"none"},"variations":["subtle","classic-modern","extreme"]},{"id":"20","slug":"classic-mullet","display":"Classic Mullet","len":"long","lenLabel":"Long","family":"Mullet","maintenance":"Medium","defaultSides":"natural","textures":["straight-fine","straight-coarse","wavy"],"allowedCurrentLength":["long","very-long"],"presetAnswers":{"S5":"natural","S6":null,"S7":null,"S8":"natural","S9":"round","S10":"none","S11":null,"S12":null,"S13":null,"S14":"skip","S14b":null,"S15":null,"S16b":"none","S16c":"none"},"variations":["classic","textured","long"]},{"id":"21","slug":"wolf-cut","display":"Wolf Cut","len":"long","lenLabel":"Long","family":"Wolf Cut","maintenance":"High","defaultSides":"natural","textures":["straight-fine","straight-coarse","wavy","curly"],"allowedCurrentLength":["long","very-long"],"presetAnswers":{"S5":"natural","S6":null,"S7":null,"S8":"natural","S9":"round","S10":"none","S11":null,"S12":null,"S13":null,"S14":"skip","S14b":null,"S15":null,"S16b":"none","S16c":"none"},"variations":["short","medium","long","heavy-layers"]}]};
+const S = {};           // answers
+let route = null;       // 'preset' | 'custom' | 'photo'
+let hist = [];          // screen stack
+let cur = null;
+let skipped = [];       // {id, why}
+let editing = null;     // screen id we jumped to from summary
+
+const $ = s => document.querySelector(s);
+const el = (t, c, h) => { const e = document.createElement(t); if (c) e.className = c; if (h != null) e.innerHTML = h; return e; };
+const byId = s => D.styles.find(x => x.slug === s);
+const opts = k => (D.screens[k] && D.screens[k].options) || [];
+const lab = (k, v) => { const o = opts(k).find(x => x.value === v); return o ? o.label : v; };
+const LEN = D.lengthCategories.map(x => x.value);
+const FADE = new Set(D.fadeTypes), TAPER = new Set(D.taperTypes);
+
+// ── head silhouette, hair volume varies by length category ──
+const HAIR = {
+  'very-short': 'M30 46c0-16 12-26 30-26s30 10 30 26c0 3-1 5-2 6-3-9-13-15-28-15s-25 6-28 15c-1-1-2-3-2-6z',
+  'short':      'M27 48c0-19 13-31 33-31s33 12 33 31c0 4-1 7-3 9-3-12-14-20-30-20s-27 8-30 20c-2-2-3-5-3-9z',
+  'medium':     'M24 52c0-23 14-37 36-37s36 14 36 37c0 6-1 10-3 13-2-16-14-26-33-26s-31 10-33 26c-2-3-3-7-3-13z',
+  'medium-long':'M22 56c0-26 16-41 38-41s38 15 38 41c0 12-2 22-5 30l-6-2c2-9 3-17 3-24 0-19-13-30-30-30s-30 11-30 30c0 7 1 15 3 24l-6 2c-3-8-5-18-5-30z',
+  'long':       'M20 58c0-28 17-44 40-44s40 16 40 44c0 18-3 34-7 46l-8-2c3-13 5-27 5-40 0-21-14-33-30-33s-30 12-30 33c0 13 2 27 5 40l-8 2c-4-12-7-28-7-46z'
+};
+function tileSvg(st, sz) {
+  const w = sz || 74;
+  return `<svg viewBox="0 0 120 108" width="${w}" aria-hidden="true">
+    <ellipse cx="60" cy="66" rx="27" ry="32" fill="#2f2820"/>
+    <path d="${HAIR[st.len]}" fill="var(--gold-lo)"/>
+    <circle cx="50" cy="66" r="2" fill="#4a4034"/><circle cx="70" cy="66" r="2" fill="#4a4034"/>
+  </svg>`;
+}
+
+// ── flow ──
+function go(id, opt) {
+  if (cur) hist.push(cur);
+  cur = id; render(opt);
+}
+function skip(id, why) { skipped.push({ id, why }); }
+function back() {
+  if (!hist.length) return;
+  cur = hist.pop(); render();
+}
+// after answering `id`, work out what comes next
+function next(id) {
+  if (editing) { const e = editing; editing = null; return go('S17'); }
+  const n = {
+    S0:  () => S.S0 === 'male' ? go('S0b') : go('FEMALE'),
+    S0b: () => go('S0c'),
+    S0c: () => go('SR'),
+    SR:  () => S.SR === 'preset' ? go('A1') : go('S1'),
+    A1:  () => S.A1 === '__photo__' ? go('A1b') : go('SE'),
+    A1b: () => go('SE'),
+    S1:  () => go('S1b'),
+    S1b: () => {
+      if (S.S1b === 'change') return go('S1c');
+      // a question with one possible answer isn't a question - fill it and move on
+      const allowed = byId(S.S1).allowedCurrentLength;
+      if (allowed.length === 1) {
+        S.S2 = allowed[0];
+        skip('S2', `only "${allowed[0]}" is possible with a ${byId(S.S1).display.toLowerCase()} - filled automatically`);
+        return go('S3');
+      }
+      return go('S2');
+    },
+    S1c: () => {
+      const a = LEN.indexOf(byId(S.S1).len), b = LEN.indexOf(byId(S.S1c).len);
+      S.derivedDir = b > a ? 'longer' : b < a ? 'shorter' : 'keep';
+      skip('S2', 'length known from the style picked at S1');
+      skip('S3', 'direction derived: ' + S.derivedDir);
+      skip('S4', 'target already chosen at S1c');
+      go('SE');
+    },
+    S2:  () => go('S3'),
+    S3:  () => {
+      if (S.S3 === 'keep') { skip('S4', 'no length change wanted'); return go('SE'); }
+      go('S4');
+    },
+    S4:  () => go('SE'),
+    SE:  () => {
+      if (route === 'preset') {
+        // the preset fills the CUT. it says nothing about facial hair, so the beard
+        // section still runs - otherwise a bearded client gets a brief saying "no beard".
+        ['S5','S6','S7','S8','S9'].forEach(x => skip(x, 'filled by the ' + byId(S.A1).display + ' preset'));
+        return go('S10');
+      }
+      go('S5');
+    },
+    S5:  () => {
+      if (FADE.has(S.S5)) return go('S6');
+      if (TAPER.has(S.S5)) { skip('S7', 'shape only applies to a fade'); return go('S6'); }
+      skip('S6', 'no fade or taper chosen'); skip('S7', 'no fade chosen');
+      go('S8');
+    },
+    S6:  () => FADE.has(S.S5) ? go('S7') : go('S8'),
+    S7:  () => go('S8'),
+    S8:  () => go('S9'),
+    S9:  () => go('S10'),
+    S10: () => {
+      if (S.S10 === 'none') {
+        ['S11','S12','S13','S15','S16b'].forEach(x => skip(x, 'clean shaven'));
+        return go('S14');
+      }
+      skip('S14', 'already has a beard');
+      go('S11');
+    },
+    S11: () => go('S12'),
+    S12: () => go('S13'),
+    S13: () => go('S15'),
+    S14: () => S.S14 === 'yes' ? go('S14b') : (skip('S14b','no touch-up wanted'), go('S16c')),
+    S14b:() => go('S16c'),
+    S15: () => go('S16b'),
+    S16b:() => go('S16c'),
+    S16c:() => go('P1'),
+    P1:  () => go('S17'),
+    S17: () => go('S18'),
+  }[id];
+  n ? n() : go('S17');
+}
+
+function pick(id, v) {
+  S[id] = v;
+  if (id === 'SR') { route = v; }
+  if (id === 'A1' && v !== '__photo__') {
+    route = 'preset';
+    Object.assign(S, byId(v).presetAnswers);
+  }
+  if (id === 'A1' && v === '__photo__') route = 'photo';
+  if (id === 'S1b' && v === 'keep') S.S1c = S.S1;
+  if (id === 'S5') { delete S.S6; delete S.S7; }
+  next(id);
+}
+
+// ── the style the brief is actually about ──
+function target() {
+  if (route === 'preset') return byId(S.A1);
+  if (S.S4) return byId(S.S4);
+  if (S.S1c) return byId(S.S1c);
+  if (S.S1) return byId(S.S1);
+  return null;
+}
+function availableStyles() {
+  const t = S.S0b;
+  return D.styles.filter(s => s.textures.includes(t));
+}
+// S4: direction + family similarity + texture, top 3
+function alternatives() {
+  const from = byId(S.S1), dir = S.S3, fi = LEN.indexOf(from.len);
+  const sim = D.similarFamilies[from.family] || [];
+  return availableStyles()
+    .filter(s => {
+      const i = LEN.indexOf(s.len);
+      return dir === 'shorter' ? i < fi : i > fi;
+    })
+    .map(s => {
+      let sc = 0;
+      if (s.family === from.family) sc += 3;
+      else if (sim.includes(s.family)) sc += 2;
+      sc += 2 - Math.min(2, Math.abs(LEN.indexOf(s.len) - fi) - 1);
+      return { s, sc };
+    })
+    .sort((a, b) => b.sc - a.sc).slice(0, 3).map(x => x.s);
+}
+function effortMismatch() {
+  const t = target(); if (!t || !S.SE) return null;
+  const rank = { Low: 1, Medium: 2, High: 3, Variable: 2 };
+  const m = rank[t.maintenance], e = rank[{ low: 'Low', medium: 'Medium', high: 'High' }[S.SE]];
+  if (m - e >= 2) return `${t.display} is ${t.maintenance.toLowerCase()}-upkeep, but you want ${S.SE} daily effort.`;
+  return null;
+}
+function longTransition() {
+  if (!S.S1 || !S.S1c || S.S1 === S.S1c) return null;
+  const a = LEN.indexOf(byId(S.S1).len), b = LEN.indexOf(byId(S.S1c).len);
+  if (Math.abs(b - a) < 2) return null;
+  return b > a
+    ? `Going from ${byId(S.S1).lenLabel.toLowerCase()} to ${byId(S.S1c).lenLabel.toLowerCase()} takes a few months of growing out.`
+    : `That's a big cut — ${byId(S.S1).lenLabel.toLowerCase()} down to ${byId(S.S1c).lenLabel.toLowerCase()}.`;
+}
+
+// ── rendering ──
+// how many screens are actually left on the path the client is on
+function stepsLeft() {
+  if (cur === 'DONE') return 0;
+  const after = { P1:3, S17:2, S18:1, DONE:0 };
+  if (after[cur] != null) return after[cur];
+  if (route === 'preset') return ({ S0:8, S0b:7, S0c:6, SR:5, A1:4, A1b:4, SE:3 })[cur] ?? 4;
+  if (route === 'photo')  return ({ A1b:12, SE:11, S5:10, S6:9, S7:8, S8:8, S9:7, S10:6,
+                                    S11:5, S12:5, S13:4, S14:4, S14b:4, S15:4, S16b:4, S16c:3 })[cur] ?? 6;
+  return ({ S0:14, S0b:13, S0c:12, SR:11, S1:10, S1b:9, S1c:8, S2:9, S3:8, S4:8, SE:7,
+            S5:6, S6:6, S7:5, S8:5, S9:4, S10:4, S11:4, S12:4, S13:4, S14:4, S14b:4,
+            S15:4, S16b:4, S16c:3 })[cur] ?? 5;
+}
+function render() {
+  const scr = $('#scr'); scr.innerHTML = ''; scr.scrollTop = 0;
+  $('#sidchip').textContent = cur;
+  $('#back').hidden = !hist.length || cur === 'DONE';
+  const left = cur === 'FEMALE' ? 0 : stepsLeft();
+  $('#step').textContent = cur === 'FEMALE' ? ''
+    : cur === 'DONE' ? 'Done'
+    : left <= 0 ? 'Last one'
+    : left === 1 ? '1 screen left'
+    : left + ' screens left';
+  const pct = cur === 'DONE' ? 100 : Math.max(4, Math.round(100 * (1 - left / (hist.length + left || 1))));
+  $('#fill').style.width = pct + '%';
+  (R[cur] || R.FALLBACK)(scr);
+  inspect();
+}
+function head(scr, q, sub) {
+  scr.append(el('h1', 'q', q));
+  if (sub) scr.append(el('p', 'sub', sub));
+}
+function optList(scr, id, list, o) {
+  o = o || {};
+  const box = el('div', 'opts'); 
+  list.forEach(op => {
+    const dis = o.allow && !o.allow.includes(op.value);
+    const quiet = op.value === 'barbers-choice';
+    const b = el('button', 'opt' + (S[id] === op.value ? ' sel' : '') + (dis ? ' dis' : '') + (quiet ? ' quiet' : ''));
+    b.innerHTML = `<span class="lb">${op.label}</span>` +
+      (dis ? `<span class="why">${o.whyDisabled || 'not possible here'}</span>`
+           : op.hint ? `<span class="ht">${op.hint}</span>` : '') +
+      (o.prefill === op.value && !dis ? `<span class="pre">usual for this cut</span>` : '');
+    if (dis) b.disabled = true;
+    else b.onclick = () => pick(id, op.value);
+    box.append(b);
+  });
+  scr.append(box);
+}
+const UPKEEP = { Low: 'Low upkeep', Medium: 'Some upkeep', High: 'High upkeep', Variable: 'Varies' };
+function tileBtn(id, st) {
+  const b = el('button', 'tile' + (S[id] === st.slug ? ' sel' : ''));
+  b.innerHTML = tileSvg(st) +
+    `<span class="nm">${st.display}</span>` +
+    `<span class="mn mn-${st.maintenance.toLowerCase()}">${UPKEEP[st.maintenance]}</span>`;
+  b.onclick = () => pick(id, st.slug);
+  return b;
+}
+function styleGrid(scr, id, list, note, opt) {
+  opt = opt || {};
+  if (note) scr.append(el('p', 'gridnote', note));
+  if (opt.flat) {
+    const g = el('div', 'grid'); list.forEach(st => g.append(tileBtn(id, st))); scr.append(g);
+    return;
+  }
+  // grouped by length so 21 tiles read as five short blocks, not one long wall
+  LEN.forEach(len => {
+    const inGroup = list.filter(s => s.len === len);
+    if (!inGroup.length) return;
+    const lbl = D.lengthCategories.find(x => x.value === len).label;
+    scr.append(el('div', 'ghdr', lbl));
+    const g = el('div', 'grid');
+    inGroup.forEach(st => g.append(tileBtn(id, st)));
+    scr.append(g);
+  });
+}
+
+const R = {
+  S0: s => { head(s, 'Are you booking a men\'s or women\'s cut?'); optList(s, 'S0', opts('S0')); },
+  FEMALE: s => {
+    head(s, 'The women\'s quiz is still being built.');
+    s.append(el('p', 'sub', 'In the real product this branches to a separate flow with colour questions. For now, jump back and pick the men\'s path.'));
+    const b = el('button', 'cta', 'Back to the start'); b.onclick = restart; s.append(b);
+  },
+  S0b: s => {
+    head(s, "What's your hair like?", 'We only show you cuts that work with it.');
+    const HINT = {
+      'straight-fine':   'Straight, soft, sits flat',
+      'straight-coarse': 'Straight but thick and stiff',
+      'wavy':            'Loose bends, not curls',
+      'curly':           'Defined curls or spirals',
+      'coily':           'Tight coils, springy'
+    };
+    optList(s, 'S0b', opts('S0b').map(o => ({ ...o, hint: HINT[o.value] })));
+  },
+  S0c: s => {
+    head(s, 'Which looks closest to you?', 'Only so the pictures look like you. Nothing else changes.');
+    const row = el('div', 'swatches');
+    ['light','medium','deep'].forEach(t => {
+      const d = el('button', `sw sw-${t}` + (S.S0c === t ? ' sel' : ''));
+      d.setAttribute('aria-label', t); d.onclick = () => pick('S0c', t); row.append(d);
+    });
+    s.append(row);
+    const sk = el('button', 'skip', 'Skip this'); sk.onclick = () => pick('S0c', 'medium'); s.append(sk);
+  },
+  SR: s => {
+    head(s, 'How would you like to do this?');
+    const box = el('div', 'opts');
+    [['preset','Pick a classic cut','We fill in the details — you can change any of them','about 1 minute',true],
+     ['custom','Build it from scratch','Choose the length, sides and finish yourself','about 3 minutes',false]]
+     .forEach(([v,lbl,ht,cost,primary]) => {
+      const b = el('button', 'opt stacked' + (primary ? ' primary' : ''));
+      b.innerHTML = `<span class="optwrap"><span class="lb">${lbl}</span>` +
+        `<span class="ht">${ht}</span><span class="cost">${cost}</span></span>`;
+      b.onclick = () => pick('SR', v);
+      box.append(b);
+    });
+    s.append(box);
+  },
+
+  A1: s => {
+    styleGrid(s, 'A1', availableStyles(), `Every cut here works with <b>${lab('S0b', S.S0b).toLowerCase()}</b> hair. We've hidden the ones that don't.`);
+    const b = el('button', 'cta alt', "Don't see what you want? Send a photo");
+    b.onclick = () => pick('A1', '__photo__'); s.append(b);
+  },
+  A1b: s => {
+    head(s, 'Send us a picture', 'Your barber will see it alongside the rest of your brief.');
+    const b = el('button', 'cta', '📷  Choose a photo');
+    b.onclick = () => { S.photo = 'client-upload.jpg'; next('A1b'); }; s.append(b);
+    s.append(el('p', 'sub', 'We\'ll still ask about your sides and beard on the next screens.'));
+  },
+  S1: s => {
+    // everything stays selectable — a client must be able to describe what they already have.
+    // cuts that suit their hair sort first so they usually find theirs in the first block.
+    const fits = D.styles.filter(x => x.textures.includes(S.S0b));
+    const rest = D.styles.filter(x => !x.textures.includes(S.S0b));
+    styleGrid(s, 'S1', [...fits, ...rest], 'Pick whatever is closest to what you have now — near enough is fine.');
+  },
+  S1b: s => {
+    head(s, `You've got a ${byId(S.S1).display.toLowerCase()}.`, 'Keep it, or try something new?');
+    optList(s, 'S1b', opts('S1b'));
+  },
+  S1c: s => styleGrid(s, 'S1c', availableStyles(), `Every cut here works with <b>${lab('S0b', S.S0b).toLowerCase()}</b> hair. We've hidden the ones that don't.`),
+  S2: s => {
+    const st = byId(S.S1);
+    head(s, 'How long is it now?', `Some lengths are off because a ${st.display.toLowerCase()} can't be that long.`);
+    optList(s, 'S2', opts('S2'), {
+      allow: st.allowedCurrentLength,
+      whyDisabled: `too long for a ${st.display.toLowerCase()}`
+    });
+  },
+  S3: s => { head(s, 'What do you want to do with the length?'); optList(s, 'S3', opts('S3')); },
+  S4: s => {
+    const alts = alternatives();
+    if (!alts.length) { head(s, 'Nothing to suggest here.', 'In the real build this falls back to the full grid.'); 
+      const b = el('button','cta','Carry on'); b.onclick = () => next('S4'); s.append(b); return; }
+    head(s, alts.length === 1 ? 'One that would suit you' : `${alts.length} that would suit you`,
+       `Closest to your ${byId(S.S1).display.toLowerCase()}, going ${S.S3}, and they work with your hair.`);
+    styleGrid(s, 'S4', alts);
+  },
+  SE: s => { head(s, 'How much time do you want to spend styling each day?'); optList(s, 'SE', opts('SE')); },
+
+  S5: s => {
+    const t = target();
+    head(s, 'What happens on the sides?',
+      t ? `Most people get a ${lab('S5', t.presetAnswers.S5).toLowerCase()} with a ${t.display.toLowerCase()} — change it if you'd rather.` : null);
+    optList(s, 'S5', opts('S5'), { prefill: t ? t.presetAnswers.S5 : null });
+  },
+  S6: s => { head(s, 'How high does it go?'); optList(s, 'S6', opts('S6')); },
+  S7: s => { head(s, 'What shape?'); optList(s, 'S7', opts('S7')); },
+  S8: s => { head(s, 'How do you like the edges?'); optList(s, 'S8', opts('S8')); },
+  S9: s => { head(s, 'And the neckline?'); optList(s, 'S9', opts('S9')); },
+  S10: s => { head(s, "What's your beard like right now?"); optList(s, 'S10', opts('S10')); },
+  S11: s => { head(s, 'Does it grow in evenly?'); optList(s, 'S11', opts('S11')); },
+  S12: s => { head(s, 'How thick is it?'); optList(s, 'S12', opts('S12')); },
+  S13: s => { head(s, 'Should the beard fade into your hair?'); optList(s, 'S13', opts('S13')); },
+  S14: s => { head(s, 'Want the edges tidied up?', 'Cheekline and neckline, even without a beard.'); optList(s, 'S14', opts('S14')); },
+  S14b: s => { head(s, 'Sharp or natural?'); optList(s, 'S14b', opts('S14b')); },
+  S15: s => { head(s, 'Where should the beard stop on your neck?'); optList(s, 'S15', opts('S15')); },
+  S16b: s => { head(s, 'What beard shape?'); optList(s, 'S16b', opts('S16b')); },
+  S16c: s => { head(s, 'Moustache?'); optList(s, 'S16c', opts('S16c')); },
+
+  P1: s => {
+    const t = target();
+    head(s, "Here's the look");
+    const sides = S.S5 ? [lab('S5', S.S5), S.S6 ? lab('S6', S.S6).toLowerCase() : null].filter(Boolean).join(', ') : '—';
+    const box = el('div', 'pv');
+    box.innerHTML = tileSvg(t, 130) +
+      `<div class="t">${t.display}</div><div class="c">your sides: ${sides.toLowerCase()}</div>`;
+    s.append(box);
+    s.append(el('p', 'sub', 'Reference only — this shows the shape, not an exact promise. Your barber will talk it through.'));
+    const b = el('button', 'cta', 'Looks right'); b.onclick = () => next('P1'); s.append(b);
+  },
+
+  S17: s => {
+    head(s, 'Your brief', 'Tap anything to change it.');
+    const t = target();
+    const rows = [];
+    const add = (grp, k, id, val) => rows.push({ grp, k, id, val });
+    add('The cut', 'Style', route === 'preset' ? 'A1' : (S.S1c ? 'S1c' : 'S1'), t.display);
+    if (S.S1 && S.S1c && S.S1 !== S.S1c) add('The cut', 'Right now', 'S1', byId(S.S1).display);
+    if (S.photo) add('The cut', 'Your photo', null, 'client-upload.jpg');
+    const UP = { Low: 'Low — wash and go', Medium: 'Some — a bit of product',
+                 High: 'High — daily styling', Variable: 'Depends how you wear it' };
+    add('The cut', 'This cut needs', null, UP[t.maintenance]);
+    add('The cut', 'You want to spend', 'SE', S.SE ? lab('SE', S.SE).toLowerCase() + ' effort' : null);
+    add('Sides', 'Treatment', 'S5', S.S5 ? lab('S5', S.S5) : null);
+    if (S.S6) add('Sides', 'Height', 'S6', lab('S6', S.S6));
+    if (S.S7) add('Sides', 'Shape', 'S7', lab('S7', S.S7));
+    add('Sides', 'Edges', 'S8', S.S8 ? lab('S8', S.S8) : null);
+    add('Sides', 'Neckline', 'S9', S.S9 ? lab('S9', S.S9) : null);
+    add('Beard', 'Beard', 'S16b', S.S16b && S.S16b !== 'none' ? lab('S16b', S.S16b) : null);
+    add('Beard', 'Moustache', 'S16c', S.S16c && S.S16c !== 'none' ? lab('S16c', S.S16c) : null);
+
+    const wrap = el('div', 'sum'); let last = null;
+    rows.forEach(r => {
+      if (r.grp !== last) { wrap.append(el('div', 'sgrp', r.grp)); last = r.grp; }
+      const row = el('div', 'srow');
+      row.append(el('dt', '', r.k));
+      row.append(el('dd', r.val ? '' : 'empty', r.val || 'not set'));
+      if (r.id) {
+        const b = el('button', '', r.val ? 'change' : 'add');
+        b.onclick = () => { editing = 'S17'; hist.push('S17'); cur = r.id; render(); };
+        row.append(b);
+      }
+      wrap.append(row);
+    });
+    s.append(wrap);
+    const lt = longTransition(), em = effortMismatch();
+    if (lt) s.append(el('div', 'flag', `<b>Heads up.</b> ${lt}`));
+    if (em) s.append(el('div', 'flag', `<b>Worth a word with your barber.</b> ${em}`));
+    const b = el('button', 'cta', 'Looks right — send it'); b.onclick = () => next('S17'); s.append(b);
+  },
+
+  S18: s => {
+    head(s, 'Nearly done', 'Your barber gets the brief the moment you send it.');
+    const f1 = el('div', 'field');
+    f1.innerHTML = `<label for="bb">Who's cutting your hair today?</label>
+      <select id="bb"><option value="">Choose…</option>
+      <option>Jayden</option><option>Maya</option><option>Sem</option><option>Whoever's free</option></select>
+      <p class="err">Pick who's cutting your hair so the brief reaches them.</p>`;
+    const f2 = el('div', 'field');
+    f2.innerHTML = `<label for="em">Your email</label>
+      <input id="em" type="email" placeholder="you@example.com" autocomplete="email" inputmode="email">
+      <p class="err" id="emerr">Add your email so we can save this brief.</p>`;
+    f2.insertAdjacentHTML('afterbegin',
+      '<p class="sub" style="margin:0 0 8px">We save your brief against it, so you never explain twice.</p>');
+    s.append(f1, f2);
+    const b = el('button', 'cta', 'Send my brief');
+    s.append(b);
+    // button stays live — clicking it tells you what's missing rather than doing nothing
+    b.onclick = () => {
+      const bb = $('#bb'), em = $('#em');
+      const okB = !!bb.value, okE = /\S+@\S+\.\S+/.test(em.value);
+      f1.classList.toggle('bad', !okB);
+      f2.classList.toggle('bad', !okE);
+      $('#emerr').textContent = em.value && !okE
+        ? "That doesn't look like an email address — check for a typo."
+        : 'Add your email so we can save this brief.';
+      if (!okB || !okE) return;
+      S.barber = bb.value; S.email = em.value; cur = 'DONE'; hist.push('S18'); render();
+    };
+    setTimeout(() => {
+      $('#bb').onchange = () => f1.classList.remove('bad');
+      $('#em').oninput  = () => f2.classList.remove('bad');
+    }, 0);
+  },
+
+  DONE: s => {
+    const t = target();
+    s.innerHTML = `<div class="done"><div class="tick">✓</div>
+      <h2>Sent to ${S.barber}</h2>
+      <p>Your ${t.display.toLowerCase()} brief is on their screen. Next time, we'll have it ready before you walk in.</p></div>`;
+    const b = el('button', 'cta alt', 'Run it again'); b.onclick = restart; s.append(b);
+  },
+  FALLBACK: s => head(s, 'Screen ' + cur, 'Not built in this prototype.')
+};
+
+function restart() {
+  Object.keys(S).forEach(k => delete S[k]);
+  route = null; hist = []; skipped = []; editing = null; cur = 'S0'; render();
+}
+
+// ── inspector ──
+function inspect() {
+  const b = $('#ibody'); if (!b) return;
+  const t = target();
+  const answered = Object.keys(S).filter(k => !['derivedDir','photo','barber','email'].includes(k));
+  b.innerHTML =
+    `<div class="kv"><b>screen</b><span>${cur}</span></div>` +
+    `<div class="kv"><b>route</b><span>${route || '—'}</span></div>` +
+    `<div class="kv"><b>texture</b><span>${S.S0b || '—'}</span></div>` +
+    `<div class="kv"><b>styles offered</b><span>${S.S0b ? availableStyles().length : '—'} / 21</span></div>` +
+    `<div class="kv"><b>target style</b><span>${t ? t.slug : '—'}</span></div>` +
+    (S.derivedDir ? `<div class="kv"><b>derived dir</b><span>${S.derivedDir}</span></div>` : '') +
+    `<div class="kv"><b>answered</b><span>${answered.length}</span></div>` +
+    (t ? `<div class="sec"><div class="kv"><b>image path</b></div><div class="path">brand/style-library/male/${t.id}-${t.slug}/${t.variations[0]}/generated/</div></div>` : '') +
+    (skipped.length ? `<div class="sec">` + skipped.map(k =>
+        `<div class="sk"><em>${k.id} skipped</em> — ${k.why}</div>`).join('') + `</div>` : '');
+}
+$('#itog').onclick = () => {
+  const p = $('#insp'); p.hidden = !p.hidden;
+  $('#itog').classList.toggle('on', !p.hidden);
+  $('#sidchip').classList.toggle('show', !p.hidden);
+  $('#itog').textContent = p.hidden ? 'Show logic' : 'Hide logic';
+  if (!p.hidden) inspect();
+};
+$('#back').onclick = back;
+$('#rst').onclick = restart;
+restart();
+
+</script>
