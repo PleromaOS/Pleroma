@@ -368,9 +368,19 @@ let waitTimer = null;
 // never offered as free choice: whichever one they pick becomes IMAGE 1, so its
 // hair texture is the texture the render preserves. Handing the model a
 // straight-haired base for a curly client reintroduces the exact bug the
-// two-image method exists to fix. Empty until the set is generated - P0b says so
-// honestly rather than showing a wrong-texture model.
-const AVATARS = [];     // { id, texture, tone, toneLabel, src }
+// two-image method exists to fix. Only the medium skin tone exists so far and
+// wavy is still missing - the Higgsfield daily limit cut the run short. P0b
+// shows an honest empty state for anything not listed here.
+const AVATARS = [
+  { id:'MAN-medium-straight-fine', texture:'straight-fine', tone:'medium', toneLabel:'Medium',
+    src:'models/MAN-medium-straight-fine.jpg' },   // gpt_image_2, quality high
+  { id:'MAN-medium-straight-coarse', texture:'straight-coarse', tone:'medium', toneLabel:'Medium',
+    src:'models/MAN-medium-straight-coarse.jpg' },   // gpt_image_2, quality high
+  { id:'MAN-medium-curly', texture:'curly', tone:'medium', toneLabel:'Medium',
+    src:'models/MAN-medium-curly.jpg' },   // gpt_image_2, quality low
+  { id:'MAN-medium-coily', texture:'coily', tone:'medium', toneLabel:'Medium',
+    src:'models/MAN-medium-coily.jpg' },   // gpt_image_2, quality low
+];    // { id, texture, tone, toneLabel, src }
 
 // A raw phone photo is 4-12MB, slow to post and pointless at the resolution the
 // model works at. Same 1280 / 0.88 as tryon.html.
@@ -380,7 +390,11 @@ function shrink(img, cb){
   if (w > max || h > max){ const s = max / Math.max(w,h); w = Math.round(w*s); h = Math.round(h*s); }
   const c = document.createElement('canvas'); c.width = w; c.height = h;
   c.getContext('2d').drawImage(img, 0, 0, w, h);
-  cb(c.toDataURL('image/jpeg', 0.88), w, h);
+  // a cross-origin image taints the canvas and toDataURL throws. Models are
+  // served from this same origin so it should not happen - but a silent throw
+  // here would leave the client tapping a tile that does nothing.
+  try { cb(c.toDataURL('image/jpeg', 0.88), w, h); }
+  catch (e) { cb(null, w, h); }
 }
 function downscale(file, cb){
   if (!file) return;
@@ -390,6 +404,7 @@ function downscale(file, cb){
 }
 function urlToPhoto(url, cb){          // models are same-origin, so no CORS dance
   const im = new Image();
+  im.crossOrigin = 'anonymous';        // harmless here, needed if they ever move to a CDN
   im.onload  = () => shrink(im, cb);
   im.onerror = () => cb(null);
   im.src = url;
@@ -906,7 +921,12 @@ const R = {
       b.onclick = () => {
         S.avatarId = a.id; S.photoKind = 'avatar';
         urlToPhoto(a.src, data => {
-          if (!data) return;
+          if (!data) {   // never silently swallow the tap
+            delete S.avatarId; delete S.photoKind;
+            const warn = el('div', 'warnbox', 'That model would not load. Try another, ' +
+              'or use your own face \u2014 it gives a better preview anyway.');
+            s.append(warn); return;
+          }
           S.photoData = data; startRender(); next('P0b');
         });
       };

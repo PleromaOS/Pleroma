@@ -1,14 +1,77 @@
-[
-  { "mannequinId": "MAN-01", "hairTexture": "Straight", "skinTone": "Light",  "baseCharacter": "BC-light",  "localFile": "images/mannequins/bases/MAN-01.png" },
-  { "mannequinId": "MAN-02", "hairTexture": "Straight", "skinTone": "Medium", "baseCharacter": "BC-medium", "localFile": "images/mannequins/bases/MAN-02.png" },
-  { "mannequinId": "MAN-03", "hairTexture": "Straight", "skinTone": "Deep",   "baseCharacter": "BC-deep",   "localFile": "images/mannequins/bases/MAN-03.png" },
-  { "mannequinId": "MAN-04", "hairTexture": "Wavy",     "skinTone": "Light",  "baseCharacter": "BC-light",  "localFile": "images/mannequins/bases/MAN-04.png" },
-  { "mannequinId": "MAN-05", "hairTexture": "Wavy",     "skinTone": "Medium", "baseCharacter": "BC-medium", "localFile": "images/mannequins/bases/MAN-05.png" },
-  { "mannequinId": "MAN-06", "hairTexture": "Wavy",     "skinTone": "Deep",   "baseCharacter": "BC-deep",   "localFile": "images/mannequins/bases/MAN-06.png" },
-  { "mannequinId": "MAN-07", "hairTexture": "Curly",    "skinTone": "Light",  "baseCharacter": "BC-light",  "localFile": "images/mannequins/bases/MAN-07.png" },
-  { "mannequinId": "MAN-08", "hairTexture": "Curly",    "skinTone": "Medium", "baseCharacter": "BC-medium", "localFile": "images/mannequins/bases/MAN-08.png" },
-  { "mannequinId": "MAN-09", "hairTexture": "Curly",    "skinTone": "Deep",   "baseCharacter": "BC-deep",   "localFile": "images/mannequins/bases/MAN-09.png" },
-  { "mannequinId": "MAN-10", "hairTexture": "Coily",    "skinTone": "Light",  "baseCharacter": "BC-light",  "localFile": "images/mannequins/bases/MAN-10.png" },
-  { "mannequinId": "MAN-11", "hairTexture": "Coily",    "skinTone": "Medium", "baseCharacter": "BC-medium", "localFile": "images/mannequins/bases/MAN-11.png" },
-  { "mannequinId": "MAN-12", "hairTexture": "Coily",    "skinTone": "Deep",   "baseCharacter": "BC-deep",   "localFile": "images/mannequins/bases/MAN-12.png" }
-]
+{
+  "note": "Models offered at P0b as an alternative to the client's own photo. Whichever one the client picks becomes IMAGE 1 in hair-transfer, so its hair texture is the texture the render preserves - which is why P0b filters on texture and never offers free choice. Generated from the approved bald base characters (base-characters.json) with a texture-only prompt; see docs/specs/higgsfield-mannequin-plan.md.",
+  "grid": {
+    "tones": [
+      "light",
+      "medium",
+      "deep"
+    ],
+    "textures": [
+      "straight-fine",
+      "straight-coarse",
+      "wavy",
+      "curly",
+      "coily"
+    ],
+    "total": 15
+  },
+  "webCopies": "product/landing-site/models/<id>.jpg - 1280px q88, same-origin so the page can read them into a canvas",
+  "originals": "consultation-app/app/images/mannequins/textured/<id>.png",
+  "models": [
+    {
+      "id": "MAN-medium-straight-fine",
+      "tone": "medium",
+      "texture": "straight-fine",
+      "base": "BC-medium",
+      "quality": "high",
+      "job": "f820ee22-2973-4b78-934f-f023da7697f5"
+    },
+    {
+      "id": "MAN-medium-straight-coarse",
+      "tone": "medium",
+      "texture": "straight-coarse",
+      "base": "BC-medium",
+      "quality": "high",
+      "job": "5f1bc923-5276-4c14-a15c-d548a8185e07"
+    },
+    {
+      "id": "MAN-medium-curly",
+      "tone": "medium",
+      "texture": "curly",
+      "base": "BC-medium",
+      "quality": "low",
+      "job": "18ffad77-07dd-45bb-b6cd-9d96feee3769",
+      "regenerate": true
+    },
+    {
+      "id": "MAN-medium-coily",
+      "tone": "medium",
+      "texture": "coily",
+      "base": "BC-medium",
+      "quality": "low",
+      "job": "2332db11-2465-48cc-9c15-e881fdab0d34",
+      "regenerate": true
+    }
+  ],
+  "pending": {
+    "reason": "Higgsfield daily generation limit reached 10 Sep 2026 - 10 of 12 submissions refused.",
+    "missing": [
+      "MAN-medium-wavy",
+      "MAN-light-straight-fine",
+      "MAN-light-straight-coarse",
+      "MAN-light-wavy",
+      "MAN-light-curly",
+      "MAN-light-coily",
+      "MAN-deep-straight-fine",
+      "MAN-deep-straight-coarse",
+      "MAN-deep-wavy",
+      "MAN-deep-curly",
+      "MAN-deep-coily"
+    ],
+    "alsoRegenerate": [
+      "MAN-medium-curly",
+      "MAN-medium-coily"
+    ],
+    "how": "gpt_image_2, quality high, 1:1, medias[0].role 'image' = that tone's BC job id."
+  }
+}
