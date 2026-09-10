@@ -64,6 +64,8 @@ label.drop input{display:none}
 .pair{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
 .pair figure{margin:0}
 .pair img{width:100%;border-radius:12px;border:1px solid var(--line);display:block}
+.pair a{display:block}
+#thumblink{display:block}
 .pair figcaption{font-size:11px;letter-spacing:.1em;text-transform:uppercase;
   color:var(--ink-3);margin-top:7px;text-align:center}
 .meta{margin-top:14px;font-size:12px;color:var(--ink-3);line-height:1.7;
@@ -100,7 +102,7 @@ label.drop input{display:none}
     <small>Face the camera. Any lighting is fine.</small>
     <input type="file" accept="image/*" capture="user" id="file">
   </label>
-  <img id="thumb" alt="Your photo">
+  <a id="thumblink" href="#" target="_blank" rel="noopener" style="display:none"><img id="thumb" alt="Your photo"></a>
   <p class="hint" id="fmeta"></p>
 </section>
 
@@ -222,6 +224,8 @@ document.getElementById("file").onchange = function(e){
       photo = c.toDataURL("image/jpeg",0.88);
       var t = document.getElementById("thumb");
       t.src = photo; t.style.display = "block";
+      var tl = document.getElementById("thumblink");
+      tl.href = photo; tl.style.display = "block";
       document.getElementById("droplab").style.display = "none";
       document.getElementById("fmeta").textContent =
         w + " x " + h + " - " + Math.round(photo.length/1365) + " KB";
@@ -271,8 +275,12 @@ document.getElementById("go").onclick = async function(){
         say("Done in " + secs + "s.");
         document.getElementById("out").innerHTML =
           "<div class=pair>"
-          + "<figure><img src=\"" + photo + "\"><figcaption>Before</figcaption></figure>"
-          + "<figure><img src=\"" + s.outputUrl + "\"><figcaption>After</figcaption></figure>"
+          + "<figure><a href=\"" + photo + "\" target=_blank rel=noopener>"
+          + "<img src=\"" + photo + "\" alt=\"Your photo before\"></a>"
+          + "<figcaption>Before - tap to enlarge</figcaption></figure>"
+          + "<figure><a href=\"" + s.outputUrl + "\" target=_blank rel=noopener>"
+          + "<img src=\"" + s.outputUrl + "\" alt=\"With the new haircut\"></a>"
+          + "<figcaption>After - tap to enlarge</figcaption></figure>"
           + "</div>"
           + "<div class=meta><b>Reference used:</b> "
           + (s.usedReference || "none - text only")
