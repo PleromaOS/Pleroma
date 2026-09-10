@@ -230,6 +230,51 @@ body{
     padding-bottom:env(safe-area-inset-bottom);
     box-shadow:0 -20px 50px -20px rgba(0,0,0,.85)}
 }
+
+/* ── photo / model fork and the AI preview (P0, P0a, P0b, P1) ── */
+label.drop{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:7px;border:1.5px dashed var(--line);border-radius:var(--r);padding:32px 18px;
+  cursor:pointer;background:var(--panel-2);text-align:center}
+label.drop b{font-size:15px;color:var(--ink);font-weight:500}
+label.drop small{color:var(--ink-3);font-size:12.5px}
+label.drop input{display:none}
+label.drop[hidden]{display:none}
+.shot{width:100%;border-radius:var(--r);border:1px solid var(--line);display:block;cursor:pointer}
+.shot[hidden]{display:none}
+.fine{font-size:12px;color:var(--ink-3);line-height:1.6;margin:14px 0 0}
+.avgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.av{background:var(--panel-2);border:1px solid var(--line);border-radius:var(--r);
+  padding:6px;cursor:pointer;font:inherit;color:var(--ink-2)}
+.av img{width:100%;border-radius:9px;display:block;aspect-ratio:1;object-fit:cover}
+.av span{display:block;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;
+  margin-top:6px;text-align:center}
+.av.sel{border-color:var(--gold);background:var(--gold-bg);color:var(--gold)}
+.empty{border:1px solid var(--line);border-radius:var(--r);padding:18px 16px;
+  background:var(--panel-2);color:var(--ink-2);font-size:13.5px;line-height:1.65;margin-bottom:12px}
+.wait{border:1px solid var(--line);border-radius:var(--r);padding:16px;
+  background:var(--panel-2);margin-bottom:14px}
+.wait .lbl{font-size:13.5px;color:var(--ink);display:flex;align-items:center;gap:9px}
+.wait .track{height:3px;background:var(--line);border-radius:99px;margin-top:13px;overflow:hidden}
+.wait .track i{display:block;height:100%;width:8%;background:var(--gold);border-radius:99px;
+  transition:width .9s linear}
+.wait .note{font-size:12px;color:var(--ink-3);margin-top:9px;line-height:1.6}
+.spin{width:13px;height:13px;border:2px solid var(--gold-lo);border-top-color:transparent;
+  border-radius:50%;animation:sp .8s linear infinite;flex:none}
+@keyframes sp{to{transform:rotate(360deg)}}
+.ba{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.ba figure{margin:0}
+.ba img{width:100%;border-radius:11px;border:1px solid var(--line);display:block;cursor:zoom-in}
+.ba figcaption{font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--ink-3);margin-top:7px;text-align:center}
+.warnbox{border:1px solid var(--line);border-left:2px solid var(--warn);border-radius:8px;
+  padding:12px 13px;background:var(--panel-2);color:var(--ink-2);font-size:13px;
+  line-height:1.6;margin-bottom:13px}
+#lb{position:fixed;inset:0;background:rgba(8,7,6,.96);display:none;z-index:99;
+  align-items:center;justify-content:center;padding:16px}
+#lb.on{display:flex}
+#lb img{max-width:100%;max-height:86dvh;border-radius:10px}
+#lbx{position:absolute;top:calc(env(safe-area-inset-top) + 10px);right:16px;font-size:30px;
+  color:var(--ink-2);background:none;border:0;cursor:pointer;line-height:1;padding:8px}
 </style>
 </head>
 <body>
@@ -244,6 +289,12 @@ body{
 </div>
 
 <div id="app" hidden>
+
+<div id="lb" role="dialog" aria-label="Full size image">
+  <button id="lbx" type="button" aria-label="Close">&times;</button>
+  <img id="lbi" alt="">
+</div>
+
 <div class="stage">
   <div class="plate">
     <span class="wm"><b>Pleroma</b><span>OS</span></span>
@@ -307,6 +358,116 @@ let hist = [];          // screen stack
 let cur = null;
 let skipped = [];       // {id, why}
 let editing = null;     // screen id we jumped to from summary
+
+// ── the AI render ──────────────────────────────────────────────────────────
+const API = "https://eusyxqguevqgrnnjqhut.supabase.co/functions/v1/hair-transfer";
+let job = null;         // { state, renderId, outputUrl, usedReference, error, t0, secs }
+let waitTimer = null;
+
+// The models a client can pick instead of their own face. Filtered by TEXTURE,
+// never offered as free choice: whichever one they pick becomes IMAGE 1, so its
+// hair texture is the texture the render preserves. Handing the model a
+// straight-haired base for a curly client reintroduces the exact bug the
+// two-image method exists to fix. Empty until the set is generated - P0b says so
+// honestly rather than showing a wrong-texture model.
+const AVATARS = [];     // { id, texture, tone, toneLabel, src }
+
+// A raw phone photo is 4-12MB, slow to post and pointless at the resolution the
+// model works at. Same 1280 / 0.88 as tryon.html.
+function shrink(img, cb){
+  const max = 1280;
+  let w = img.width, h = img.height;
+  if (w > max || h > max){ const s = max / Math.max(w,h); w = Math.round(w*s); h = Math.round(h*s); }
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  c.getContext('2d').drawImage(img, 0, 0, w, h);
+  cb(c.toDataURL('image/jpeg', 0.88), w, h);
+}
+function downscale(file, cb){
+  if (!file) return;
+  const r = new FileReader();
+  r.onload = ev => { const im = new Image(); im.onload = () => shrink(im, cb); im.src = ev.target.result; };
+  r.readAsDataURL(file);
+}
+function urlToPhoto(url, cb){          // models are same-origin, so no CORS dance
+  const im = new Image();
+  im.onload  = () => shrink(im, cb);
+  im.onerror = () => cb(null);
+  im.src = url;
+}
+
+// quiz answers -> what hair-transfer takes. The field names already line up with
+// quiz-data.json, so there is no translation layer - only S6's "barber's choice",
+// which is not a fade height the API knows about.
+function renderPayload(){
+  const t = target();
+  return {
+    styleId:     t.id,
+    texture:     S.S0b,
+    sides:       S.S5 || null,
+    fadeHeight:  (S.S6 && S.S6 !== 'barbers-choice') ? S.S6 : null,
+    // the beard they have NOW, not the shape they asked for: this render is about
+    // the cut, and feeding it a requested beard invites the model to restyle a
+    // face the identity lock is trying to hold still.
+    beard:       S.S10 || 'none',
+    photoBase64: S.photoData
+  };
+}
+
+function repaintP1(){ if (cur === 'P1') render(); }
+
+async function startRender(){
+  job = { state:'submitting', t0: Date.now(), usedReference: undefined };
+  repaintP1();
+  try{
+    const res = await fetch(API, { method:'POST',
+      headers:{'Content-Type':'application/json'}, body: JSON.stringify(renderPayload()) });
+    const j = await res.json();
+    if (j.error) throw new Error(j.error);
+    job.renderId = j.renderId;
+    job.usedReference = j.usedReference || null;
+    job.state = 'running';
+    repaintP1();
+    poll();
+  }catch(e){
+    job.state = 'failed'; job.error = e.message; repaintP1();
+  }
+}
+
+async function poll(){
+  const mine = job;
+  for (let i = 0; i < 60; i++){
+    await new Promise(r => setTimeout(r, 3000));
+    if (job !== mine || job.state !== 'running') return;   // superseded by a retry
+    try{
+      const s = await (await fetch(API + '?renderId=' + job.renderId)).json();
+      if (s.status === 'succeeded'){
+        job.state = 'done'; job.outputUrl = s.outputUrl;
+        if (s.usedReference !== undefined) job.usedReference = s.usedReference || null;
+        job.secs = Math.round((Date.now() - job.t0) / 1000);
+        repaintP1(); return;
+      }
+      if (s.status === 'failed'){
+        job.state = 'failed'; job.error = s.error || 'the render did not finish';
+        repaintP1(); return;
+      }
+    }catch(e){ /* a dropped poll is not a failed render - keep trying */ }
+  }
+  job.state = 'failed'; job.error = 'it took longer than three minutes'; repaintP1();
+}
+
+// ticks the waiting screen in place - a full re-render every second would throw
+// away the client's scroll position
+function tickWait(){
+  clearTimeout(waitTimer);
+  const lbl = $('#wlbl'); if (!lbl || !job) return;
+  const secs = Math.round((Date.now() - job.t0) / 1000);
+  lbl.textContent = job.state === 'submitting' ? 'Sending your photo\u2026' : 'Cutting your hair\u2026';
+  $('#wbar').style.width = Math.min(96, 8 + secs * 3) + '%';
+  $('#wnote').textContent = 'About 30 seconds. ' + secs + 's so far \u2014 you can leave this screen open.';
+  if (job.state === 'submitting' || job.state === 'running') waitTimer = setTimeout(tickWait, 1000);
+}
+
+function zoom(src){ $('#lbi').src = src; $('#lb').className = 'on'; }
 
 const $ = s => document.querySelector(s);
 const el = (t, c, h) => { const e = document.createElement(t); if (c) e.className = c; if (h != null) e.innerHTML = h; return e; };
@@ -415,8 +576,12 @@ function next(id) {
     S16b:() => go('S16c'),
     // the photo route never picks a style, so target() is null and there is
     // nothing to preview. Skip P1 rather than throw.
-    S16c:() => target() ? go('P1')
-           : (skip('P1', 'no style chosen \u2014 you sent a photo instead'), go('S17')),
+    S16c:() => target() ? go('P0')
+           : (skip('P0', 'no style chosen \u2014 you sent a photo instead'),
+              skip('P1', 'nothing to preview'), go('S17')),
+    P0:  () => S.P0 === 'face' ? go('P0a') : go('P0b'),
+    P0a: () => go('P1'),
+    P0b: () => go('P1'),
     P1:  () => go('S17'),
     S17: () => go('S18'),
   }[id];
@@ -486,14 +651,15 @@ function longTransition() {
 // how many screens are actually left on the path the client is on
 function stepsLeft() {
   if (cur === 'DONE') return 0;
-  const after = { P1:3, S17:2, S18:1, DONE:0 };
+  const after = { P0:5, P0a:4, P0b:4, P1:3, S17:2, S18:1, DONE:0 };
   if (after[cur] != null) return after[cur];
-  if (route === 'preset') return ({ S0:8, S0b:7, S0c:6, SR:5, A1:4, A1b:4, SE:3 })[cur] ?? 4;
-  if (route === 'photo')  return ({ A1b:12, SE:11, S5:10, S6:9, S7:8, S8:8, S9:7, S10:6,
-                                    S11:5, S12:5, S13:4, S14:4, S14b:4, S15:4, S16b:4, S16c:3 })[cur] ?? 6;
-  return ({ S0:14, S0b:13, S0c:12, SR:11, S1:10, S1b:9, S1c:8, S2:9, S3:8, S4:8, SE:7,
+  // every path now passes through P0 and one of P0a/P0b before the preview
+  if (route === 'preset') return 2 + (({ S0:8, S0b:7, S0c:6, SR:5, A1:4, A1b:4, SE:3 })[cur] ?? 4);
+  if (route === 'photo')  return 2 + (({ A1b:12, SE:11, S5:10, S6:9, S7:8, S8:8, S9:7, S10:6,
+                                    S11:5, S12:5, S13:4, S14:4, S14b:4, S15:4, S16b:4, S16c:3 })[cur] ?? 6);
+  return 2 + (({ S0:14, S0b:13, S0c:12, SR:11, S1:10, S1b:9, S1c:8, S2:9, S3:8, S4:8, SE:7,
             S5:6, S6:6, S7:5, S8:5, S9:4, S10:4, S11:4, S12:4, S13:4, S14:4, S14b:4,
-            S15:4, S16b:4, S16c:3 })[cur] ?? 5;
+            S15:4, S16b:4, S16c:3 })[cur] ?? 5);
 }
 function render() {
   const scr = $('#scr'); scr.innerHTML = ''; scr.scrollTop = 0;
@@ -664,6 +830,92 @@ const R = {
   S16b: s => { head(s, 'What beard shape?'); optList(s, 'S16b', opts('S16b')); },
   S16c: s => { head(s, 'Moustache?'); optList(s, 'S16c', opts('S16c')); },
 
+  // ── how do you want to see it? ──
+  // Own-face is framed as the accurate one because it is, and that is the honest
+  // nudge toward the better result. It is also the better privacy posture by
+  // accident of ordering: whoever bails before this screen never hands over a
+  // face photo, and whoever picks a model never hands one over at all.
+  P0: s => {
+    head(s, 'How do you want to see it?', 'We can put the cut on your face, or on a model.');
+    const box = el('div', 'opts');
+    [['face',   'On my own face', 'The accurate one — it keeps your hair, your colour, your face.', true],
+     ['avatar', 'On a model',     'Pick whoever looks closest to you. No photo of you is taken.',      false]]
+    .forEach(([v, lbl_, ht, primary]) => {
+      const b = el('button', 'opt stacked' + (primary ? ' primary' : ''));
+      b.innerHTML = `<span class="optwrap"><span class="lb">${lbl_}</span><span class="ht">${ht}</span></span>`;
+      b.onclick = () => pick('P0', v);
+      box.append(b);
+    });
+    s.append(box);
+  },
+
+  P0a: s => {
+    head(s, 'Take a photo', 'Face the camera. Any lighting is fine.');
+    const drop = el('label', 'drop');
+    drop.innerHTML = '<b>Take or choose a photo</b><small>Head and shoulders, facing forward.</small>';
+    const inp = document.createElement('input');
+    inp.type = 'file'; inp.accept = 'image/*'; inp.setAttribute('capture', 'user');
+    drop.append(inp);
+    const shot = el('img', 'shot'); shot.hidden = true; shot.alt = 'Your photo';
+    const meta = el('p', 'sub'); meta.style.margin = '10px 0 0';
+    const cta  = el('button', 'cta', 'Use this photo');
+    cta.disabled = true; cta.style.marginTop = '14px';
+
+    if (S.photoData && S.photoKind === 'face') {   // coming back via Back
+      shot.src = S.photoData; shot.hidden = false; drop.hidden = true;
+      meta.textContent = 'Tap the photo to take another'; cta.disabled = false;
+    }
+    inp.onchange = e => downscale(e.target.files[0], (data, w, h) => {
+      S.photoData = data; S.photoKind = 'face'; delete S.avatarId;
+      shot.src = data; shot.hidden = false; drop.hidden = true;
+      meta.textContent = w + ' × ' + h + ' — tap the photo to take another';
+      cta.disabled = false;
+    });
+    shot.onclick = () => {
+      shot.hidden = true; drop.hidden = false; meta.textContent = '';
+      cta.disabled = true; delete S.photoData;
+    };
+    cta.onclick = () => { startRender(); next('P0a'); };
+    s.append(drop, shot, meta, cta);
+    s.append(el('p', 'fine',
+      'Your photo makes this one preview and is deleted after 24 hours. It is never public, ' +
+      'and your barber sees the brief, not the photo.'));
+  },
+
+  P0b: s => {
+    const set = AVATARS.filter(a => a.texture === S.S0b);
+    head(s, 'Pick the model closest to you',
+      set.length ? 'They all have ' + lab('S0b', S.S0b).toLowerCase() +
+                   ' hair like yours — that is the part that has to match.' : '');
+    if (!set.length) {
+      s.append(el('div', 'empty',
+        'We have no model with ' + lab('S0b', S.S0b).toLowerCase() + ' hair yet. Showing you a cut ' +
+        'on the wrong hair type would be worse than showing you nothing, so use your own face instead ' +
+        '— or carry on without a preview.'));
+      const a = el('button', 'cta', 'Use my own face');
+      a.onclick = () => pick('P0', 'face');
+      const b = el('button', 'cta alt', 'Carry on without it');
+      b.onclick = () => { skip('P1', 'no model available for ' + S.S0b + ' hair'); go('S17'); };
+      s.append(a, b); return;
+    }
+    const tone = S.S0c || 'medium';
+    const grid = el('div', 'avgrid');
+    set.slice().sort((x, y) => (y.tone === tone) - (x.tone === tone)).forEach(a => {
+      const b = el('button', 'av' + (S.avatarId === a.id ? ' sel' : ''));
+      b.innerHTML = `<img src="${a.src}" alt="" loading="lazy"><span>${a.toneLabel}</span>`;
+      b.onclick = () => {
+        S.avatarId = a.id; S.photoKind = 'avatar';
+        urlToPhoto(a.src, data => {
+          if (!data) return;
+          S.photoData = data; startRender(); next('P0b');
+        });
+      };
+      grid.append(b);
+    });
+    s.append(grid);
+    s.append(el('p', 'fine', 'Nothing of you is uploaded on this route.'));
+  },
+
   P1: s => {
     const t = target();
     if (!t) {   // belt and braces - routing should already have skipped this screen
@@ -671,13 +923,66 @@ const R = {
       const c = el('button', 'cta', 'Continue'); c.onclick = () => next('P1'); s.append(c); return;
     }
     head(s, "Here's the look");
+
     const sides = S.S5 ? [lab('S5', S.S5), S.S6 ? lab('S6', S.S6).toLowerCase() : null].filter(Boolean).join(', ') : '—';
-    const box = el('div', 'pv');
-    box.innerHTML = tileSvg(t, 130) +
-      `<div class="t">${t.display}</div><div class="c">your sides: ${sides.toLowerCase()}</div>`;
-    s.append(box);
-    s.append(el('p', 'sub', 'Reference only — this shows the shape, not an exact promise. Your barber will talk it through.'));
-    const b = el('button', 'cta', 'Looks right'); b.onclick = () => next('P1'); s.append(b);
+    const onwards = txt => { const b = el('button', 'cta', txt || 'Looks right');
+                             b.onclick = () => next('P1'); return b; };
+    const shapeCard = () => {
+      const box = el('div', 'pv');
+      box.innerHTML = tileSvg(t, 130) +
+        `<div class="t">${t.display}</div><div class="c">your sides: ${sides.toLowerCase()}</div>`;
+      return box;
+    };
+    const noRef = () => el('div', 'warnbox',
+      'We have no reference photo for this cut on ' + lab('S0b', S.S0b).toLowerCase() +
+      ' hair, so the texture in this one is a rougher guess than usual.');
+
+    // no photo taken at all - the shape card, same as the old prototype
+    if (!job) {
+      s.append(shapeCard());
+      s.append(el('p', 'sub', 'Reference only — this shows the shape, not an exact promise. Your barber will talk it through.'));
+      s.append(onwards()); return;
+    }
+
+    if (job.state === 'submitting' || job.state === 'running') {
+      const w = el('div', 'wait');
+      w.innerHTML = '<div class="lbl"><span class="spin"></span><span id="wlbl"></span></div>' +
+                    '<div class="track"><i id="wbar"></i></div><div class="note" id="wnote"></div>';
+      s.append(w);
+      if (job.usedReference === null) s.append(noRef());
+      s.append(shapeCard());
+      setTimeout(tickWait, 0);
+      return;
+    }
+
+    if (job.state === 'done') {
+      const ba = el('div', 'ba');
+      ba.innerHTML =
+        `<figure><img src="${S.photoData}" alt="Before"><figcaption>Now</figcaption></figure>` +
+        `<figure><img src="${job.outputUrl}" alt="With the new haircut"><figcaption>${t.display}</figcaption></figure>`;
+      s.append(ba);
+      ba.querySelectorAll('img').forEach(im => { im.onclick = () => zoom(im.src); });
+      s.append(el('p', 'sub', 'Tap either picture to see it big.'));
+      if (!job.usedReference) s.append(noRef());
+      s.append(el('p', 'fine',
+        'A preview, not a promise — it shows the shape and length you asked for. ' +
+        'Your barber will talk it through.'));
+      s.append(onwards());
+      const again = el('button', 'cta alt', 'Run it again');
+      again.onclick = () => startRender();
+      s.append(again);
+      return;
+    }
+
+    // failed - a preview that does not arrive is not a dead end for the brief
+    s.append(el('div', 'warnbox',
+      '<b>The preview did not come through.</b><br>' +
+      (job.error || 'Something went wrong on our side.') +
+      '<br>Your brief is unaffected — the preview is the extra, not the point.'));
+    s.append(shapeCard());
+    const retry = el('button', 'cta', 'Try again'); retry.onclick = () => startRender();
+    s.append(retry);
+    s.append(onwards('Carry on without it'));
   },
 
   S17: s => {
@@ -689,6 +994,8 @@ const R = {
         t ? t.display : 'From your photo');
     if (S.S1 && S.S1c && S.S1 !== S.S1c) add('The cut', 'Right now', 'S1', byId(S.S1).display);
     if (S.photo) add('The cut', 'Your photo', null, 'client-upload.jpg');
+    if (S.photoKind) add('The cut', 'Preview', 'P0',
+        S.photoKind === 'face' ? 'On your own photo' : 'On a model');
     const UP = { Low: 'Low — wash and go', Medium: 'Some — a bit of product',
                  High: 'High — daily styling', Variable: 'Depends how you wear it' };
     if (t) add('The cut', 'This cut needs', null, UP[t.maintenance]);
@@ -767,14 +1074,17 @@ const R = {
 
 function restart() {
   Object.keys(S).forEach(k => delete S[k]);
-  route = null; hist = []; skipped = []; editing = null; cur = 'S0'; render();
+  route = null; hist = []; skipped = []; editing = null;
+  job = null; clearTimeout(waitTimer);
+  cur = 'S0'; render();
 }
 
 // ── inspector ──
 function inspect() {
   const b = $('#ibody'); if (!b) return;
   const t = target();
-  const answered = Object.keys(S).filter(k => !['derivedDir','photo','barber','email'].includes(k));
+  const answered = Object.keys(S).filter(k =>
+    !['derivedDir','photo','barber','email','photoData','photoKind','avatarId'].includes(k));
   b.innerHTML =
     `<div class="kv"><b>screen</b><span>${cur}</span></div>` +
     `<div class="kv"><b>route</b><span>${route || '—'}</span></div>` +
@@ -783,6 +1093,9 @@ function inspect() {
     `<div class="kv"><b>target style</b><span>${t ? t.slug : '—'}</span></div>` +
     (S.derivedDir ? `<div class="kv"><b>derived dir</b><span>${S.derivedDir}</span></div>` : '') +
     `<div class="kv"><b>answered</b><span>${answered.length}</span></div>` +
+    (S.photoKind ? `<div class="kv"><b>image 1</b><span>${S.photoKind}${S.avatarId ? ' / ' + S.avatarId : ''}</span></div>` : '') +
+    (job ? `<div class="kv"><b>render</b><span>${job.state}${job.secs ? ' / ' + job.secs + 's' : ''}</span></div>` +
+           `<div class="kv"><b>reference</b><span>${job.usedReference === undefined ? '—' : (job.usedReference || 'none - text only')}</span></div>` : '') +
     (t ? `<div class="sec"><div class="kv"><b>image path</b></div><div class="path">brand/style-library/male/${t.id}-${t.slug}/${t.variations[0]}/generated/</div></div>` : '') +
     (skipped.length ? `<div class="sec">` + skipped.map(k =>
         `<div class="sk"><em>${k.id} skipped</em> — ${k.why}</div>`).join('') + `</div>` : '');
@@ -794,6 +1107,8 @@ $('#itog').onclick = () => {
   $('#itog').textContent = p.hidden ? 'Show logic' : 'Hide logic';
   if (!p.hidden) inspect();
 };
+$('#lbx').onclick = () => { $('#lb').className = ''; };
+$('#lb').onclick = e => { if (e.target.id !== 'lbi') $('#lb').className = ''; };
 $('#back').onclick = back;
 $('#rst').onclick = restart;
 restart();
