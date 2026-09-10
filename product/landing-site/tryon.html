@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<title>PleromaOS</title>
+<style>
+:root{
+  --bg:#0e0d0b; --card:#171613; --line:#2b2823;
+  --ink:#f5f1e8; --ink-2:#b8b0a1; --ink-3:#908674;
+  --gold:#c9a961; --gold-lo:#9c8555; --bad:#d4796d;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  padding:0 0 72px}
+.wrap{max-width:640px;margin:0 auto;padding:20px 16px}
+header{padding:26px 16px 18px;border-bottom:1px solid var(--line);text-align:center}
+h1{margin:0;font-size:19px;letter-spacing:.14em;text-transform:uppercase;font-weight:600}
+h1 span{color:var(--gold)}
+.sub{margin:6px 0 0;color:var(--ink-3);font-size:13px}
+
+/* gate */
+#gate{max-width:340px;margin:16vh auto 0;padding:0 20px;text-align:center}
+#gate p{color:var(--ink-3);font-size:13.5px;margin:0 0 20px}
+#code{width:100%;padding:15px;border-radius:12px;border:1px solid var(--line);
+  background:var(--card);color:var(--ink);font-size:17px;text-align:center;
+  letter-spacing:.22em;text-transform:uppercase}
+#code:focus{outline:0;border-color:var(--gold-lo)}
+#gate button{width:100%;margin-top:10px;padding:15px;border-radius:12px;border:0;
+  background:var(--gold);color:#1a1509;font-size:15px;font-weight:700;cursor:pointer}
+#gateErr{color:var(--bad);font-size:13px;margin-top:12px;min-height:19px}
+#app{display:none}
+
+section{margin:26px 0}
+h2{font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3);
+  margin:0 0 10px;font-weight:600}
+.grid{display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(104px,1fr))}
+button.opt{background:var(--card);border:1px solid var(--line);color:var(--ink-2);
+  padding:13px 10px;border-radius:11px;font-size:13.5px;cursor:pointer;text-align:center;
+  min-height:52px;transition:.12s}
+button.opt:hover{border-color:var(--gold-lo)}
+button.opt[aria-pressed="true"]{background:var(--gold);border-color:var(--gold);
+  color:#1a1509;font-weight:600}
+button.opt .tag{display:block;font-size:10px;letter-spacing:.06em;margin-top:3px;opacity:.75}
+label.drop{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:8px;border:1.5px dashed var(--line);border-radius:16px;padding:34px 18px;
+  cursor:pointer;background:var(--card);text-align:center}
+label.drop b{font-size:15px;color:var(--ink)}
+label.drop small{color:var(--ink-3);font-size:12.5px}
+label.drop input{display:none}
+#thumb{display:none;width:100%;border-radius:16px;border:1px solid var(--line)}
+#go{width:100%;padding:17px;border-radius:13px;border:0;background:var(--gold);
+  color:#1a1509;font-size:16px;font-weight:700;letter-spacing:.03em;cursor:pointer;
+  margin-top:8px}
+#go:disabled{opacity:.35;cursor:not-allowed}
+#status{margin-top:14px;padding:14px;border-radius:11px;background:var(--card);
+  border:1px solid var(--line);font-size:13.5px;color:var(--ink-2);display:none}
+#status.on{display:block}
+.spin{display:inline-block;width:13px;height:13px;border:2px solid var(--gold-lo);
+  border-top-color:transparent;border-radius:50%;animation:s .8s linear infinite;
+  vertical-align:-2px;margin-right:8px}
+@keyframes s{to{transform:rotate(360deg)}}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.pair figure{margin:0}
+.pair img{width:100%;border-radius:12px;border:1px solid var(--line);display:block}
+.pair figcaption{font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-3);margin-top:7px;text-align:center}
+.meta{margin-top:14px;font-size:12px;color:var(--ink-3);line-height:1.7;
+  border-top:1px solid var(--line);padding-top:12px;word-break:break-all}
+.meta b{color:var(--ink-2);font-weight:600}
+.meta a{color:var(--gold)}
+.bad{color:var(--bad)}
+.hint{font-size:12px;color:var(--ink-3);margin:8px 0 0}
+#again{width:100%;margin-top:12px;padding:14px;border-radius:12px;
+  background:transparent;border:1px solid var(--line);color:var(--ink-2);
+  font-size:14px;cursor:pointer;display:none}
+</style></head><body>
+
+<div id="gate">
+  <h1 style="margin-bottom:18px">Pleroma<span>OS</span></h1>
+  <p>Internal preview. Enter your access code.</p>
+  <input id="code" autocomplete="off" autocapitalize="characters"
+         spellcheck="false" placeholder="CODE" aria-label="Access code">
+  <button id="enter" type="button">Enter</button>
+  <div id="gateErr" role="alert"></div>
+</div>
+
+<div id="app">
+<header>
+  <h1>Pleroma<span>OS</span></h1>
+  <p class="sub">See your next haircut before the first cut</p>
+</header>
+
+<div class="wrap">
+<section>
+  <h2>1 - Your photo</h2>
+  <label class="drop" id="droplab">
+    <b>Take or choose a photo</b>
+    <small>Face the camera. Any lighting is fine.</small>
+    <input type="file" accept="image/*" capture="user" id="file">
+  </label>
+  <img id="thumb" alt="Your photo">
+  <p class="hint" id="fmeta"></p>
+</section>
+
+<section>
+  <h2>2 - Haircut</h2>
+  <div class="grid" id="styles"></div>
+  <p class="hint">A gold dot means a real reference photo exists for that cut,
+  so the two-image path is used. Without one it falls back to text only, which
+  is measurably worse on curly and coily hair.</p>
+</section>
+
+<section><h2>3 - Your hair texture</h2><div class="grid" id="tex"></div></section>
+<section><h2>4 - Sides</h2><div class="grid" id="sides"></div></section>
+<section id="fhsec"><h2>5 - Fade height</h2><div class="grid" id="fh"></div></section>
+<section><h2>6 - Facial hair</h2><div class="grid" id="beard"></div></section>
+
+<button id="go" disabled>Generate</button>
+<button id="again" type="button">Try another cut on this photo</button>
+<div id="status"></div>
+<div id="out"></div>
+</div>
+</div>
+
+<script>
+// Obscurity, not security: this only keeps the page off the radar of anyone
+// who stumbles on the URL. Anyone who views source can read the code. That is
+// acceptable for an internal preview and must not be mistaken for auth.
+var CODE = "PLEROMA26";
+var API = "https://eusyxqguevqgrnnjqhut.supabase.co/functions/v1/hair-transfer";
+
+function unlock(){
+  document.getElementById("gate").style.display = "none";
+  document.getElementById("app").style.display = "block";
+}
+try{ if(sessionStorage.getItem("pl_ok") === "1") unlock(); }catch(e){}
+
+function tryCode(){
+  var v = (document.getElementById("code").value || "").trim().toUpperCase();
+  if(v === CODE){
+    try{ sessionStorage.setItem("pl_ok","1"); }catch(e){}
+    unlock();
+  } else {
+    document.getElementById("gateErr").textContent = "That code is not right.";
+  }
+}
+document.getElementById("enter").onclick = tryCode;
+document.getElementById("code").addEventListener("keydown", function(e){
+  if(e.key === "Enter") tryCode();
+});
+
+var STYLES = [
+ ["01","Buzz Cut",1],["02","Flat Top",1],["03","Crew Cut",1],["04","Caesar",1],
+ ["05","Textured Crop",0],["06","Edgar Cut",0],["07","Fauxhawk",0],["08","Quiff",0],
+ ["09","Slick Back",0],["10","Classic Pompadour",0],["11","Modern Pompadour",0],
+ ["12","Classic Mens",0],["13","Comb Over",0],["14","Comb Over Fade",0],
+ ["15","Curtains",0],["16","Curly Afro",0],["17","Afro Fade",0],["18","Mohawk",0],
+ ["19","Modern Mullet",0],["20","Classic Mullet",0],["21","Wolf Cut",0]
+];
+var TEX = [["straight-fine","Straight, fine"],["straight-coarse","Straight, thick"],
+ ["wavy","Wavy"],["curly","Curly"],["coily","Coily"]];
+var SIDES = [["skin-fade","Skin fade"],["close-fade","Close fade"],
+ ["shadow-fade","Shadow fade"],["taper","Taper"],["undercut","Undercut"],
+ ["natural","Natural"]];
+var FH = [["low","Low"],["mid","Mid"],["high","High"],["drop","Drop"]];
+var BEARD = [["none","Clean shaven"],["stubble","Stubble"],["short","Short beard"],
+ ["medium","Medium beard"],["full","Full beard"]];
+
+var pick = {styleId:null,texture:null,sides:null,fadeHeight:null,beard:null};
+var photo = null;
+
+function build(host, items, key, dot){
+  var el = document.getElementById(host);
+  items.forEach(function(it){
+    var b = document.createElement("button");
+    b.className = "opt"; b.type = "button";
+    b.setAttribute("aria-pressed","false");
+    b.innerHTML = it[1] + (dot && it[2] ? "<span class=tag>&#9679; reference</span>" : "");
+    b.onclick = function(){
+      pick[key] = it[0];
+      Array.prototype.forEach.call(el.children,function(c){
+        c.setAttribute("aria-pressed","false"); });
+      b.setAttribute("aria-pressed","true");
+      if(key === "sides") fadeVis();
+      ready();
+    };
+    el.appendChild(b);
+  });
+}
+build("styles",STYLES,"styleId",true);
+build("tex",TEX,"texture",false);
+build("sides",SIDES,"sides",false);
+build("fh",FH,"fadeHeight",false);
+build("beard",BEARD,"beard",false);
+
+function fadeVis(){
+  var needs = ["skin-fade","close-fade","shadow-fade"].indexOf(pick.sides) > -1;
+  document.getElementById("fhsec").style.display = needs ? "" : "none";
+  if(!needs) pick.fadeHeight = null;
+}
+fadeVis();
+
+function ready(){
+  document.getElementById("go").disabled =
+    !(photo && pick.styleId && pick.texture && pick.sides && pick.beard);
+}
+
+// Downscale on the device. A raw phone photo is 4-12MB, slow to post and
+// pointless at the resolution the model works at.
+document.getElementById("file").onchange = function(e){
+  var f = e.target.files[0]; if(!f) return;
+  var r = new FileReader();
+  r.onload = function(ev){
+    var im = new Image();
+    im.onload = function(){
+      var max = 1280, w = im.width, h = im.height;
+      if(w > max || h > max){ var s = max/Math.max(w,h); w = Math.round(w*s); h = Math.round(h*s); }
+      var c = document.createElement("canvas"); c.width = w; c.height = h;
+      c.getContext("2d").drawImage(im,0,0,w,h);
+      photo = c.toDataURL("image/jpeg",0.88);
+      var t = document.getElementById("thumb");
+      t.src = photo; t.style.display = "block";
+      document.getElementById("droplab").style.display = "none";
+      document.getElementById("fmeta").textContent =
+        w + " x " + h + " - " + Math.round(photo.length/1365) + " KB";
+      ready();
+    };
+    im.src = ev.target.result;
+  };
+  r.readAsDataURL(f);
+};
+
+function say(html){
+  var s = document.getElementById("status");
+  s.className = "on"; s.innerHTML = html;
+}
+
+document.getElementById("again").onclick = function(){
+  document.getElementById("out").innerHTML = "";
+  document.getElementById("status").className = "";
+  document.getElementById("again").style.display = "none";
+  window.scrollTo({top:0,behavior:"smooth"});
+};
+
+document.getElementById("go").onclick = async function(){
+  var t0 = Date.now();
+  document.getElementById("go").disabled = true;
+  document.getElementById("out").innerHTML = "";
+  document.getElementById("again").style.display = "none";
+  say("<span class=spin></span>Sending your photo...");
+  try{
+    var body = Object.assign({}, pick, {photoBase64: photo});
+    var res = await fetch(API,{method:"POST",
+      headers:{"Content-Type":"application/json"}, body: JSON.stringify(body)});
+    var j = await res.json();
+    if(j.error) throw new Error(j.error);
+
+    say("<span class=spin></span>Cutting your hair... about 30 seconds."
+      + (j.usedReference ? "<br><br>Reference: <b>" + j.usedReference + "</b>"
+        : "<br><br><span class=bad>No matching reference - text-only fallback.</span>"));
+
+    var tries = 0;
+    while(tries++ < 60){
+      await new Promise(function(r){ setTimeout(r,3000); });
+      var p = await fetch(API + "?renderId=" + j.renderId);
+      var s = await p.json();
+      if(s.status === "succeeded"){
+        var secs = Math.round((Date.now()-t0)/1000);
+        say("Done in " + secs + "s.");
+        document.getElementById("out").innerHTML =
+          "<div class=pair>"
+          + "<figure><img src=\"" + photo + "\"><figcaption>Before</figcaption></figure>"
+          + "<figure><img src=\"" + s.outputUrl + "\"><figcaption>After</figcaption></figure>"
+          + "</div>"
+          + "<div class=meta><b>Reference used:</b> "
+          + (s.usedReference || "none - text only")
+          + "<br><b>Render:</b> " + secs + "s"
+          + "<br><a href=\"" + s.outputUrl + "\" target=_blank>Open full size</a></div>";
+        document.getElementById("again").style.display = "block";
+        break;
+      }
+      if(s.status === "failed"){ throw new Error(s.error || "render failed"); }
+    }
+  }catch(err){
+    say("<span class=bad>Failed:</span> " + err.message);
+  }
+  document.getElementById("go").disabled = false;
+};
+</script>
+</body></html>
