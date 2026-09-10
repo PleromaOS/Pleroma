@@ -49,7 +49,7 @@ label.drop{display:flex;flex-direction:column;align-items:center;justify-content
 label.drop b{font-size:15px;color:var(--ink)}
 label.drop small{color:var(--ink-3);font-size:12.5px}
 label.drop input{display:none}
-#thumb{display:none;width:100%;border-radius:16px;border:1px solid var(--line)}
+#thumb{display:none;width:100%;border-radius:16px;border:1px solid var(--line);cursor:zoom-in}
 #go{width:100%;padding:17px;border-radius:13px;border:0;background:var(--gold);
   color:#1a1509;font-size:16px;font-weight:700;letter-spacing:.03em;cursor:pointer;
   margin-top:8px}
@@ -63,9 +63,8 @@ label.drop input{display:none}
 @keyframes s{to{transform:rotate(360deg)}}
 .pair{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
 .pair figure{margin:0}
-.pair img{width:100%;border-radius:12px;border:1px solid var(--line);display:block}
+.pair img{width:100%;border-radius:12px;border:1px solid var(--line);display:block;cursor:zoom-in}
 .pair a{display:block}
-#thumblink{display:block}
 .pair figcaption{font-size:11px;letter-spacing:.1em;text-transform:uppercase;
   color:var(--ink-3);margin-top:7px;text-align:center}
 .meta{margin-top:14px;font-size:12px;color:var(--ink-3);line-height:1.7;
@@ -77,6 +76,12 @@ label.drop input{display:none}
 #again{width:100%;margin-top:12px;padding:14px;border-radius:12px;
   background:transparent;border:1px solid var(--line);color:var(--ink-2);
   font-size:14px;cursor:pointer;display:none}
+#lb{position:fixed;inset:0;background:rgba(8,7,6,.96);display:none;z-index:99;
+  align-items:center;justify-content:center;padding:16px}
+#lb.on{display:flex}
+#lb img{max-width:100%;max-height:88vh;border-radius:10px}
+#lbx{position:absolute;top:14px;right:18px;font-size:30px;color:var(--ink-2);
+  background:none;border:0;cursor:pointer;line-height:1;padding:8px}
 </style></head><body>
 
 <div id="gate">
@@ -86,6 +91,11 @@ label.drop input{display:none}
          spellcheck="false" placeholder="CODE" aria-label="Access code">
   <button id="enter" type="button">Enter</button>
   <div id="gateErr" role="alert"></div>
+</div>
+
+<div id="lb" role="dialog" aria-label="Full size image">
+  <button id="lbx" type="button" aria-label="Close">&times;</button>
+  <img id="lbi" alt="">
 </div>
 
 <div id="app">
@@ -102,7 +112,7 @@ label.drop input{display:none}
     <small>Face the camera. Any lighting is fine.</small>
     <input type="file" accept="image/*" capture="user" id="file">
   </label>
-  <a id="thumblink" href="#" target="_blank" rel="noopener" style="display:none"><img id="thumb" alt="Your photo"></a>
+  <img id="thumb" alt="Your photo">
   <p class="hint" id="fmeta"></p>
 </section>
 
@@ -224,8 +234,6 @@ document.getElementById("file").onchange = function(e){
       photo = c.toDataURL("image/jpeg",0.88);
       var t = document.getElementById("thumb");
       t.src = photo; t.style.display = "block";
-      var tl = document.getElementById("thumblink");
-      tl.href = photo; tl.style.display = "block";
       document.getElementById("droplab").style.display = "none";
       document.getElementById("fmeta").textContent =
         w + " x " + h + " - " + Math.round(photo.length/1365) + " KB";
@@ -235,6 +243,23 @@ document.getElementById("file").onchange = function(e){
   };
   r.readAsDataURL(f);
 };
+
+function zoom(src){
+  document.getElementById("lbi").src = src;
+  document.getElementById("lb").className = "on";
+}
+document.getElementById("lbx").onclick = function(){
+  document.getElementById("lb").className = "";
+};
+document.getElementById("lb").onclick = function(e){
+  if(e.target.id !== "lbi") this.className = "";
+};
+document.addEventListener("click", function(e){
+  var t = e.target;
+  if(t.tagName === "IMG" && (t.id === "thumb" || t.closest(".pair"))){
+    e.preventDefault(); zoom(t.src);
+  }
+});
 
 function say(html){
   var s = document.getElementById("status");
@@ -275,11 +300,9 @@ document.getElementById("go").onclick = async function(){
         say("Done in " + secs + "s.");
         document.getElementById("out").innerHTML =
           "<div class=pair>"
-          + "<figure><a href=\"" + photo + "\" target=_blank rel=noopener>"
-          + "<img src=\"" + photo + "\" alt=\"Your photo before\"></a>"
+          + "<figure><img src=\"" + photo + "\" alt=\"Your photo before\">"
           + "<figcaption>Before - tap to enlarge</figcaption></figure>"
-          + "<figure><a href=\"" + s.outputUrl + "\" target=_blank rel=noopener>"
-          + "<img src=\"" + s.outputUrl + "\" alt=\"With the new haircut\"></a>"
+          + "<figure><img src=\"" + s.outputUrl + "\" alt=\"With the new haircut\">"
           + "<figcaption>After - tap to enlarge</figcaption></figure>"
           + "</div>"
           + "<div class=meta><b>Reference used:</b> "
