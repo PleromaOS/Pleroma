@@ -10,7 +10,8 @@ export const PUBLISHABLE_KEY = "sb_publishable_u_qqfoYHcfx6O2ZT2Vgq_A_WfcV0RRY";
 
 // Wording versions. When the text of a consent or the guarantee terms changes,
 // bump the version here, so the database records which words each client saw.
-export const SELFIE_CONSENT_VERSION = "selfie-2026-09-v1";
+// v2 (2026-09-26): three photos, used for the render AND the barber's brief.
+export const SELFIE_CONSENT_VERSION = "selfie-2026-09-v2";
 export const GUARANTEE_TERMS_VERSION = "guarantee-2026-09-v1";
 
 // Demo mode: add ?demo to the address. Every door is simulated in the browser,

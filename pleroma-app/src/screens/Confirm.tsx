@@ -18,7 +18,7 @@ function Pips({ at }: { at: 1 | 2 }) {
 }
 
 export function ConfirmYou({ flow }: { flow: Flow }) {
-  const { c, go, back, selfie } = flow;
+  const { c, update, go, back, selfie } = flow;
   return (
     <Page onBack={back}>
       <Pips at={1} />
@@ -29,7 +29,7 @@ export function ConfirmYou({ flow }: { flow: Flow }) {
       </div>
       <p className="caption">Same face, same hair colour, same you. Only the cut should be different.</p>
       <Button onClick={() => go("confirm-cut")}>Yes, that's me</Button>
-      <Button kind="secondary" onClick={() => go("selfie")}>No, try another photo</Button>
+      <Button kind="secondary" onClick={() => { update({ renderId: undefined }); go("scan"); }}>No, scan again</Button>
     </Page>
   );
 }

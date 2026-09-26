@@ -24,7 +24,7 @@ export function Landing({ flow }: { flow: Flow }) {
     try {
       const t = await startConsultation(c.shop, c.entry);
       update({ ticket: { consultation_id: t.consultation_id, ticket: t.ticket }, shopName: t.shop_name });
-      go("email");
+      go("scan");
     } catch (e) {
       setProblem(explain(e));
     } finally {

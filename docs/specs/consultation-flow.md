@@ -77,6 +77,16 @@ booking with the fewest possible moments where someone can leave.
 
 ---
 
+> **Changed again 2026-09-26 (Bryan, option "B: scan first") — applies to BOTH
+> flows and replaces the "email before selfie" note below.** The consultation
+> now opens with a three-photo scan (front + both sides), right after the
+> landing page: Landing → why + consent switch → scan → email → questions →
+> render. The consent switch is tapped before the camera opens; the photos stay
+> on the phone until the email is given; the email step then records the
+> consent (consent must belong to a known person) and only after that does any
+> photo leave the phone. A refresh before then clears the photos and the client
+> rescans (answers and email are kept).
+
 ## B. Shop entry — someone already in the building
 
 > **Changed 2026-09-26 (Bryan):** in the shop flow the email now comes **before

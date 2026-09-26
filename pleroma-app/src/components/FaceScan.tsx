@@ -251,6 +251,7 @@ function Numbers({ r }: { r: Readings }) {
       {row("Face brightness", l?.face, `${LIMITS.brightMin}–${LIMITS.brightMax}`)}
       {row("Background − face", l ? l.background - l.face : undefined, `≤ ${LIMITS.backlightGap}`)}
       {row("Blown out %", l ? l.blownOut * 100 : undefined, `≤ ${LIMITS.blownOutMax * 100}`)}
+      {row("Hair in shadow %", l ? l.hairShadow * 100 : undefined, `≤ ${LIMITS.hairShadowMax * 100}`)}
       {row("Sharpness", r.sharp, `≥ ${Math.max(LIMITS.sharpFloor, r.best * LIMITS.sharpVsBest).toFixed(1)} (best ${r.best.toFixed(1)})`, 1)}
       {row("Movement", r.move, `≤ ${LIMITS.moveMax}`, 3)}
       <div><dt>Verdict</dt><dd className="limit" style={{ gridColumn: "2 / 4" }}>{r.v.say}</dd></div>

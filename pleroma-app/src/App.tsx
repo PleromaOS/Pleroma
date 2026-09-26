@@ -19,17 +19,17 @@ import { Landing } from "./screens/Landing";
 import { PhotoCheckTest } from "./screens/PhotoCheckTest";
 import { EffortQuestion, LengthQuestion, StyleQuestion, TextureQuestion } from "./screens/Questions";
 import { Refine, Reveal } from "./screens/Reveal";
-import { Selfie } from "./screens/Selfie";
+import { Scan } from "./screens/Scan";
 import { Wait } from "./screens/Wait";
 
 const ROOMS: Record<StepId, (p: { flow: Flow }) => React.ReactNode> = {
   landing: Landing,
+  scan: Scan,
   email: EmailGate,
   texture: TextureQuestion,
   length: LengthQuestion,
   style: StyleQuestion,
   effort: EffortQuestion,
-  selfie: Selfie,
   wait: Wait,
   reveal: Reveal,
   refine: Refine,

@@ -131,7 +131,7 @@ export function EffortQuestion({ flow }: { flow: Flow }) {
       <div className="stack">
         {EFFORTS.map((o) => (
           <Row key={o.value} label={o.label} hint={o.hint} selected={chosen === o.value}
-            onSelect={() => answer({ styling_effort: o.value }, "selfie")} />
+            onSelect={() => answer({ styling_effort: o.value }, "wait")} />
         ))}
       </div>
       <Problem message={problem} />

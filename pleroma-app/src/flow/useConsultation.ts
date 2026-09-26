@@ -5,12 +5,13 @@
 // session storage, so a refresh or an accidental swipe-back does not throw
 // the client back to the start. Session storage is wiped when the tab closes.
 //
-// What it deliberately does NOT keep: the selfie. A photo of a face is
-// Article 9 data, so it lives only in memory for the few minutes it is needed
-// on screen, and is never written to the phone's storage by us.
+// What it deliberately does NOT keep: the photos. A photo of a face is
+// Article 9 data, so the three scan photos live only in memory until they
+// are sent, and are never written to the phone's storage by us.
 
 import { useCallback, useEffect, useState } from "react";
 import type { Handoff, Ticket } from "../api/doors";
+import type { ScanPhotos } from "../components/FaceScan";
 import type { StepId } from "./steps";
 
 export type Consultation = {
@@ -20,6 +21,8 @@ export type Consultation = {
   ticket?: Ticket;
   step: StepId;
   history: StepId[];              // for the back button
+  consentTappedAt?: string;       // when the photo switch was turned on (sent with the email)
+  emailGiven?: boolean;
   answers: Record<string, string | boolean>;
   styleName?: string;             // for display only; the door stores the style id
   renderId?: string;
@@ -41,7 +44,7 @@ function load(shop: string, entry: "campaign" | "shop"): Consultation {
 
 export function useConsultation(shop: string, entry: "campaign" | "shop") {
   const [c, setC] = useState<Consultation>(() => load(shop, entry));
-  const [selfie, setSelfie] = useState<string | null>(null); // memory only, see above
+  const [photos, setPhotos] = useState<ScanPhotos | null>(null); // memory only, see above
 
   useEffect(() => {
     try { sessionStorage.setItem(key(shop, entry), JSON.stringify(c)); } catch { /* ignore */ }
@@ -63,11 +66,12 @@ export function useConsultation(shop: string, entry: "campaign" | "shop") {
 
   const restart = useCallback(() => {
     try { sessionStorage.removeItem(key(shop, entry)); } catch { /* ignore */ }
-    setSelfie(null);
+    setPhotos(null);
     setC(load(shop, entry));
   }, [shop, entry]);
 
-  return { c, update, go, back, restart, selfie, setSelfie };
+  // The front photo is the one the render is drawn on.
+  return { c, update, go, back, restart, photos, setPhotos, selfie: photos?.front ?? null };
 }
 
 export type Flow = ReturnType<typeof useConsultation>;

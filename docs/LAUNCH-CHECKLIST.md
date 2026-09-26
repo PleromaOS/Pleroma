@@ -57,6 +57,12 @@ Tick an item only when it is done and tested, and add the date.
       change screen brightness, so today the scan turns the screen white and asks
       the client to turn brightness up themselves.
 
+- [ ] **Legal check on the scan-first consent timing.** The client turns on
+      the photo consent switch before the camera opens, but our server records
+      it a minute later, when they give their email (no photo leaves the phone
+      before that). Confirm this is fine, and review the new wording (version
+      selfie-2026-09-v2: three photos, used for the render AND the barber's brief).
+
 ## Already done
 
 - [x] 2026-09-26 Data model: 11 tables with shop separation, frozen briefs,

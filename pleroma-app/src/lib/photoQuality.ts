@@ -27,6 +27,8 @@ export const LIMITS = {
   brightMax: 205,
   backlightGap: 55,        // background this much brighter than the face = light behind them
   blownOutMax: 0.10,       // at most 10% of the face pure white
+  hairShadowMax: 0.6,      // at most 60% of the hair band near-black (<16): beyond that the
+                           //   texture and colour can't be read, even on black hair
   sharpFloor: 4,           // absolute minimum crispness of the face cut-out (library photos)
   sharpVsBest: 0.6,        // live: a frame must be at least 60% as crisp as the best one seen of this person
   moveMax: 0.04,           // live: the nose may move at most 4% of the face's height between checks
@@ -90,7 +92,10 @@ export function geometry(pts: Point[]): Geometry {
   return { faceHeight, centreX: (box.x0 + box.x1) / 2, hairTop, turn, tilt, nod, box };
 }
 
-export type Light = { face: number; background: number; blownOut: number };
+// hairShadow: share of the band just above the forehead (where the hair is)
+// that is near-black. Black hair in decent light still shows strands at 20-60;
+// hair lost in shadow drops under 16 and its texture can't be read.
+export type Light = { face: number; background: number; blownOut: number; hairShadow: number };
 
 // Pixel measurements on a small grey copy of the picture (w x h values 0..255).
 // Small on purpose: 160 pixels wide is plenty to judge light and blur, and it
@@ -98,18 +103,21 @@ export type Light = { face: number; background: number; blownOut: number };
 export function light(grey: Uint8ClampedArray, w: number, h: number, box: Geometry["box"]): Light {
   const x0 = Math.max(0, Math.floor(box.x0 * w)), x1 = Math.min(w - 1, Math.ceil(box.x1 * w));
   const y0 = Math.max(0, Math.floor(box.y0 * h)), y1 = Math.min(h - 1, Math.ceil(box.y1 * h));
-  let fSum = 0, fN = 0, white = 0, bSum = 0, bN = 0;
+  const hy0 = Math.max(0, Math.floor((box.y0 - (box.y1 - box.y0) * 0.25) * h));
+  let fSum = 0, fN = 0, white = 0, bSum = 0, bN = 0, hN = 0, hDark = 0;
   for (let y = 0; y < h; y++) {
     for (let x = 0; x < w; x++) {
       const v = grey[y * w + x];
       if (x >= x0 && x <= x1 && y >= y0 && y <= y1) { fSum += v; fN++; if (v >= 245) white++; }
       else { bSum += v; bN++; }
+      if (x >= x0 && x <= x1 && y >= hy0 && y < y0) { hN++; if (v < 16) hDark++; }
     }
   }
   return {
     face: fN ? fSum / fN : 0,
     background: bN ? bSum / bN : 0,
     blownOut: fN ? white / fN : 0,
+    hairShadow: hN ? hDark / hN : 0,
   };
 }
 
@@ -148,6 +156,7 @@ export function judge(shot: Shot, g: Geometry | null, l: Light | null, wantSide?
   if (l.background - l.face > LIMITS.backlightGap) return { ok: false, say: "The light is behind you. Turn to face the light" };
   if (l.face < LIMITS.brightMin) return { ok: false, say: "Too dark. Face a window or a lamp" };
   if (l.face > LIMITS.brightMax || l.blownOut > LIMITS.blownOutMax) return { ok: false, say: "Too bright. Step out of direct light" };
+  if (l.hairShadow > LIMITS.hairShadowMax) return { ok: false, say: "Your hair is in shadow. Face the light" };
   if (Math.abs(g.tilt) > LIMITS.tiltMax) return { ok: false, say: "Keep your head straight" };
   if (Math.abs(g.nod) > LIMITS.tiltMax) return { ok: false, say: g.nod > 0 ? "Lift your chin a little" : "Lower your chin a little" };
   if (shot === "front") {

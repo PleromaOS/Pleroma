@@ -1,10 +1,14 @@
 // W34 · Email gate (variant 1c, "reassurance on demand, live help").
 // The render is the reward for the email: asking here is what keeps a shop's
 // render spend to identified people (consultation-flow.md, step 2).
-// Door 2 links the email to the consultation.
+// Door 2 links the email to the consultation. Then door 4 records the photo
+// consent the client gave on the scan screen: consent belongs to a person,
+// and the email is what makes them one. Nothing about the photos has left the
+// phone before this point.
 
 import { useMemo, useState } from "react";
-import { giveEmail } from "../api/doors";
+import { giveConsent, giveEmail } from "../api/doors";
+import { SELFIE_CONSENT_VERSION } from "../config";
 import { Button, Disclosure, Page, Problem } from "../components/ui";
 import type { Flow } from "../flow/useConsultation";
 import { explain } from "../lib/messages";
@@ -19,7 +23,7 @@ const TYPOS: Record<string, string> = {
 };
 
 export function EmailGate({ flow }: { flow: Flow }) {
-  const { c, go, back } = flow;
+  const { c, update, go, back } = flow;
   const [email, setEmail] = useState("");
   const [busy, setBusy] = useState(false);
   const [problem, setProblem] = useState<string | null>(null);
@@ -36,6 +40,8 @@ export function EmailGate({ flow }: { flow: Flow }) {
     setBusy(true); setProblem(null);
     try {
       await giveEmail(c.ticket, trimmed);
+      if (c.consentTappedAt) await giveConsent(c.ticket, "render_selfie", SELFIE_CONSENT_VERSION);
+      update({ emailGiven: true });
       go("texture");
     } catch (e) {
       setProblem(explain(e));
