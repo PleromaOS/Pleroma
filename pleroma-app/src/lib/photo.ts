@@ -12,7 +12,10 @@ export function drawToJpeg(source: CanvasImageSource, width: number, height: num
   canvas.width = Math.round(width * scale);
   canvas.height = Math.round(height * scale);
   const ctx = canvas.getContext("2d")!;
-  if (mirror) { // a front camera preview is mirrored; the saved photo must not be
+  // The camera's own frames are NOT mirrored (only the on-screen preview is,
+  // by CSS), so photos are saved as they come. Mirroring would put a side
+  // parting on the wrong side for the barber. Fixed 2026-09-26.
+  if (mirror) {
     ctx.translate(canvas.width, 0);
     ctx.scale(-1, 1);
   }

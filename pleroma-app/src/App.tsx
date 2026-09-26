@@ -16,6 +16,7 @@ import { ConfirmCut, ConfirmYou } from "./screens/Confirm";
 import { EmailGate } from "./screens/EmailGate";
 import { Handoff } from "./screens/Handoff";
 import { Landing } from "./screens/Landing";
+import { PhotoCheckTest } from "./screens/PhotoCheckTest";
 import { EffortQuestion, LengthQuestion, StyleQuestion, TextureQuestion } from "./screens/Questions";
 import { Refine, Reveal } from "./screens/Reveal";
 import { Selfie } from "./screens/Selfie";
@@ -47,6 +48,7 @@ function readAddress() {
 
 export default function App() {
   const { shop, entry } = readAddress();
+  if (shop === "photo-check") return <PhotoCheckTest />; // test page for the photo checker
   if (!shop) {
     return (
       <main className="page">

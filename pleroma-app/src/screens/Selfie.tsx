@@ -68,7 +68,7 @@ export function Selfie({ flow }: { flow: Flow }) {
   function shoot() {
     const v = video.current;
     if (!v || !v.videoWidth) return;
-    setPhoto(drawToJpeg(v, v.videoWidth, v.videoHeight, true));
+    setPhoto(drawToJpeg(v, v.videoWidth, v.videoHeight));
   }
 
   async function fromLibrary(input: HTMLInputElement) {

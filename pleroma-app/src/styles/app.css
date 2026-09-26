@@ -190,3 +190,24 @@ em { font-style: normal; color: var(--gold-text); }
 .btn--label { display: flex; align-items: center; justify-content: center; position: relative; }
 label[aria-disabled="true"] { opacity: .45; pointer-events: none; }
 .link { text-align: center; }
+
+/* ---- Photo checker ------------------------------------------------------ */
+.display--sm { font-size: var(--title-1); line-height: var(--title-1-lh); }
+.capture { display: flex; flex-direction: column; gap: var(--space-3); }
+.camera video { transform: scaleX(-1); }
+.camera__oval { transition: border-color var(--t-state); }
+.camera__oval--side { width: 44%; }
+/* The oval fills with gold as the "hold still" moment completes. */
+.camera--ok .camera__oval { border-color: var(--gold); border-width: calc(2px + 4px * var(--hold, 0)); }
+.coach { position: absolute; bottom: var(--space-4); left: 50%; transform: translateX(-50%); max-width: 90%; text-align: center; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: var(--r-pill); padding: var(--space-2) var(--space-4); font-weight: 600; font-size: var(--body-sm); z-index: 2; }
+.coach--ok { background: var(--ok-wash); color: var(--ok-text); border-color: var(--ok); }
+.numbers { margin: 0; font-size: var(--caption); font-variant-numeric: tabular-nums; border: 1px solid var(--line); border-radius: var(--r-md); padding: var(--space-2) var(--space-3); }
+.numbers div { display: grid; grid-template-columns: 1fr auto 9em; gap: var(--space-2); padding: 2px 0; }
+.numbers dt { color: var(--ink-2); }
+.numbers dd { margin: 0; text-align: right; }
+.numbers .limit { color: var(--ink-3); }
+.pips--3 i { flex: 1; }
+.three { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-2); }
+.three figure { margin: 0; }
+.three img { aspect-ratio: 3 / 4; object-fit: cover; border-radius: var(--r-sm); border: 1px solid var(--line); width: 100%; }
+.three figcaption { font-size: var(--caption); color: var(--ink-3); text-align: center; }

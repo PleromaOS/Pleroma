@@ -7,9 +7,12 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "build:preview": "vite build --config vite.preview.config.ts"
+    "build:preview": "vite build --config vite.preview.config.ts",
+    "predev": "node scripts/mediapipe-assets.mjs",
+    "prebuild": "node scripts/mediapipe-assets.mjs"
   },
   "dependencies": {
+    "@mediapipe/tasks-vision": "^0.10.35",
     "react": "^19.3.0",
     "react-dom": "^19.3.0"
   },
