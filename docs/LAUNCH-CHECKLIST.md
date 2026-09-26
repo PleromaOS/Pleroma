@@ -31,6 +31,9 @@ Tick an item only when it is done and tested, and add the date.
       Google's terms for sending client photos to Gemini.
 - [ ] **Remove the development functions** `gemini-test`, `dev-seed` and `tryon`.
       They are open to the public.
+- [ ] **Host the client app** (`pleroma-app/`) on a web address with https,
+      one link per shop (`/<shop-slug>` for adverts, `/<shop-slug>/in-shop`
+      for the QR code). A phone camera only works on https.
 - [ ] **Retire the old quiz app** in `consultation-app/app/`. It saves to table
       shapes that no longer exist.
 
@@ -44,6 +47,8 @@ Tick an item only when it is done and tested, and add the date.
       and shop lockup, made when the client takes the image away.
 - [ ] **A human check on the landing page** (for example Cloudflare Turnstile) if
       bots get past the rate limits.
+- [ ] **Pass codes are 4 digits per shop** (W24 design). Fine until a shop has
+      thousands of open passes; then clear expired passes or move to 5 digits.
 - [ ] Fix the two old database functions Supabase warns about
       (`touch_renders_updated_at`, `pick_style_reference`: search path not fixed).
 
@@ -56,3 +61,5 @@ Tick an item only when it is done and tested, and add the date.
 - [x] 2026-09-26 Feasibility gate: texture coverage, length gap, effort mismatch
 - [x] 2026-09-26 Spam protection: rate limits per connection, hourly clean-up of
       empty consultations
+- [x] 2026-09-26 Client app (React) campaign flow, all screens wired to the doors,
+      clicked through end to end in demo mode

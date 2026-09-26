@@ -1,7 +1,7 @@
 // The app's front door: reads the address and shows the right room.
 //
-//   /barber-jansen            a stranger from the shop's advert (campaign entry)
-//   /barber-jansen/in-shop    the QR code in the shop's waiting area (shop entry)
+//   /consult/barber-jansen            a stranger from the shop's advert (campaign entry)
+//   /consult/barber-jansen/in-shop    the QR code in the shop's waiting area (shop entry)
 //   add ?demo to either       every door simulated, nothing saved, no render spent
 //
 // Why no routing library: the client only ever moves forward through one
@@ -38,7 +38,10 @@ const ROOMS: Record<StepId, (p: { flow: Flow }) => React.ReactNode> = {
 };
 
 function readAddress() {
-  const [shop, second] = PREVIEW_BUILD ? ["demo"] : window.location.pathname.split("/").filter(Boolean);
+  // Drop the "/consult" part the site serves the app under, then read shop and entry.
+  const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+  const path = window.location.pathname.startsWith(base) ? window.location.pathname.slice(base.length) : window.location.pathname;
+  const [shop, second] = PREVIEW_BUILD ? ["demo"] : path.split("/").filter(Boolean);
   return { shop: shop?.toLowerCase(), entry: second === "in-shop" ? "shop" as const : "campaign" as const };
 }
 
@@ -48,7 +51,7 @@ export default function App() {
     return (
       <main className="page">
         <h1 className="display">PleromaOS</h1>
-        <p className="lede">This link is missing the shop. Try <a href="/pleroma-test?demo">/pleroma-test?demo</a>.</p>
+        <p className="lede">This link is missing the shop. Try <a href={`${import.meta.env.BASE_URL}pleroma-test`}>the test shop</a>.</p>
       </main>
     );
   }
