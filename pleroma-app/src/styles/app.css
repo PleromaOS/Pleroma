@@ -191,17 +191,46 @@ em { font-style: normal; color: var(--gold-text); }
 label[aria-disabled="true"] { opacity: .45; pointer-events: none; }
 .link { text-align: center; }
 
-/* ---- Photo checker ------------------------------------------------------ */
+/* ---- Face scan (Face ID-style) ---------------------------------------- */
 .display--sm { font-size: var(--title-1); line-height: var(--title-1-lh); }
-.capture { display: flex; flex-direction: column; gap: var(--space-3); }
-.camera video { transform: scaleX(-1); }
-.camera__oval { transition: border-color var(--t-state); }
-.camera__oval--side { width: 44%; }
-/* The oval fills with gold as the "hold still" moment completes. */
-.camera--ok .camera__oval { border-color: var(--gold); border-width: calc(2px + 4px * var(--hold, 0)); }
-.coach { position: absolute; bottom: var(--space-4); left: 50%; transform: translateX(-50%); max-width: 90%; text-align: center; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: var(--r-pill); padding: var(--space-2) var(--space-4); font-weight: 600; font-size: var(--body-sm); z-index: 2; }
-.coach--ok { background: var(--ok-wash); color: var(--ok-text); border-color: var(--ok); }
-.numbers { margin: 0; font-size: var(--caption); font-variant-numeric: tabular-nums; border: 1px solid var(--line); border-radius: var(--r-md); padding: var(--space-2) var(--space-3); }
+.scan-page { min-height: 100dvh; display: flex; flex-direction: column; align-items: center; background: var(--bg); padding: var(--space-6) var(--space-4); gap: var(--space-4); }
+.scan { width: 100%; display: flex; flex-direction: column; align-items: center; gap: var(--space-5); transition: background .4s; }
+.scan__title { font-family: var(--font-display); font-weight: 600; font-size: 26px; line-height: 32px; text-align: center; margin: var(--space-4) 0 0; min-height: 64px; text-wrap: balance; }
+.scan__window { position: relative; width: min(76vw, 340px); aspect-ratio: 1; }
+.scan__window video { position: absolute; inset: 5%; width: 90%; height: 90%; object-fit: cover; border-radius: 50%; transform: scaleX(-1); background: var(--surface-2); }
+.ring { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.ring line { stroke: var(--line-strong); stroke-width: 1.1; stroke-linecap: round; transition: stroke .25s, x2 .25s, y2 .25s; }
+.ring line.lit { stroke: var(--gold); stroke-width: 1.4; }
+.scan__wait { position: absolute; inset: 0; display: grid; place-items: center; color: var(--ink-2); font-weight: 600; }
+.scan__coach { min-height: 64px; margin: 0; text-align: center; font-size: 22px; line-height: 28px; font-weight: 600; color: var(--ink); opacity: 0; transition: opacity .25s; max-width: 22ch; text-wrap: balance; }
+.scan__coach.is-on { opacity: 1; }
+.scan__note { margin: 0; font-size: var(--caption); color: var(--ink-3); }
+/* Screen light: everything around the window turns bright white to light the face. */
+.scan-page:has(.scan--light) { background: #ffffff; }
+.scan--light .scan__title, .scan--light .scan__coach { color: #1a1816; }
+.scan--light .ring line { stroke: #d9d2c4; }
+.scan--light .ring line.lit { stroke: #b08a3e; }
+.scan--light ~ .link { color: #7d5f22; }
+/* Done: the check mark draws itself in the middle. */
+.scan__check { position: absolute; left: 50%; top: 50%; width: 34%; transform: translate(-50%, -50%); }
+.scan__check circle { fill: color-mix(in srgb, var(--bg) 70%, transparent); stroke: var(--gold); stroke-width: 2; }
+.scan__check path { fill: none; stroke: var(--gold); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 48; stroke-dashoffset: 48; animation: draw .5s .15s ease-out forwards; }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+.scan--done .scan__window video { filter: brightness(.6); transition: filter .4s; }
+
+/* Intro: a head that turns while the ring fills, before the camera opens. */
+.intro { display: flex; flex-direction: column; align-items: center; gap: var(--space-4); text-align: center; padding-top: var(--space-6); }
+.head { width: 180px; height: 180px; }
+.head__skin { fill: var(--surface-3); stroke: var(--line-strong); }
+.head__hair { fill: var(--ink-3); }
+.head__features { fill: var(--ink-2); stroke: var(--ink-2); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; animation: turn 6s ease-in-out infinite; }
+.head__features path { fill: none; }
+.head__ring line { stroke: var(--line-strong); stroke-width: 1.6; stroke-linecap: round; animation: lightup 6s linear infinite; }
+@keyframes turn { 0%, 15% { transform: translateX(0); } 35%, 45% { transform: translateX(-12px); } 65%, 75% { transform: translateX(12px); } 90%, 100% { transform: translateX(0); } }
+@keyframes lightup { 0% { stroke: var(--line-strong); } 5%, 80% { stroke: var(--gold); } 100% { stroke: var(--line-strong); } }
+@media (prefers-reduced-motion: reduce) { .head__features, .head__ring line { animation: none; } }
+
+.numbers { width: 100%; margin: 0; font-size: var(--caption); font-variant-numeric: tabular-nums; border: 1px solid var(--line); border-radius: var(--r-md); padding: var(--space-2) var(--space-3); }
 .numbers div { display: grid; grid-template-columns: 1fr auto 9em; gap: var(--space-2); padding: 2px 0; }
 .numbers dt { color: var(--ink-2); }
 .numbers dd { margin: 0; text-align: right; }

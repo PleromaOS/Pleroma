@@ -16,10 +16,13 @@ export type Shot = "front" | "side";
 // Every limit in one place. These are STARTING values: they must be tuned on
 // real photos (good ones and bad ones) before launch. The test page shows the
 // live numbers next to each limit for exactly that reason.
+// All sizes are measured inside the round window the client actually sees
+// (fixed 2026-09-26: they were measured on the full, wider camera picture,
+// which forced Bryan to hold the phone at full arm's length).
 export const LIMITS = {
-  faceMinHeight: 0.30,     // face at least 30% of the picture's height
-  faceMaxHeight: 0.80,     // not so close that the hair is cut off
-  hairRoomAbove: 0.06,     // room above the estimated top of the hair, as share of picture height
+  faceMinHeight: 0.26,     // forehead-to-chin at least 26% of the window: a relaxed arm's length
+  faceMaxHeight: 0.62,     // not so close that the hair is cut off
+  hairRoomAbove: 0.02,     // the estimated top of the hair must be inside the window
   brightMin: 75,           // average brightness of the face, 0 (black) to 255 (white)
   brightMax: 205,
   backlightGap: 55,        // background this much brighter than the face = light behind them
@@ -46,6 +49,15 @@ export type Geometry = {
   box: { x0: number; y0: number; x1: number; y1: number };
 };
 
+// The camera picture is wider (or taller) than the round window, which shows
+// its centre square. This turns face points from "share of the whole picture"
+// into "share of the window", so every check is about what the client sees.
+export function toWindow(pts: Point[], frameW: number, frameH: number): Point[] {
+  const side = Math.min(frameW, frameH);
+  const ox = (frameW - side) / 2, oy = (frameH - side) / 2;
+  return pts.map((p) => ({ x: (p.x * frameW - ox) / side, y: (p.y * frameH - oy) / side }));
+}
+
 export function geometry(pts: Point[]): Geometry {
   const xs = pts.map((p) => p.x), ys = pts.map((p) => p.y);
   const box = { x0: Math.min(...xs), y0: Math.min(...ys), x1: Math.max(...xs), y1: Math.max(...ys) };
@@ -68,9 +80,10 @@ export function geometry(pts: Point[]): Geometry {
   const noseShare = (nose.y - eyeY) / Math.max(1e-6, pts[P.chin].y - eyeY);
   const nod = (noseShare - 0.4) * 120;
 
-  // The face points stop at the forehead; hair sits above it. Roughly half a
-  // face-height above the forehead covers most cuts up to a quiff.
-  const hairTop = pts[P.forehead].y - faceHeight * 0.5;
+  // The face points stop at the forehead; hair sits above it. A third of a
+  // face-height above the forehead covers most cuts. (Was half: too much,
+  // it pushed people to hold the phone too far away.)
+  const hairTop = pts[P.forehead].y - faceHeight * 0.33;
 
   return { faceHeight, centreX: (box.x0 + box.x1) / 2, hairTop, turn, tilt, nod, box };
 }
@@ -116,12 +129,13 @@ export function light(grey: Uint8ClampedArray, w: number, h: number, box: Geomet
 export type Verdict = { ok: boolean; say: string };
 
 export function judge(shot: Shot, g: Geometry | null, l: Light | null, wantSide?: 1 | -1): Verdict {
-  if (!g || !l) return { ok: false, say: shot === "front" ? "Put your face in the oval" : "Turn back a little, we lost your face" };
+  if (!g || !l) return { ok: false, say: shot === "front" ? "Put your face in the circle" : "Turn back a little, we lost your face" };
   const turnAbs = Math.abs(g.turn);
   if (shot === "front") {
     if (g.faceHeight < LIMITS.faceMinHeight) return { ok: false, say: "Move a little closer" };
     if (g.faceHeight > LIMITS.faceMaxHeight) return { ok: false, say: "Move a little further away" };
     if (Math.abs(g.centreX - 0.5) > 0.15) return { ok: false, say: "Move your face to the middle" };
+    if (g.box.y1 > 1.02) return { ok: false, say: "Tilt the phone down a little" };
   }
   if (g.hairTop < LIMITS.hairRoomAbove) return { ok: false, say: "Show the top of your head: tilt the phone up a little" };
   if (l.background - l.face > LIMITS.backlightGap) return { ok: false, say: "The light is behind you. Turn to face the light" };
