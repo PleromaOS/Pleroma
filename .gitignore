@@ -47,3 +47,6 @@ __pycache__/
 *.pyc
 *.pyo
 .pytest_cache/
+
+# Built on Netlify from pleroma-app/, never committed
+product/landing-site/consult/

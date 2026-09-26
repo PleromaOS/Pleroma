@@ -1,0 +1,51 @@
+# How Netlify builds pleromaos.nl (read on every push to GitHub; this file
+# overrides the build settings typed into Netlify's website).
+#
+# The site is two things side by side:
+#   /            the marketing pages in product/landing-site (plain files, as before)
+#   /consult/    the client consultation app, built from pleroma-app/ (React)
+#
+# The build step turns the React code into plain files and copies them into
+# the published folder under consult/. That copy is made fresh on Netlify
+# every time and is never saved in the repository.
+
+[build]
+  publish = "product/landing-site"
+  command = "cd pleroma-app && npm ci && npm run build && rm -rf ../product/landing-site/consult && cp -r dist ../product/landing-site/consult"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# Every /consult/<shop>/... address opens the app, which reads the shop and
+# the entry (advert or in-shop) from the address itself.
+[[redirects]]
+  from = "/consult/*"
+  to = "/consult/index.html"
+  status = 200
+
+# The old consultation pages are retired (2026-09-26). Anyone with an old link
+# lands in the new app on the test shop. "force" is needed because the old
+# files still exist in the folder; they stay in git history and can come back.
+[[redirects]]
+  from = "/app.html"
+  to = "/consult/pleroma-test"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/app"
+  to = "/consult/pleroma-test"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tryon.html"
+  to = "/consult/pleroma-test"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tryon"
+  to = "/consult/pleroma-test"
+  status = 301
+  force = true

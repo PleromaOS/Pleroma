@@ -1,0 +1,200 @@
+/* ==========================================================================
+   PleromaOS — design tokens
+   The single source of truth for colour, type, space, radius and motion.
+
+   Dark is canonical. Light is derived from the cream of the Pleroma logo
+   lockup — it is a supported equal, not a degraded fallback.
+
+   Theming is one attribute on <html>. No component names a raw value and no
+   component knows which theme it is in.
+
+       <html data-theme="dark">    default
+       <html data-theme="light">
+
+   Resolution order: stored user choice -> OS preference -> dark.
+   ========================================================================== */
+
+:root,
+:root[data-theme="dark"] {
+  /* -- Surface ------------------------------------------------------------ */
+  --bg:            #141210;  /* page */
+  --surface:       #1c1917;  /* card */
+  --surface-2:     #242019;  /* inset, nested panel, input */
+  --surface-3:     #2b2620;  /* hover, pressed */
+  --line:          #332c24;  /* hairline */
+  --line-strong:   #453c30;  /* emphasised divider */
+
+  /* -- Text --------------------------------------------------------------- */
+  --ink:           #f4efe6;  /* primary */
+  --ink-2:         #b3a894;  /* secondary */
+  --ink-3:         #908674;  /* meta, captions */
+  --ink-on-gold:   #1a1816;  /* text on a gold fill */
+
+  /* -- Brand -------------------------------------------------------------- */
+  --gold:          #c9a96e;  /* accent fill, the OS in the wordmark */
+  --gold-text:     #c9a96e;  /* gold as type */
+  --gold-dim:      #9c8555;  /* gold borders, low emphasis */
+  --gold-wash:     #2a2317;  /* tinted background */
+  --forest:        #4a7a5c;  /* secondary brand, trust. FILL ONLY on dark */
+
+  /* -- Status ------------------------------------------------------------- */
+  --ok:            #4a7a5c;
+  --ok-text:       #6fae86;
+  --ok-wash:       #1a2a1f;
+
+  --watch:         #c98a4e;
+  --watch-text:    #d99a5e;
+  --watch-wash:    #2a2017;
+
+  --risk:          #c96b56;
+  --risk-text:     #e07760;
+  --risk-wash:     #2e1b17;
+
+  --scrim:         rgba(0, 0, 0, .55);
+}
+
+:root[data-theme="light"] {
+  --bg:            #efe9dd;
+  --surface:       #faf6ec;
+  --surface-2:     #f3ecdf;
+  --surface-3:     #ebe3d3;
+  --line:          #ded3c0;
+  --line-strong:   #c9bca3;
+
+  --ink:           #1a1816;
+  --ink-2:         #5c5347;
+  --ink-3:         #7a6f5e;
+  --ink-on-gold:   #1a1816;
+
+  /* Gold is a FILL in light mode, never type: #c9a96e on cream is 2.07:1. */
+  --gold:          #c9a96e;
+  --gold-text:     #7d5f22;
+  --gold-dim:      #b39359;
+  --gold-wash:     #f5ecd8;
+  --forest:        #2d4a35;
+
+  /* Status pigments darken rather than invert — the dark-mode red reads as
+     pink on cream. The meaning is identical; the value is not. */
+  --ok:            #2d4a35;
+  --ok-text:       #2d4a35;
+  --ok-wash:       #e4ecdf;
+
+  --watch:         #8a5a1e;
+  --watch-text:    #8a5a1e;
+  --watch-wash:    #f7ead6;
+
+  --risk:          #9e3a2a;
+  --risk-text:     #9e3a2a;
+  --risk-wash:     #f7e2dd;
+
+  --scrim:         rgba(26, 24, 22, .35);
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #efe9dd; --surface: #faf6ec; --surface-2: #f3ecdf; --surface-3: #ebe3d3;
+    --line: #ded3c0; --line-strong: #c9bca3;
+    --ink: #1a1816; --ink-2: #5c5347; --ink-3: #7a6f5e; --ink-on-gold: #1a1816;
+    --gold: #c9a96e; --gold-text: #7d5f22; --gold-dim: #b39359; --gold-wash: #f5ecd8;
+    --forest: #2d4a35;
+    --ok: #2d4a35; --ok-text: #2d4a35; --ok-wash: #e4ecdf;
+    --watch: #8a5a1e; --watch-text: #8a5a1e; --watch-wash: #f7ead6;
+    --risk: #9e3a2a; --risk-text: #9e3a2a; --risk-wash: #f7e2dd;
+    --scrim: rgba(26, 24, 22, .35);
+  }
+}
+
+/* ==========================================================================
+   Typography
+   Two families. Never a third.
+   The serif carries identity: wordmark, client names, page titles, and the one
+   emphasis line that closes a card. Everything else is the sans.
+   ========================================================================== */
+
+:root {
+  --font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-ui: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* size / line-height */
+  --display-1:     40px;  --display-1-lh: 44px;   /* serif 600 */
+  --display-2:     32px;  --display-2-lh: 37px;   /* serif 600 */
+  --title-1:       24px;  --title-1-lh:   30px;   /* serif 600 — client name */
+  --title-2:       20px;  --title-2-lh:   26px;   /* serif 600 */
+  --heading:       17px;  --heading-lh:   23px;   /* sans 600 */
+  --body:          16px;  --body-lh:      24px;   /* sans 400 */
+  --body-sm:       14px;  --body-sm-lh:   20px;   /* sans 400 */
+  --caption:       13px;  --caption-lh:   18px;   /* sans 400 */
+  --micro:         11px;  --micro-lh:     14px;   /* sans 600, UPPERCASE, .12em */
+
+  --micro-tracking: .12em;
+
+  /* -- Space. 8px grid. 4 only inside a component. --------------------- */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-7:  32px;
+  --space-8:  40px;
+  --space-9:  48px;
+  --space-10: 64px;
+
+  /* -- Radius ---------------------------------------------------------- */
+  --r-sm:   8px;    /* inputs, small tiles, thumbnails */
+  --r-md:   10px;   /* inner panels, option cards, callouts */
+  --r-lg:   14px;   /* CARD DEFAULT */
+  --r-xl:   20px;   /* phone frames, sheets */
+  --r-pill: 999px;  /* chips, toggles, buttons, avatars */
+
+
+  /* -- Visual choice sizing ---------------------------------------------
+     This product is chosen with the eyes, not read. A client recognises a
+     picture; they do not parse a list. The picture governs the layout.
+
+     390px screen - 32px gutters = 358px of content.
+     Two across with a 12px gap = 173px per tile, which is a legible head.
+     Three across (catalogue only) = 111px.                                */
+  --tile-gap:    12px;
+  --tile-2up:    173px;   /* questions  - 2 across, never more than 4 */
+  --tile-3up:    111px;   /* catalogue  - 3 across, scrolls           */
+  --tile-check:  28px;    /* selected mark, top-right of the frame    */
+
+  /* -- Motion. Purposeful only; this runs on old phones. ---------------- */
+  --t-state:   120ms;
+  --t-advance: 220ms;
+  --t-enter:   260ms;
+  --t-progress: 300ms;
+  --ease:      cubic-bezier(.2, .8, .2, 1);
+
+  /* There are NO drop shadows in this system. Depth is surface value plus
+     hairlines. A shadow is invisible on near-black and looks like a different
+     product on warm cream. */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --t-state: 100ms; --t-advance: 100ms; --t-enter: 100ms; --t-progress: 100ms;
+  }
+}
+
+/* ==========================================================================
+   Verified contrast, WCAG 2.1 AA. All pass for normal text.
+
+                          dark    light
+   ink       / surface    15.3    16.4
+   ink-2     / surface     7.5     7.0
+   ink-3     / surface     4.9     4.6
+   gold-text / surface     7.8     5.5
+   ok-text   / surface     6.7     9.1
+   watch-text/ surface     5.1     5.5
+   risk-text / surface     5.8     6.3
+   ink-on-gold / gold      7.9     7.9
+
+   --forest on dark is 3.5:1. It is a FILL and BORDER colour only; never text.
+   That is what --ok-text exists for.
+
+   In light mode --surface against --bg is 1.12:1 on purpose — a hard white
+   card on cream looks cheap. The 1px --line border does the separating.
+   NEVER remove the card border in light mode.
+   ========================================================================== */
