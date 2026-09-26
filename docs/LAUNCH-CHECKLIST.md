@@ -63,7 +63,18 @@ Tick an item only when it is done and tested, and add the date.
       before that). Confirm this is fine, and review the new wording (version
       selfie-2026-09-v2: three photos, used for the render AND the barber's brief).
 
+- [ ] **How long raw scan photos are kept.** Today they stay until the client
+      asks for deletion (the persistent AI clone decision in CONTEXT.md needs
+      them). Decide a limit for clients who never come back, and make the
+      deletion flow remove the files in storage too, not just the table rows.
+      Three 25-byte fake test files from the door test sit in client-photos
+      under 0ff1680d…/51e38ccb…/ (the database won't delete storage files
+      directly; remove them with the Storage API or the dashboard).
+
 ## Already done
+
+- [x] 2026-09-26 Private photo storage: door 9 (save-photos) stores the three scan
+      photos per consultation after email + consent; renders draw on the stored front photo
 
 - [x] 2026-09-26 Data model: 11 tables with shop separation, frozen briefs,
       guarantees, consents

@@ -10,9 +10,10 @@
 // asks door 6 every 2.5 seconds whether the render is done.
 //
 // Since the scan moved to the start (2026-09-26) the render is STARTED here,
-// on arrival, with the front photo. If the photos were cleared by a page
-// refresh, the client is sent back for a quick rescan; their email and
-// answers are kept, so the rescan comes straight back here.
+// on arrival. The server draws on the front photo already in private storage
+// (door 9), so a page refresh no longer loses anything. Only if the photos
+// were never stored does the client go back for a quick rescan (email and
+// answers kept, so the rescan comes straight back here).
 
 import { useEffect, useRef, useState } from "react";
 import { renderStatus, requestRender } from "../api/doors";
@@ -26,23 +27,23 @@ const POLL_MS = 2500;
 const GIVE_UP_MS = 180_000;
 
 export function Wait({ flow }: { flow: Flow }) {
-  const { c, update, go, photos } = flow;
+  const { c, update, go } = flow;
   const [elapsed, setElapsed] = useState(0);
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
   const [problem, setProblem] = useState<string | null>(null);
   const started = useRef(Date.now());
   const asked = useRef(false);
-  const lostPhotos = !c.renderId && !photos;
+  const lostPhotos = !c.renderId && !c.photosSaved;
 
   // Start the render once, on arrival.
   useEffect(() => {
-    if (c.renderId || !photos || !c.ticket || asked.current) return;
+    if (c.renderId || !c.photosSaved || !c.ticket || asked.current) return;
     asked.current = true;
-    requestRender(c.ticket, photos.front)
+    requestRender(c.ticket)
       .then((r) => update({ renderId: r.render_id, rendersLeft: r.renders_left, imageUrl: undefined, eligible: undefined }))
       .catch((e) => { setProblem(explain(e)); setFailed(true); });
-  }, [c.renderId, c.ticket, photos, update]);
+  }, [c.renderId, c.ticket, c.photosSaved, update]);
 
   function rescan() { update({ renderId: undefined }); go("scan"); }
 
@@ -70,7 +71,7 @@ export function Wait({ flow }: { flow: Flow }) {
     if (!c.ticket) return;
     setProblem(null);
     try {
-      const r = await requestRender(c.ticket, photos?.front);
+      const r = await requestRender(c.ticket);
       update({ renderId: r.render_id, rendersLeft: r.renders_left });
       setFailed(false); setElapsed(0);
     } catch (e) {
@@ -92,7 +93,7 @@ export function Wait({ flow }: { flow: Flow }) {
     return (
       <Page>
         <h1 className="display display--sm">One more quick scan</h1>
-        <p className="lede">The page reloaded, and your photos are only ever kept on your phone until they're used, so they were cleared. Your answers are saved.</p>
+        <p className="lede">Your photos didn't reach us, so we need them once more. Your answers are saved.</p>
         <Button onClick={rescan}>Scan again</Button>
       </Page>
     );

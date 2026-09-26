@@ -63,7 +63,7 @@ export function FaceScan({ onDone, onNoCamera, debug }: {
   useEffect(() => {
     let stream: MediaStream | null = null, cancelled = false;
     const giveUp = setTimeout(() => !cancelled && onNoCamera(), 6000);
-    navigator.mediaDevices?.getUserMedia({ video: { facingMode: "user", width: { ideal: 1280 }, height: { ideal: 1280 } }, audio: false })
+    navigator.mediaDevices?.getUserMedia({ video: { facingMode: "user", width: { ideal: 1920 }, height: { ideal: 1920 } }, audio: false })
       .then((s) => {
         clearTimeout(giveUp);
         if (cancelled) { s.getTracks().forEach((t) => t.stop()); return; }

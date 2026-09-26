@@ -1,10 +1,12 @@
 // Shrinks a photo before it is sent.
 //
-// A phone camera photo can be 5-12 MB. The renderer does not need more than
-// about 1200 px on the long side to see hair, and a smaller photo uploads in a
-// second on mobile data instead of twenty. Returns a JPEG as base64 text.
+// A phone camera photo can be 5-12 MB. 1600 px on the long side keeps enough
+// detail for the hair reading (strands, curl pattern, hairline, greys) while
+// the three scan photos together stay around 1.5 MB: a few seconds on mobile
+// data. (Was 1200 px; raised 2026-09-26 so the analyser has more to read.)
+// Returns a JPEG as base64 text.
 
-const LONG_SIDE = 1200;
+const LONG_SIDE = 1600;
 
 export function drawToJpeg(source: CanvasImageSource, width: number, height: number, mirror = false): string {
   const scale = Math.min(1, LONG_SIDE / Math.max(width, height));
@@ -20,7 +22,7 @@ export function drawToJpeg(source: CanvasImageSource, width: number, height: num
     ctx.scale(-1, 1);
   }
   ctx.drawImage(source, 0, 0, canvas.width, canvas.height);
-  return canvas.toDataURL("image/jpeg", 0.88);
+  return canvas.toDataURL("image/jpeg", 0.9);
 }
 
 export function fileToJpeg(file: File): Promise<string> {
@@ -43,5 +45,5 @@ export function samplePhoto(): string {
   ctx.fillStyle = "#1a1816"; ctx.beginPath(); ctx.ellipse(300, 240, 160, 90, 0, Math.PI, 0); ctx.fill();
   ctx.fillStyle = "#908674"; ctx.font = "28px Inter, sans-serif"; ctx.textAlign = "center";
   ctx.fillText("SAMPLE PHOTO", 300, 740);
-  return canvas.toDataURL("image/jpeg", 0.88);
+  return canvas.toDataURL("image/jpeg", 0.9);
 }

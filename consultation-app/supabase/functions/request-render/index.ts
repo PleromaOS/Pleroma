@@ -2,8 +2,10 @@
 //
 // What it does:   the only way a render happens. Checks that everything needed
 //                 is in place, then asks the renderer (hair-transfer) to start.
-//                 The first call sends the selfie; re-renders reuse it unless a
-//                 new one is sent.
+//                 It draws on the client's stored FRONT scan photo (door 9,
+//                 save-photos). A photo sent in the call still wins, and an
+//                 older consultation without scan photos reuses its first
+//                 render's photo.
 // What it does NOT do: it does not wait for the image (that takes 30-60s; the
 //                 browser asks render-status). It does not charge the shop: a
 //                 consultation only counts at its first SUCCESSFUL render.
@@ -93,7 +95,9 @@ Deno.serve(async (req: Request) => {
 
   const photo = typeof body.photo_base64 === "string" ? body.photo_base64 : null;
   if (photo && photo.length > MAX_PHOTO_CHARS) return reply(413, { error: "photo_too_large" });
-  const reusePath = renders.find((r) => r.source_photo_path)?.source_photo_path ?? null;
+  const { data: front } = await client
+    .from("client_photos").select("storage_path").eq("consultation_id", c.id).eq("kind", "front").maybeSingle();
+  const reusePath = front?.storage_path ?? renders.find((r) => r.source_photo_path)?.source_photo_path ?? null;
   if (!photo && !reusePath) return reply(400, { error: "photo_required" });
 
   // Hand the order to the kitchen, with the key only doors hold.

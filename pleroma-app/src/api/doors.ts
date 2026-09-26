@@ -47,9 +47,9 @@ export const giveConsent = (t: Ticket, purpose: "render_selfie" | "after_photo",
   knock<{ ok: true }>("give-consent", { ...t, purpose, wording_version });
 
 // 5
-export const requestRender = (t: Ticket, photo_base64?: string) =>
-  knock<{ render_id: string; renders_left: number }>(
-    "request-render", photo_base64 ? { ...t, photo_base64 } : { ...t });
+// The render uses the stored front photo (door 9); no photo is sent again.
+export const requestRender = (t: Ticket) =>
+  knock<{ render_id: string; renders_left: number }>("request-render", { ...t });
 
 // 6
 export type RenderStatus = {
@@ -65,6 +65,11 @@ export const renderStatus = (t: Ticket, render_id: string) =>
 export const confirmRender = (t: Ticket, render_id: string, terms_version: string) =>
   knock<{ brief_id: string; guarantee_eligible: boolean; valid_until: string }>(
     "confirm-render", { ...t, render_id, terms_version });
+
+// 9 · the three scan photos, stored privately (a second call replaces them)
+export type PhotoSet = { front: string; sideA: string; sideB: string; source: "scan" | "library" };
+export const savePhotos = (t: Ticket, p: PhotoSet) =>
+  knock<{ ok: true }>("save-photos", { ...t, source: p.source, front: p.front, side_a: p.sideA, side_b: p.sideB });
 
 // 8
 export type Handoff =

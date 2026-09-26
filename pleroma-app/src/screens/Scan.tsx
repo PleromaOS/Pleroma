@@ -6,19 +6,22 @@
 //   scan    the Face ID-style scan (FaceScan), or the photo library.
 //   review  the three photos, "Looks good" or "Scan again".
 //
-// What it deliberately does NOT do: send anything. The photos stay in the
-// phone's memory until the client gives their email; the email screen then
-// records the consent and only after that do photos leave the phone.
-// Cost of that choice: a page refresh before then clears the photos, and the
-// client scans again (about 15 seconds).
+// What it deliberately does NOT do: send anything before the email. The
+// photos stay in the phone's memory until the client gives their email; the
+// email screen then records the consent and stores them (door 9). A client
+// who already gave their email (a rescan) has them stored straight away here.
+// Cost of that choice: a page refresh before the email clears the photos, and
+// the client scans again (about 15 seconds).
 
 import { useCallback, useState } from "react";
+import { savePhotos } from "../api/doors";
 import { FaceScan, type ScanPhotos } from "../components/FaceScan";
 import { HeadTurning } from "../components/HeadTurning";
 import { PhotoLibrary } from "../components/PhotoLibrary";
-import { Button, Page } from "../components/ui";
+import { Button, Page, Problem } from "../components/ui";
 import { IS_DEMO } from "../config";
 import type { Flow } from "../flow/useConsultation";
+import { explain } from "../lib/messages";
 import { samplePhoto } from "../lib/photo";
 import { sound } from "../lib/sound";
 
@@ -26,8 +29,11 @@ export function Scan({ flow }: { flow: Flow }) {
   const { c, update, go, back, photos, setPhotos } = flow;
   const [agreed, setAgreed] = useState(!!c.consentTappedAt);
   const [stage, setStage] = useState<"intro" | "scan" | "library" | "review">(photos ? "review" : "intro");
+  const [busy, setBusy] = useState(false);
+  const [problem, setProblem] = useState<string | null>(null);
 
-  const done = useCallback((p: ScanPhotos) => { setPhotos(p); setStage("review"); }, [setPhotos]);
+  const fromScan = useCallback((p: ScanPhotos) => { setPhotos({ ...p, source: "scan" }); update({ photosSaved: false }); setStage("review"); }, [setPhotos, update]);
+  const fromLibrary = useCallback((p: ScanPhotos) => { setPhotos({ ...p, source: "library" }); update({ photosSaved: false }); setStage("review"); }, [setPhotos, update]);
   const noCamera = useCallback(() => setStage("library"), []);
 
   function agree(on: boolean) {
@@ -37,22 +43,31 @@ export function Scan({ flow }: { flow: Flow }) {
 
   // Where to go next: a client who already gave their email (they are
   // rescanning after a refresh or a failed render) skips what they've done.
-  function next() {
+  async function next() {
     if (!c.emailGiven) return go("email");
-    update({ renderId: undefined });
-    go(c.answers.styling_effort ? "wait" : "texture");
+    if (!photos || !c.ticket) return;
+    setBusy(true); setProblem(null);
+    try {
+      await savePhotos(c.ticket, photos);
+      update({ photosSaved: true, renderId: undefined });
+      go(c.answers.styling_effort ? "wait" : "texture");
+    } catch (e) {
+      setProblem(explain(e));
+    } finally {
+      setBusy(false);
+    }
   }
 
   if (stage === "scan") {
     return (
       <main className="scan-page">
-        <FaceScan onDone={done} onNoCamera={noCamera} />
+        <FaceScan onDone={fromScan} onNoCamera={noCamera} />
         <button className="link" onClick={() => setStage("library")}>Use photos from my library instead</button>
       </main>
     );
   }
 
-  if (stage === "library") return <PhotoLibrary onDone={done} onBack={() => setStage("intro")} />;
+  if (stage === "library") return <PhotoLibrary onDone={fromLibrary} onBack={() => setStage("intro")} />;
 
   if (stage === "review" && photos) {
     return (
@@ -63,9 +78,10 @@ export function Scan({ flow }: { flow: Flow }) {
             <figure key={k}><img src={photos[k]} alt="" /><figcaption>{k === "front" ? "Front" : "Side"}</figcaption></figure>
           ))}
         </div>
-        <p className="caption">They stay on your phone until you continue.</p>
-        <Button onClick={next}>Looks good</Button>
-        <Button kind="secondary" onClick={() => { setPhotos(null); setStage("intro"); }}>Scan again</Button>
+        <p className="caption">{c.emailGiven ? "They're saved privately when you continue." : "They stay on your phone until you continue."}</p>
+        <Problem message={problem} />
+        <Button onClick={next} busy={busy}>Looks good</Button>
+        <Button kind="secondary" disabled={busy} onClick={() => { setPhotos(null); setStage("intro"); }}>Scan again</Button>
       </Page>
     );
   }
@@ -97,7 +113,7 @@ export function Scan({ flow }: { flow: Flow }) {
         {agreed ? "Start scan" : "Turn on the switch to start"}
       </Button>
       {IS_DEMO && (
-        <Button kind="secondary" disabled={!agreed} onClick={() => { const p = samplePhoto(); done({ front: p, sideA: p, sideB: p }); }}>
+        <Button kind="secondary" disabled={!agreed} onClick={() => { const p = samplePhoto(); fromScan({ front: p, sideA: p, sideB: p }); }}>
           Demo: use sample photos
         </Button>
       )}

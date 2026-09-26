@@ -6,12 +6,13 @@
 // the client back to the start. Session storage is wiped when the tab closes.
 //
 // What it deliberately does NOT keep: the photos. A photo of a face is
-// Article 9 data, so the three scan photos live only in memory until they
-// are sent, and are never written to the phone's storage by us.
+// Article 9 data, so the three scan photos live only in memory on the phone
+// until the email step sends them to private storage (door 9), and are never
+// written to the phone's storage by us.
 
 import { useCallback, useEffect, useState } from "react";
 import type { Handoff, Ticket } from "../api/doors";
-import type { ScanPhotos } from "../components/FaceScan";
+import type { PhotoSet } from "../api/doors";
 import type { StepId } from "./steps";
 
 export type Consultation = {
@@ -23,6 +24,7 @@ export type Consultation = {
   history: StepId[];              // for the back button
   consentTappedAt?: string;       // when the photo switch was turned on (sent with the email)
   emailGiven?: boolean;
+  photosSaved?: boolean;          // the current photos are in private storage
   answers: Record<string, string | boolean>;
   styleName?: string;             // for display only; the door stores the style id
   renderId?: string;
@@ -44,7 +46,7 @@ function load(shop: string, entry: "campaign" | "shop"): Consultation {
 
 export function useConsultation(shop: string, entry: "campaign" | "shop") {
   const [c, setC] = useState<Consultation>(() => load(shop, entry));
-  const [photos, setPhotos] = useState<ScanPhotos | null>(null); // memory only, see above
+  const [photos, setPhotos] = useState<PhotoSet | null>(null); // memory only, see above
 
   useEffect(() => {
     try { sessionStorage.setItem(key(shop, entry), JSON.stringify(c)); } catch { /* ignore */ }

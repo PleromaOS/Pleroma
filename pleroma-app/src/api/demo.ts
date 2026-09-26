@@ -6,7 +6,7 @@
 
 import { DoorError as DemoError } from "./errors";
 
-let state: { email?: string; consent?: boolean; renders: number; confirmed?: boolean } = { renders: 0 };
+let state: { email?: string; consent?: boolean; photos?: boolean; renders: number; confirmed?: boolean } = { renders: 0 };
 const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
 let renderStartedAt = 0;
 
@@ -34,8 +34,14 @@ export async function demoDoor(door: string, body: Record<string, unknown>): Pro
       if (!state.email) throw new DemoError("email_required_first", 409);
       state.consent = true;
       return { ok: true };
+    case "save-photos":
+      if (!state.email) throw new DemoError("email_required_first", 409);
+      if (!state.consent) throw new DemoError("selfie_consent_required", 409);
+      state.photos = true;
+      return { ok: true };
     case "request-render":
       if (!state.consent) throw new DemoError("selfie_consent_required", 409);
+      if (!state.photos) throw new DemoError("photo_required", 400);
       if (state.renders >= 4) throw new DemoError("no_renders_left", 429);
       state.renders++;
       renderStartedAt = Date.now();

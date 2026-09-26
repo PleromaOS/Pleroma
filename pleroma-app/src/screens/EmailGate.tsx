@@ -4,10 +4,11 @@
 // Door 2 links the email to the consultation. Then door 4 records the photo
 // consent the client gave on the scan screen: consent belongs to a person,
 // and the email is what makes them one. Nothing about the photos has left the
-// phone before this point.
+// phone before this point; right after the consent, door 9 stores the three
+// photos privately. If a refresh cleared the photos, the client rescans next.
 
 import { useMemo, useState } from "react";
-import { giveConsent, giveEmail } from "../api/doors";
+import { giveConsent, giveEmail, savePhotos } from "../api/doors";
 import { SELFIE_CONSENT_VERSION } from "../config";
 import { Button, Disclosure, Page, Problem } from "../components/ui";
 import type { Flow } from "../flow/useConsultation";
@@ -23,7 +24,7 @@ const TYPOS: Record<string, string> = {
 };
 
 export function EmailGate({ flow }: { flow: Flow }) {
-  const { c, update, go, back } = flow;
+  const { c, update, go, back, photos } = flow;
   const [email, setEmail] = useState("");
   const [busy, setBusy] = useState(false);
   const [problem, setProblem] = useState<string | null>(null);
@@ -42,6 +43,9 @@ export function EmailGate({ flow }: { flow: Flow }) {
       await giveEmail(c.ticket, trimmed);
       if (c.consentTappedAt) await giveConsent(c.ticket, "render_selfie", SELFIE_CONSENT_VERSION);
       update({ emailGiven: true });
+      if (!photos) return go("scan"); // cleared by a refresh: quick rescan, then on
+      await savePhotos(c.ticket, photos);
+      update({ photosSaved: true });
       go("texture");
     } catch (e) {
       setProblem(explain(e));
