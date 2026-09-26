@@ -11,15 +11,23 @@
 // soft "searching" sound that brightens as you get closer and goes silent when
 // it's right, and one large line of text only when something needs fixing.
 //
-// Low light: the area around the window turns bright white to light the face,
-// like the iPhone's front flash. Every check runs on the phone; the camera
+// Low light: the WHOLE screen turns white and the camera circle shrinks, so the
+// screen itself lights the face (like the iPhone's front flash); the guidance
+// switches to dark text so it stays readable. A website cannot turn the
+// brightness up itself (only an installed app can), so we ask once.
+//
+// "Hold still" is decided two ways (fixed 2026-09-26, it never let go when the
+// phone was close): the face must not be moving between checks, and the
+// picture must be at least 60% as crisp as the best frame seen of this person
+// in this pose. Sharpness is measured on a fixed-size cut-out of the face, so
+// holding the phone close or far no longer changes the number. Every check runs on the phone; the camera
 // picture is not sent anywhere by this screen.
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { FaceLandmarker } from "@mediapipe/tasks-vision";
-import { findFace, greyFrame, preloadFaceTracker } from "../lib/faceTracker";
+import { faceCrop, findFace, greyFrame, preloadFaceTracker } from "../lib/faceTracker";
 import { drawToJpeg } from "../lib/photo";
-import { geometry, judge, light, LIMITS, toWindow, type Geometry, type Light, type Verdict } from "../lib/photoQuality";
+import { geometry, judge, light, LIMITS, sharpness, toWindow, type Geometry, type Light, type Verdict } from "../lib/photoQuality";
 import { sound } from "../lib/sound";
 
 export type ScanPhotos = { front: string; sideA: string; sideB: string };
@@ -28,7 +36,8 @@ type Phase = "front" | "sideA" | "sideB" | "done";
 const TICK_MS = 110;
 const HOLD = { front: 6, side: 3 };    // checks in a row that must pass (~0.65 s front, ~0.35 s side)
 const COACH_DELAY = 6;                 // a problem must last ~0.7 s before we mention it (no flicker)
-const DARK_TICKS_FOR_LIGHT = 8;        // ~0.9 s too dark → switch the screen light on
+const DARK_TICKS_FOR_LIGHT = 8;        // ~0.9 s darkish → switch the screen light on
+const LIGHT_MARGIN = 15;               // switch on a little BEFORE "too dark", so it helps early
 const TICKS = 72;                      // marks around the ring
 
 export function FaceScan({ onDone, onNoCamera, debug }: {
@@ -44,7 +53,7 @@ export function FaceScan({ onDone, onNoCamera, debug }: {
   const [coach, setCoach] = useState<string | null>(null);
   const [tracking, setTracking] = useState(false);
   const [screenLight, setScreenLight] = useState(false);
-  const [readings, setReadings] = useState<{ g: Geometry | null; l: Light | null; v: Verdict } | null>(null);
+  const [readings, setReadings] = useState<Readings | null>(null);
   const photos = useRef<Partial<ScanPhotos>>({});
   const firstSide = useRef<1 | -1 | null>(null);
   const phaseRef = useRef<Phase>("front");
@@ -67,6 +76,14 @@ export function FaceScan({ onDone, onNoCamera, debug }: {
     return () => { cancelled = true; clearTimeout(giveUp); stream?.getTracks().forEach((t) => t.stop()); sound.stop(); };
   }, [onNoCamera]);
 
+  // Keep the screen from dimming or locking mid-scan (where the phone allows it).
+  useEffect(() => {
+    let lock: { release: () => Promise<void> } | null = null;
+    const nav = navigator as Navigator & { wakeLock?: { request: (t: "screen") => Promise<{ release: () => Promise<void> }> } };
+    nav.wakeLock?.request("screen").then((l) => { lock = l; }).catch(() => {});
+    return () => { void lock?.release().catch(() => {}); };
+  }, []);
+
   const take = useCallback((v: HTMLVideoElement) => {
     sound.shutter();
     return drawToJpeg(v, v.videoWidth, v.videoHeight);
@@ -76,27 +93,38 @@ export function FaceScan({ onDone, onNoCamera, debug }: {
   useEffect(() => {
     if (!tracker || !live) return;
     let streak = 0, badStreak = 0, darkStreak = 0;
+    let best = 0, bestFor: Phase = "front";          // crispest frame seen in this pose
+    let prev: { x: number; y: number } | null = null; // nose position at the last check
     const loop = setInterval(() => {
       const v = video.current, p = phaseRef.current;
       if (!v || v.readyState < 2 || p === "done") return;
 
       const raw = findFace(tracker, v, performance.now());
-      let g: Geometry | null = null, l: Light | null = null;
+      let g: Geometry | null = null, l: Light | null = null, sharp = 0, move = 0;
       if (raw) {
         g = geometry(toWindow(raw, v.videoWidth, v.videoHeight));
         const full = geometry(raw); // light is measured on the full picture's face box
         const { grey, w, h } = greyFrame(v);
         l = light(grey, w, h, full.box);
-      }
+        sharp = sharpness(faceCrop(v, v.videoWidth, v.videoHeight, full.box));
+        // Movement: how far the nose moved since the last check, as a share of the face size.
+        const nose = raw[1];
+        move = prev ? Math.hypot(nose.x - prev.x, nose.y - prev.y) / Math.max(0.05, full.faceHeight) : 1;
+        prev = { x: nose.x, y: nose.y };
+      } else prev = null;
+      if (bestFor !== p) { best = 0; bestFor = p; }
+      // The best slowly fades, so one lucky frame can't set an impossible bar.
+      best = Math.max(best * 0.99, sharp);
+      const steady = sharp >= Math.max(LIMITS.sharpFloor, best * LIMITS.sharpVsBest) && move <= LIMITS.moveMax;
       setTracking(!!g);
 
       // Which way the second side must turn: the opposite of the first.
       const want = p === "sideB" && firstSide.current ? ((-firstSide.current) as 1 | -1) : undefined;
-      const verdict = judge(p === "front" ? "front" : "side", g, l, want);
-      if (debug) setReadings({ g, l, v: verdict });
+      const verdict = judge(p === "front" ? "front" : "side", g, l, want, steady);
+      if (debug) setReadings({ g, l, v: verdict, sharp, best, move });
 
-      // Screen light: switched on after a moment of "too dark", and left on.
-      if (g && l && l.face < LIMITS.brightMin) {
+      // Screen light: switched on after a moment of dim light, and left on.
+      if (g && l && l.face < LIMITS.brightMin + LIGHT_MARGIN) {
         if (++darkStreak >= DARK_TICKS_FOR_LIGHT) setScreenLight(true);
       } else darkStreak = 0;
 
@@ -166,7 +194,7 @@ export function FaceScan({ onDone, onNoCamera, debug }: {
       </div>
 
       <p className={`scan__coach ${coach ? "is-on" : ""}`} role="status" aria-live="polite">{coach ?? " "}</p>
-      {screenLight && phase !== "done" && <p className="scan__note">Screen light on</p>}
+      {screenLight && phase !== "done" && <p className="scan__note">Turn your screen brightness all the way up</p>}
 
       {debug && readings && <Numbers r={readings} />}
     </div>
@@ -207,7 +235,9 @@ function Check() {
   );
 }
 
-function Numbers({ r }: { r: { g: Geometry | null; l: Light | null; v: Verdict } }) {
+type Readings = { g: Geometry | null; l: Light | null; v: Verdict; sharp: number; best: number; move: number };
+
+function Numbers({ r }: { r: Readings }) {
   const { g, l } = r;
   const row = (name: string, value: number | undefined, limit: string, digits = 0) =>
     <div><dt>{name}</dt><dd>{value === undefined ? "–" : value.toFixed(digits)}</dd><dd className="limit">{limit}</dd></div>;
@@ -221,7 +251,8 @@ function Numbers({ r }: { r: { g: Geometry | null; l: Light | null; v: Verdict }
       {row("Face brightness", l?.face, `${LIMITS.brightMin}–${LIMITS.brightMax}`)}
       {row("Background − face", l ? l.background - l.face : undefined, `≤ ${LIMITS.backlightGap}`)}
       {row("Blown out %", l ? l.blownOut * 100 : undefined, `≤ ${LIMITS.blownOutMax * 100}`)}
-      {row("Sharpness", l?.sharp, `≥ ${LIMITS.sharpMin}`)}
+      {row("Sharpness", r.sharp, `≥ ${Math.max(LIMITS.sharpFloor, r.best * LIMITS.sharpVsBest).toFixed(1)} (best ${r.best.toFixed(1)})`, 1)}
+      {row("Movement", r.move, `≤ ${LIMITS.moveMax}`, 3)}
       <div><dt>Verdict</dt><dd className="limit" style={{ gridColumn: "2 / 4" }}>{r.v.say}</dd></div>
     </dl>
   );

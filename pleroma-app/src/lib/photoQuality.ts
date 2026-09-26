@@ -27,7 +27,9 @@ export const LIMITS = {
   brightMax: 205,
   backlightGap: 55,        // background this much brighter than the face = light behind them
   blownOutMax: 0.10,       // at most 10% of the face pure white
-  sharpMin: 22,            // edge crispness; below this the photo is soft or shaken
+  sharpFloor: 4,           // absolute minimum crispness of the face cut-out (library photos)
+  sharpVsBest: 0.6,        // live: a frame must be at least 60% as crisp as the best one seen of this person
+  moveMax: 0.04,           // live: the nose may move at most 4% of the face's height between checks
   frontTurnMax: 12,        // front photo: head turned at most 12 degrees
   sideTurnMin: 45,         // side photo: head turned between 45 and 80 degrees
   sideTurnMax: 80,         //   (past about 80 the face tracker loses the face)
@@ -88,14 +90,14 @@ export function geometry(pts: Point[]): Geometry {
   return { faceHeight, centreX: (box.x0 + box.x1) / 2, hairTop, turn, tilt, nod, box };
 }
 
-export type Light = { face: number; background: number; blownOut: number; sharp: number };
+export type Light = { face: number; background: number; blownOut: number };
 
 // Pixel measurements on a small grey copy of the picture (w x h values 0..255).
 // Small on purpose: 160 pixels wide is plenty to judge light and blur, and it
 // runs many times a second on an old phone.
 export function light(grey: Uint8ClampedArray, w: number, h: number, box: Geometry["box"]): Light {
-  const x0 = Math.max(1, Math.floor(box.x0 * w)), x1 = Math.min(w - 2, Math.ceil(box.x1 * w));
-  const y0 = Math.max(1, Math.floor(box.y0 * h)), y1 = Math.min(h - 2, Math.ceil(box.y1 * h));
+  const x0 = Math.max(0, Math.floor(box.x0 * w)), x1 = Math.min(w - 1, Math.ceil(box.x1 * w));
+  const y0 = Math.max(0, Math.floor(box.y0 * h)), y1 = Math.min(h - 1, Math.ceil(box.y1 * h));
   let fSum = 0, fN = 0, white = 0, bSum = 0, bN = 0;
   for (let y = 0; y < h; y++) {
     for (let x = 0; x < w; x++) {
@@ -104,31 +106,36 @@ export function light(grey: Uint8ClampedArray, w: number, h: number, box: Geomet
       else { bSum += v; bN++; }
     }
   }
-  // Sharpness: how strongly each pixel differs from its four neighbours
-  // (the "variance of the Laplacian"). A crisp photo has strong, varied edges;
-  // a blurred or shaken one has soft, uniform ones.
-  const lap: number[] = [];
-  for (let y = y0; y <= y1; y++) {
-    for (let x = x0; x <= x1; x++) {
-      const i = y * w + x;
-      lap.push(4 * grey[i] - grey[i - 1] - grey[i + 1] - grey[i - w] - grey[i + w]);
-    }
-  }
-  const mean = lap.reduce((a, b) => a + b, 0) / Math.max(1, lap.length);
-  const sharp = lap.reduce((a, b) => a + (b - mean) ** 2, 0) / Math.max(1, lap.length);
   return {
     face: fN ? fSum / fN : 0,
     background: bN ? bSum / bN : 0,
     blownOut: fN ? white / fN : 0,
-    sharp: Math.sqrt(sharp),
   };
+}
+
+// Sharpness of the fixed-size face cut-out: how strongly each pixel differs
+// from its four neighbours (the "variance of the Laplacian"). A crisp photo
+// has strong, varied edges; a soft or shaken one has weak, uniform ones.
+export function sharpness(grey: Uint8ClampedArray, size = 128): number {
+  let sum = 0, sq = 0, n = 0;
+  for (let y = 1; y < size - 1; y++) {
+    for (let x = 1; x < size - 1; x++) {
+      const i = y * size + x;
+      const v = 4 * grey[i] - grey[i - 1] - grey[i + 1] - grey[i - size] - grey[i + size];
+      sum += v; sq += v * v; n++;
+    }
+  }
+  const mean = sum / n;
+  return Math.sqrt(Math.max(0, sq / n - mean * mean));
 }
 
 // The verdict: the ONE thing to fix, in the order a client should fix it.
 // One line of coaching at a time; a list of five problems helps nobody.
 export type Verdict = { ok: boolean; say: string };
 
-export function judge(shot: Shot, g: Geometry | null, l: Light | null, wantSide?: 1 | -1): Verdict {
+// steady: the scan's own judgement that the picture is crisp and not moving
+// (see FaceScan: compared with the best frame seen of this person).
+export function judge(shot: Shot, g: Geometry | null, l: Light | null, wantSide?: 1 | -1, steady = true): Verdict {
   if (!g || !l) return { ok: false, say: shot === "front" ? "Put your face in the circle" : "Turn back a little, we lost your face" };
   const turnAbs = Math.abs(g.turn);
   if (shot === "front") {
@@ -150,6 +157,6 @@ export function judge(shot: Shot, g: Geometry | null, l: Light | null, wantSide?
     if (turnAbs < LIMITS.sideTurnMin) return { ok: false, say: "Keep turning" };
     if (turnAbs > LIMITS.sideTurnMax) return { ok: false, say: "A little less" };
   }
-  if (l.sharp < LIMITS.sharpMin) return { ok: false, say: "Hold still" };
+  if (!steady) return { ok: false, say: "Hold still" };
   return { ok: true, say: "Perfect, hold it" };
 }

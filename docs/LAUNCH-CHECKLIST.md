@@ -52,6 +52,11 @@ Tick an item only when it is done and tested, and add the date.
 - [ ] Fix the two old database functions Supabase warns about
       (`touch_renders_updated_at`, `pick_style_reference`: search path not fixed).
 
+- [ ] **Automatic screen brightness for the selfie light** needs an installed
+      app (a thin native wrapper around the web app). Websites are not allowed to
+      change screen brightness, so today the scan turns the screen white and asks
+      the client to turn brightness up themselves.
+
 ## Already done
 
 - [x] 2026-09-26 Data model: 11 tables with shop separation, frozen briefs,

@@ -65,3 +65,25 @@ export function greyFrame(video: HTMLVideoElement): { grey: Uint8ClampedArray; w
   }
   return { grey, w: W, h };
 }
+
+// A fixed-size grey cut-out of the face and hairline, for measuring sharpness.
+// Fixed size is the point: sharpness is then the same whether the face is
+// close or far (fixed 2026-09-26: measured on the whole frame it punished
+// people for holding the phone close, because close-up skin looks smooth).
+const CROP = 128;
+let cropCanvas: HTMLCanvasElement | null = null;
+// Works on the live video or on a still photo (vw/vh: its full size in pixels).
+export function faceCrop(video: CanvasImageSource, vw: number, vh: number, box: { x0: number; y0: number; x1: number; y1: number }): Uint8ClampedArray {
+  const bw = box.x1 - box.x0, bh = box.y1 - box.y0;
+  // Include the hairline above the forehead, where the sharpest detail is.
+  const x = Math.max(0, (box.x0 - bw * 0.05) * vw), y = Math.max(0, (box.y0 - bh * 0.25) * vh);
+  const w = Math.min(vw - x, bw * 1.1 * vw), h = Math.min(vh - y, bh * 1.0 * vh);
+  cropCanvas ??= document.createElement("canvas");
+  cropCanvas.width = CROP; cropCanvas.height = CROP;
+  const ctx = cropCanvas.getContext("2d", { willReadFrequently: true })!;
+  ctx.drawImage(video, x, y, Math.max(1, w), Math.max(1, h), 0, 0, CROP, CROP);
+  const rgba = ctx.getImageData(0, 0, CROP, CROP).data;
+  const grey = new Uint8ClampedArray(CROP * CROP);
+  for (let i = 0; i < grey.length; i++) grey[i] = 0.299 * rgba[i * 4] + 0.587 * rgba[i * 4 + 1] + 0.114 * rgba[i * 4 + 2];
+  return grey;
+}
