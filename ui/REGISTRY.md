@@ -97,7 +97,7 @@ Added 2026-09-27 after grilling. See `docs/specs/scan-path.md`, `docs/specs/intr
 | W37 | Introduction · how it works | | **LOCKED** | 1 of 3 | `ui/locked/W37/` | 2026-09-27 |
 | W38 | Introduction · your face, your rules | | **LOCKED** | 3 of 3 | `ui/locked/W38/` | 2026-09-27 |
 | W39 | Introduction · the guarantee | | **LOCKED** | 2 of 2 | `ui/locked/W39/` | 2026-09-27 |
-| W40 | Prep checklist + consent | | — | | | |
+| W40 | Prep checklist + consent | | EXPLORING | 3 in `ui/candidates/W40/` | | |
 | W41 | Reading your hair | | — | | | |
 | W42 | Finding screen (yes / no) | ★ | — | | | |
 | W43 | AI twin check | | — | | | |
@@ -178,6 +178,7 @@ record of how the product got its shape.
 
 | Date | ID | What happened |
 |---|---|---|
+| 2026-09-27 | W40 | 3 variants: pre-flight check, tap as you do it, the waiting ring. Age line moved into the consent label. |
 | 2026-09-27 | W39 | **LOCKED** — variant 2, the seal. |
 | 2026-09-27 | W39 | 2 stories variants: same chassis, the seal. |
 | 2026-09-27 | W38 | **LOCKED** — variant 3, stories continued. Foundation first; photos and copy revisited later. |
