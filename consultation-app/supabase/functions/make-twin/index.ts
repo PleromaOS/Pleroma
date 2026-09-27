@@ -141,10 +141,12 @@ Deno.serve(async (req: Request) => {
   if (last) {
     if (last.status === "succeeded" && last.client_verdict !== "not-quite") {
       // Made before the side views existed: add just the sides, keep the front.
-      const { data: full } = await client.from("ai_twins").select("side_a_path, prompt").eq("id", last.id).single();
-      if (full && !full.side_a_path && full.prompt) {
-        await client.from("ai_twins").update({ status: "running", finished_at: new Date().toISOString(), pending_views: ["side_a", "side_b"] }).eq("id", last.id);
-        dispatch(last.id, ["side_a", "side_b"]);
+      // Only the sides that are missing are made (a side can be cleared to redo it).
+      const { data: full } = await client.from("ai_twins").select("side_a_path, side_b_path, prompt").eq("id", last.id).single();
+      const missing = (["side_a", "side_b"] as View[]).filter((v) => full && !full[`${v}_path` as "side_a_path" | "side_b_path"]);
+      if (full && missing.length && full.prompt) {
+        await client.from("ai_twins").update({ status: "running", finished_at: new Date().toISOString(), pending_views: missing }).eq("id", last.id);
+        dispatch(last.id, missing);
         return reply(202, { twin_id: last.id, attempt: last.attempt, adding: "sides" });
       }
       return reply(200, { twin_id: last.id, attempt: last.attempt, status: "succeeded" }); // already made: nothing to spend

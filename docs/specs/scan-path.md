@@ -327,6 +327,21 @@ photos, "Reading your hair" for the reading, the twin check for the AI twin.
   Re-test on Bryan's scan (front kept): same grey T-shirt and background on
   all three. One side passed the truth check; on the other the checker was
   busy (503), so it was kept with a note for the barber.
+- Sides facing the wrong way (Bryan, 27 Sep: "it repeated the side photo").
+  With the front as an extra picture, the image model drew one side, then
+  both sides, mirrored: the other side of his head, and turned further than
+  his photos. Fixed in twin-kitchen: every picture is labelled ("IMAGE 2:");
+  before a side is made, a quick look at the real side photo writes the angle
+  out in words (nose toward the left or right edge, slight / three-quarter /
+  profile, which ear shows); the truth check now also fails a side that faces
+  the wrong way or changes the profile. Also from Bryan: "my chin ... does not
+  descend. It continues slightly forward", so the side instructions lock the
+  chin projection and jaw angle, and the check looks for a receding chin.
+  make-twin now only remakes the sides that are missing.
+  Re-test on Bryan's scan (front kept): both sides the right way round, at
+  the same angle as his photos, and both passed the truth check first time.
+- W47 (locked): the client turns the twin with a slider or a finger, between
+  the three checked views. The same viewer will show the new cut.
 - Door 15 `my-photos`: 1-hour private links to the client's OWN three scan
   photos, for showing their real photo next to the twin or render.
 - Not built yet: the twin check screen in the app (W43), starting the twin

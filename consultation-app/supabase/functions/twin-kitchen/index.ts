@@ -8,6 +8,14 @@
 // (database function twin_view_done). The last view to finish sets the
 // twin's status.
 //
+// Sides, checked harder (27 Sep): one side came out facing the wrong way, so
+// both sides looked the same, and Bryan saw his chin sloping back where his
+// real chin comes forward. The side instructions now name the direction and
+// the profile, and the truth check asks both for the sides. Every picture is
+// now labelled ("IMAGE 2:") and the side photo's angle is read first and
+// written out in words (left/right, how far turned), because "the same angle
+// as IMAGE 2" alone came out mirrored on both sides.
+//
 // Same clothes on every view (Bryan, 27 Sep): the sides were made at the
 // same time as the front, each on its own, so each one invented its own
 // shirt. Now the front is made first; only when it is stored does its job
@@ -37,7 +45,13 @@ function sidePrompt(front: string, photoNumber: 2 | 3): string {
     `turned to exactly the same angle as IMAGE ${photoNumber} (the same side of his head, the same amount of turn), head and shoulders`)
     + " IMAGE 4 is the finished studio portrait of him from the front. Dress him in EXACTLY the same clothing as IMAGE 4"
     + " (same garment, same colour, same neckline), with the same plain background, the same light and the same colours as IMAGE 4,"
-    + " so the pictures belong together as one set. Only the angle is different.";
+    + " so the pictures belong together as one set. Only the angle is different."
+    // Found 27 Sep: a side came out facing the wrong way (both sides the same).
+    + ` DIRECTION: his face must point to the SAME side of the picture as in IMAGE ${photoNumber}.`
+    + ` If his nose points to the left edge of IMAGE ${photoNumber}, it points to the left edge here; if to the right, to the right. Never mirror him.`
+    // Bryan, 27 Sep: "my chin actually does not descend. It continues slightly forward."
+    + ` PROFILE: copy his profile exactly from IMAGE ${photoNumber}: the same chin projection (how far the chin comes forward),`
+    + " the same jawline angle, nose, lips and neck. Do not make the chin recede or slope backwards.";
 }
 
 // ---- The truth check ---------------------------------------------------------
@@ -74,7 +88,8 @@ async function makeImage(prompt: string, photos: string[]): Promise<Uint8Array> 
   const res = await fetch(`${GEMINI_BASE}/models/${IMAGE_MODEL}:generateContent?key=${Deno.env.get("GEMINI_API_KEY")}`, {
     method: "POST", headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      contents: [{ parts: [{ text: prompt }, ...photos.map(jpeg)] }],
+      // Each picture gets its name in front of it, so "IMAGE 2" means one picture for certain.
+      contents: [{ parts: [{ text: prompt }, ...photos.flatMap((p, i) => [{ text: `IMAGE ${i + 1}:` }, jpeg(p)])] }],
       generationConfig: { imageConfig: { imageSize: "2K", aspectRatio: "3:4" } },
     }),
   });
@@ -87,15 +102,69 @@ async function makeImage(prompt: string, photos: string[]): Promise<Uint8Array> 
   throw new Error(`no image returned (${j.candidates?.[0]?.finishReason ?? "no reason"})`);
 }
 
-async function truthCheck(photos: string[], twin: Uint8Array): Promise<Check> {
-  const parts = [{ text: CHECK_PROMPT }, ...photos.map(jpeg), { inline_data: { mime_type: "image/png", data: toBase64(twin) } }];
+// ---- Reading the angle of a side photo ------------------------------------
+// Found 27 Sep: told "the same angle as IMAGE 2", the image model twice drew
+// both sides mirrored (the other side of his head) and turned much further.
+// So a quick look at the real photo first puts the angle into plain words.
+const POSE_SCHEMA = {
+  type: "OBJECT",
+  properties: {
+    nose_points: { type: "STRING", enum: ["left", "right"] },
+    turn: { type: "STRING", enum: ["slight", "three-quarter", "profile"] },
+    ear_side: { type: "STRING", enum: ["left", "right", "both"] },
+  },
+  required: ["nose_points", "turn", "ear_side"],
+};
+type Pose = { nose_points: "left" | "right"; turn: string; ear_side: string };
+async function readPose(photo: string): Promise<Pose | null> {
+  const prompt = "Look at this photo of a man. As seen in the picture (not from his point of view): does his nose point toward the left or the right edge of the picture? How far is his head turned from facing the camera: slight (under about 25 degrees), three-quarter (about 30 to 60 degrees) or profile? On which side of the picture is the ear you can see best (left, right, or both equally)?";
+  for (const model of CHECK_MODELS) {
+    const res = await fetch(`${GEMINI_BASE}/models/${model}:generateContent?key=${Deno.env.get("GEMINI_API_KEY")}`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ contents: [{ role: "user", parts: [{ text: prompt }, jpeg(photo)] }], generationConfig: { responseMimeType: "application/json", responseSchema: POSE_SCHEMA, temperature: 0 } }),
+    });
+    if (!res.ok) continue;
+    const j = await res.json().catch(() => ({}));
+    const text = j?.candidates?.[0]?.content?.parts?.find((p: { text?: string }) => p.text)?.text;
+    try { return JSON.parse(text ?? "") as Pose; } catch { continue; }
+  }
+  return null;   // unknown: the instructions fall back to "same as IMAGE n"
+}
+function poseWords(p: Pose | null, n: number): string {
+  if (!p) return "";
+  const turn = p.turn === "profile" ? "turned fully sideways (profile)" : p.turn === "slight" ? "turned only slightly away from the camera, both eyes clearly visible" : "turned about halfway (a three-quarter view, both eyes visible)";
+  return ` EXACT ANGLE, as measured in IMAGE ${n}: his nose points toward the ${p.nose_points.toUpperCase()} edge of the picture, his head is ${turn}`
+    + (p.ear_side !== "both" ? `, and the ear we see is on the ${p.ear_side.toUpperCase()} side of the picture` : "")
+    + `. The new picture must match this exactly: nose toward the ${p.nose_points.toUpperCase()} edge of the frame. Do not turn him further than IMAGE ${n}.`;
+}
+
+// Sides get two more questions: facing the right way, and the same profile.
+function checkPrompt(view: View): string {
+  if (view === "front") return CHECK_PROMPT;
+  const n = view === "side_a" ? 2 : 3;
+  return CHECK_PROMPT + `
+Photo 4 is meant to show him from the same side and angle as photo ${n}. Also answer:
+- wrong_direction: does his face point to the OPPOSITE side of the picture compared with photo ${n} (mirrored, or the other side of his head)?
+- profile_changed: is his profile different from photo ${n}, especially the chin (receding or sloping back where the real chin comes forward), jawline angle, nose or lips?`;
+}
+function checkSchema(view: View) {
+  if (view === "front") return CHECK_SCHEMA;
+  return {
+    ...CHECK_SCHEMA,
+    properties: { ...CHECK_SCHEMA.properties, wrong_direction: { type: "BOOLEAN" }, profile_changed: { type: "BOOLEAN" } },
+    required: [...CHECK_SCHEMA.required, "wrong_direction", "profile_changed"],
+  };
+}
+
+async function truthCheck(photos: string[], twin: Uint8Array, view: View): Promise<Check> {
+  const parts = [{ text: checkPrompt(view) }, ...photos.map(jpeg), { inline_data: { mime_type: "image/png", data: toBase64(twin) } }];
   let lastErr = "";
   for (let round = 0; round < 3; round++) {
     if (round) await new Promise((r) => setTimeout(r, round * 4000));
     for (const model of CHECK_MODELS) {
       const res = await fetch(`${GEMINI_BASE}/models/${model}:generateContent?key=${Deno.env.get("GEMINI_API_KEY")}`, {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ contents: [{ role: "user", parts }], generationConfig: { responseMimeType: "application/json", responseSchema: CHECK_SCHEMA, temperature: 0 } }),
+        body: JSON.stringify({ contents: [{ role: "user", parts }], generationConfig: { responseMimeType: "application/json", responseSchema: checkSchema(view), temperature: 0 } }),
       });
       const j = await res.json().catch(() => ({}));
       if (res.status === 404 || res.status === 429 || res.status >= 500) { lastErr += `${model} ${res.status}; `; continue; }
@@ -103,7 +172,7 @@ async function truthCheck(photos: string[], twin: Uint8Array): Promise<Check> {
       const text = j?.candidates?.[0]?.content?.parts?.find((p: { text?: string }) => p.text)?.text;
       const c = JSON.parse(text ?? "{}") as Check;
       c.passed = c.same_person === true && !c.hairline_moved && !c.hair_added && !c.texture_changed
-        && !c.colour_changed && !c.beard_changed && !c.face_changed;
+        && !c.colour_changed && !c.beard_changed && !c.face_changed && !c.wrong_direction && !c.profile_changed;
       c.model = model;
       return c;
     }
@@ -144,13 +213,14 @@ async function cook(twinId: string, view: View) {
       if (dl.error || !dl.data) throw new Error("front_download_failed");
       inputs.push(toBase64(new Uint8Array(await dl.data.arrayBuffer())));
     }
-    const prompt = view === "front" ? t.prompt : sidePrompt(t.prompt, view === "side_a" ? 2 : 3);
+    const n = view === "side_a" ? 2 : 3;
+    const prompt = view === "front" ? t.prompt : sidePrompt(t.prompt, n) + poseWords(await readPose(photos[n - 1]), n);
     let image: Uint8Array | null = null;
     for (let tries = 1; tries <= 2; tries++) {
-      image = await makeImage(prompt + (tries > 1 ? " CRITICAL: the previous attempt changed him. Change NOTHING about his face, hairline, hair or beard." : ""), inputs);
+      image = await makeImage(prompt + (tries > 1 ? " CRITICAL: the previous attempt changed him" + (checks[checks.length - 1]?.wrong_direction ? " and faced the WRONG WAY" : "") + ". Change NOTHING about his face, profile, chin, hairline, hair or beard." : ""), inputs);
       let check: Check;
       // The truth check compares with his real photos only, never with the front twin.
-      try { check = await truthCheck(photos, image); }
+      try { check = await truthCheck(photos, image, view); }
       catch (e) {
         // The checker itself is down: keep this picture with a note for the
         // barber rather than paying for a second one nobody can check.
