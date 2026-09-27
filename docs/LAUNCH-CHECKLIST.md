@@ -71,6 +71,14 @@ Tick an item only when it is done and tested, and add the date.
       under 0ff1680d…/51e38ccb…/ (the database won't delete storage files
       directly; remove them with the Storage API or the dashboard).
 
+- [ ] **A proper privacy and support inbox.** For now every privacy,
+      deletion and support address in the app is bryan@pleromaos.nl
+      (docs/specs/intro-copy.md). Before launch: a dedicated address (for
+      example privacy@pleromaos.nl) that more than one person can read, with
+      a written process and response time for deletion requests.
+- [ ] **Confirm billing is on for the Gemini key** before the intro says
+      "your photos are never used to train AI" (only true on the paid tier).
+
 ## Already done
 
 - [x] 2026-09-26 Private photo storage: door 9 (save-photos) stores the three scan
