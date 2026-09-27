@@ -316,6 +316,17 @@ photos, "Reading your hair" for the reading, the twin check for the AI twin.
   volume and height on top") and was kept with a note for the barber, as
   designed. Clothing differs between the three views (T-shirt, another
   T-shirt, bare shoulders); Bryan: clothing doesn't matter.
+- One shirt on all three views (Bryan, later the same day: "make sure that
+  the shirt is consistent"). The front is now made first, exactly as
+  approved; when it is stored, its job starts the two sides, and each side
+  gets the finished front as an extra picture with "exactly the same
+  clothing, background, light and colours as this". The truth check still
+  compares each side with the client's real photos only. A twin now takes
+  about 2 to 3 minutes (front, then both sides together). If the front
+  fails, the sides are closed as failed too, so a twin never hangs.
+  Re-test on Bryan's scan (front kept): same grey T-shirt and background on
+  all three. One side passed the truth check; on the other the checker was
+  busy (503), so it was kept with a note for the barber.
 - Door 15 `my-photos`: 1-hour private links to the client's OWN three scan
   photos, for showing their real photo next to the twin or render.
 - Not built yet: the twin check screen in the app (W43), starting the twin

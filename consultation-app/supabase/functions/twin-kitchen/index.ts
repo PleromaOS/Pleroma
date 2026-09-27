@@ -8,6 +8,15 @@
 // (database function twin_view_done). The last view to finish sets the
 // twin's status.
 //
+// Same clothes on every view (Bryan, 27 Sep): the sides were made at the
+// same time as the front, each on its own, so each one invented its own
+// shirt. Now the front is made first; only when it is stored does its job
+// start the two sides, and each side gets the finished front as an extra
+// picture: "same clothes, same background, same light as this". The front
+// itself is made exactly as Bryan approved it.
+// The kitchen answers its caller straight away and works in the background,
+// so starting the sides never eats into the front's own time limit.
+//
 //   POST { twin_id, view: "front" | "side_a" | "side_b" }   (service key only)
 
 import { createClient } from "npm:@supabase/supabase-js@2";
@@ -21,12 +30,15 @@ const json = (b: unknown, s = 200) => new Response(JSON.stringify(b), { status: 
 
 // The side views: the approved front instructions, with only the framing
 // changed to the angle of the client's own side photo.
+type View = "front" | "side_a" | "side_b";
 const FRONT_FRAMING = "facing the camera, head and shoulders";
 function sidePrompt(front: string, photoNumber: 2 | 3): string {
   return front.replace(FRONT_FRAMING,
-    `turned to exactly the same angle as IMAGE ${photoNumber} (the same side of his head, the same amount of turn), head and shoulders`);
+    `turned to exactly the same angle as IMAGE ${photoNumber} (the same side of his head, the same amount of turn), head and shoulders`)
+    + " IMAGE 4 is the finished studio portrait of him from the front. Dress him in EXACTLY the same clothing as IMAGE 4"
+    + " (same garment, same colour, same neckline), with the same plain background, the same light and the same colours as IMAGE 4,"
+    + " so the pictures belong together as one set. Only the angle is different.";
 }
-type View = "front" | "side_a" | "side_b";
 
 // ---- The truth check ---------------------------------------------------------
 const CHECK_PROMPT = `You are checking an AI-made portrait against real photos of the same client.
@@ -55,7 +67,8 @@ function toBase64(bytes: Uint8Array): string {
   for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
   return btoa(s);
 }
-const jpeg = (b64: string) => ({ inline_data: { mime_type: "image/jpeg", data: b64 } });
+// The scan photos are JPEG; the front twin handed to the sides is PNG.
+const jpeg = (b64: string) => ({ inline_data: { mime_type: b64.startsWith("iVBOR") ? "image/png" : "image/jpeg", data: b64 } });
 
 async function makeImage(prompt: string, photos: string[]): Promise<Uint8Array> {
   const res = await fetch(`${GEMINI_BASE}/models/${IMAGE_MODEL}:generateContent?key=${Deno.env.get("GEMINI_API_KEY")}`, {
@@ -98,14 +111,22 @@ async function truthCheck(photos: string[], twin: Uint8Array): Promise<Check> {
   throw new Error(`check unavailable: ${lastErr}`);
 }
 
-Deno.serve(async (req: Request) => {
-  if (req.headers.get("authorization") !== `Bearer ${SERVICE_KEY}`) return json({ error: "doors only" }, 401);
-  const body = await req.json().catch(() => ({}));
-  const view = body.view as View;
-  if (!["front", "side_a", "side_b"].includes(view)) return json({ error: "view" }, 400);
+// Starts other views in their own jobs (used by the front to start the sides).
+function dispatch(twinId: string, views: View[]) {
+  const url = `${Deno.env.get("SUPABASE_URL")}/functions/v1/twin-kitchen`;
+  return Promise.allSettled(views.map((view) => fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${SERVICE_KEY}` },
+    body: JSON.stringify({ twin_id: twinId, view }),
+  })));
+}
+
+async function cook(twinId: string, view: View) {
   const client = createClient(Deno.env.get("SUPABASE_URL")!, SERVICE_KEY, { auth: { persistSession: false } });
-  const { data: t } = await client.from("ai_twins").select("id, prompt, source_paths").eq("id", body.twin_id).single();
-  if (!t) return json({ error: "twin" }, 404);
+  const { data: t } = await client.from("ai_twins").select("id, prompt, source_paths, output_path").eq("id", twinId).single();
+  if (!t) return;
+  const done = (path: string | null, checks: Check[], passed: boolean, error: string | null, v: View = view) =>
+    client.rpc("twin_view_done", { p_twin: t.id, p_view: v, p_path: path, p_checks: checks, p_passed: passed, p_error: error });
 
   const checks: Check[] = [];
   try {
@@ -115,11 +136,20 @@ Deno.serve(async (req: Request) => {
       if (dl.error || !dl.data) throw new Error("photo_download_failed");
       photos.push(toBase64(new Uint8Array(await dl.data.arrayBuffer())));
     }
+    // A side needs the finished front, for the clothes, background and light.
+    const inputs = [...photos];
+    if (view !== "front") {
+      if (!t.output_path) throw new Error("front_missing");
+      const dl = await client.storage.from("ai-twins").download(t.output_path);
+      if (dl.error || !dl.data) throw new Error("front_download_failed");
+      inputs.push(toBase64(new Uint8Array(await dl.data.arrayBuffer())));
+    }
     const prompt = view === "front" ? t.prompt : sidePrompt(t.prompt, view === "side_a" ? 2 : 3);
     let image: Uint8Array | null = null;
     for (let tries = 1; tries <= 2; tries++) {
-      image = await makeImage(prompt + (tries > 1 ? " CRITICAL: the previous attempt changed him. Change NOTHING about his face, hairline, hair or beard." : ""), photos);
+      image = await makeImage(prompt + (tries > 1 ? " CRITICAL: the previous attempt changed him. Change NOTHING about his face, hairline, hair or beard." : ""), inputs);
       let check: Check;
+      // The truth check compares with his real photos only, never with the front twin.
       try { check = await truthCheck(photos, image); }
       catch (e) {
         // The checker itself is down: keep this picture with a note for the
@@ -133,10 +163,25 @@ Deno.serve(async (req: Request) => {
     const path = view === "front" ? `${t.id}.png` : `${t.id}-${view}.png`;
     const up = await client.storage.from("ai-twins").upload(path, image!, { contentType: "image/png", upsert: true });
     if (up.error) throw new Error(up.error.message);
-    await client.rpc("twin_view_done", { p_twin: t.id, p_view: view, p_path: path, p_checks: checks, p_passed: !!checks[checks.length - 1]?.passed, p_error: null });
-    return json({ ok: true, view });
+    await done(path, checks, !!checks[checks.length - 1]?.passed, null);
+    if (view === "front") await dispatch(t.id, ["side_a", "side_b"]);
   } catch (e) {
-    await client.rpc("twin_view_done", { p_twin: t.id, p_view: view, p_path: null, p_checks: checks, p_passed: false, p_error: String(e).slice(0, 300) });
-    return json({ error: String(e).slice(0, 300) }, 500);
+    await done(null, checks, false, String(e).slice(0, 300));
+    // No front, no sides: close them too, so the twin never hangs on "running".
+    if (view === "front") {
+      await done(null, [], false, "front failed", "side_a");
+      await done(null, [], false, "front failed", "side_b");
+    }
   }
+}
+
+Deno.serve(async (req: Request) => {
+  if (req.headers.get("authorization") !== `Bearer ${SERVICE_KEY}`) return json({ error: "doors only" }, 401);
+  const body = await req.json().catch(() => ({}));
+  const view = body.view as View;
+  if (!["front", "side_a", "side_b"].includes(view)) return json({ error: "view" }, 400);
+  if (typeof body.twin_id !== "string") return json({ error: "twin" }, 400);
+  // @ts-ignore EdgeRuntime is provided by the Supabase edge runtime
+  EdgeRuntime.waitUntil(cook(body.twin_id, view));
+  return json({ accepted: true, view }, 202);
 });

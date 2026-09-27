@@ -21,7 +21,9 @@
 // Three views (Bryan, 27 Sep): the front, and each side at the same angle as
 // the client's own side photos, so the barber can judge the sides and the
 // client can compare like for like. Each view is made by its own job
-// (twin-kitchen) at the same time, and each is checked.
+// (twin-kitchen) and each is checked. The front comes first; its job starts
+// the sides, which copy the front's clothes, background and light, so the
+// three pictures match (Bryan, 27 Sep: one shirt, not three).
 // The front instructions are exactly the ones Bryan approved; only the
 // framing sentence differs for the sides.
 //
@@ -35,7 +37,7 @@
 import { db, gatekeep, masterKey, openConsultation, readBody, reply, tooManyKnocks } from "../_shared/door.ts";
 
 const IMAGE_MODEL = Deno.env.get("GEMINI_IMAGE_MODEL") ?? "gemini-3-pro-image";
-const RUNNING_STALE_MS = 4 * 60_000;
+const RUNNING_STALE_MS = 6 * 60_000;   // front, then sides: up to about 4 minutes
 
 // ---- The words for the confirmed findings ----------------------------------
 const W: Record<string, Record<string, string>> = {
@@ -163,6 +165,6 @@ Deno.serve(async (req: Request) => {
   }).select("id").single();
   if (error || !row) return reply(500, { error: "could_not_start_twin" });
 
-  dispatch(row.id, ["front", "side_a", "side_b"]);
+  dispatch(row.id, ["front"]);   // the front starts the sides when it is done
   return reply(202, { twin_id: row.id, attempt });
 });
