@@ -65,16 +65,44 @@ _Avoid_: customer (reserved for the salon owner as buyer), patient
 The client-facing flow that captures what a client wants and shows them the result on their own face, producing a brief and a render. Run by a client who has not necessarily chosen the shop yet. This is the acquisition surface: shops advertise a free consultation instead of advertising haircuts.
 _Avoid_: quiz (internal only), demo, trial, preview flow
 
+**Scan path**:
+The way into a consultation where the client's current hair and face are learned from a three-photo scan (front and both sides) and the client confirms each finding with yes or no.
+_Avoid_: photo route, selfie flow, AI route
+
+**Finding**:
+One fact about the client's current hair or beard that the scan read from the photos — texture, thickness, colour and greys, current length, current cut, fade, parting, hairline and thinning, beard and moustache — shown to the client to confirm. Never a guess about gender, and never worded as a diagnosis.
+_Avoid_: result, detection, prediction, analysis (for a single fact)
+
+**AI twin**:
+An AI-made likeness of the client in good studio light, built from their scan photos and confirmed findings, on which their new cut is drawn. At most one per client, kept only if the client agrees to keep it: the face is refined with every new scan, the hair is updated to how it is that day.
+_Avoid_: clone, AI clone, digital double, avatar (an avatar is not the client's own face)
+
+**Question path**:
+The way into a consultation for a client who prefers no photos: every fact about their current hair is asked as a question, and the result is shown on an avatar.
+_Avoid_: no-photo route, manual route, quiz route
+
+**Avatar**:
+A ready-made face from the avatar library, chosen by a question-path client to see their cut on; filtered by their hair texture and skin tone. Never the client's own face.
+_Avoid_: twin, mannequin (reserved for the style reference images), model
+
+**Route**:
+How the client chooses what they want: "Choose a famous style" (a preset fills in every detail) or "Build my own style" (chosen piece by piece). Both routes are offered on both the scan path and the question path.
+_Avoid_: path (reserved for scan path / question path), flow
+
 **Render**:
-The AI-generated image showing the briefed haircut on the client's own photo.
+The AI-generated image showing the briefed haircut on the client's AI twin (scan path), on their own front photo if the twin was rejected, or on an avatar (question path).
 _Avoid_: preview, mockup, simulation, result
+
+**Truth check**:
+The automatic comparison of every render (and AI twin) against the client's original photos and confirmed findings, before the client sees it, catching a moved hairline, added density, or changed texture or colour. A render that fails is silently redone.
+_Avoid_: QA, review, validation, feasibility check (that is the stylist's)
 
 **Render confirmation**:
 The client confirming that the render shows their face, their hair, and the haircut they actually want. Client-side half of the countersign.
 _Avoid_: approval, sign-off, accept
 
 **Feasibility gate**:
-The automatic check that decides whether a render is eligible to carry the guarantee. Evaluates the gap between current and goal state, texture compatibility, and styling-effort mismatch. A render that fails the gate is still shown, framed as a longer journey with a plan, but carries no guarantee.
+The automatic check that decides whether a render is eligible to carry the guarantee. Evaluates the gap between current and goal state, texture compatibility, and styling-effort mismatch; a render on an avatar never passes, because the guarantee needs the client's own face and hair. A render that fails the gate is still shown, framed as a longer journey with a plan, but carries no guarantee.
 _Avoid_: validation, eligibility check, screening
 
 **Feasibility check**:
@@ -102,7 +130,7 @@ The message sent 24 hours after a consultation that produced a render but no boo
 _Avoid_: reminder, nurture, drip, abandoned cart
 
 **Shop entry**:
-A consultation started from the shop's QR code by someone already in the building. Email is asked at the end, after the client has seen their brief, exactly as previously resolved. The client selects their barber.
+A consultation started from the shop's QR code by someone already in the building. The client selects their barber. (Changed 2026-09-26: email is now asked after the scan and before the render, as in the campaign entry, because photo consent must belong to a known person.)
 _Avoid_: in-store flow, walk-in flow
 
 **Campaign entry**:
@@ -171,6 +199,10 @@ _Avoid_: notifications, messages, campaign
 - **Brief match** is calculated per visit, per stylist
 - When a **Stylist** leaves, **Outreach** is triggered automatically to all their **Clients**
 - A **Founding partner** is a **Salon owner** who joins the **Design Partner Programme**
+- A **Consultation** follows exactly one path — **scan path** or **question path** — and exactly one **route**
+- A scan-path **Consultation** produces several **Findings**, each confirmed or corrected by the **Client**
+- A **Client** has at most one **AI twin**; a question-path **Render** is drawn on an **Avatar** and never carries the **Result guarantee**
+- Every **Render** and **AI twin** passes a **Truth check** before the **Client** sees it
 
 ---
 
@@ -251,6 +283,10 @@ People who click from paid ads have already seen the brand name and hook. The 3-
 ---
 
 ## Flagged Ambiguities
+
+- **"AI clone" vs "AI twin"** — resolved 2026-09-27: **AI twin** everywhere; it keeps the earlier persistent-clone decision (one per client, refined with every scan), with the hair updated to that day's scan.
+
+- **"Route"** was used for both the photo / no-photo split and the famous-style / build-my-own choice — resolved 2026-09-27: the photo split is the **scan path** or **question path**; **route** means only famous-style / build-my-own, and both paths offer both routes.
 
 - **"Partner"** was used for both the Calendly booking CTA and the founding salon concept — resolved: "Design Partner" = the salon, "partner programme" = the initiative.
 - **"Application"** was briefly considered for the CTA — rejected: it frames the programme as selective in a gatekeeping way, and no other part of the site uses that word. The experience is "we talk to everyone, we choose 20."
