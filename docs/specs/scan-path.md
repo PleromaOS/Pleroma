@@ -130,3 +130,48 @@ QUESTION PATH
   - Avatar picker
 Plus the spec'd but unbuilt quiz widgets both paths need: route chooser,
 preset grid, sides (S5–S9), beard and moustache (S10–S16c).
+
+## Introduction screen — decisions (2026-09-27)
+
+Modelled on Duolingo (value before asks, one idea per screen, a friendly
+voice, visible progress) and Wispr Flow (explain before the phone asks for a
+permission, an early proof moment, privacy in short flat sentences plus real
+control). Four short screens, then the prep:
+
+  1  Welcome — the SHOP invites them first (name, ideally the barber's face),
+     then who PleromaOS is and why: bridging the communication gap between
+     client and barber, so clients finally get the result they want, backed
+     by something real, not vague words. 3 minutes, free, you keep your
+     render and brief. Optional one tap: "What brings you here?" (new look /
+     sharpen my cut / fix a bad cut / just curious).
+  2  How it works — what to expect next, as a story: three photos → your AI
+     twin → your new cut on you → a guarantee the shop backs. The HUMAN why:
+       photos: "A good barber looks at you from every side before touching
+       the clippers. So do we."
+       twin: "Nobody looks their best in a bathroom-light selfie. We'd be
+       judging the lighting, not the haircut. Your AI twin is you on a good
+       day, so you can judge the cut."
+     Every hair type (honest: some textures have no guarantee badge yet).
+  3  Your face, your rules — never sold; who sees it; delete anytime; the
+     twin kept only if you say so; stop anytime, nothing saved before the
+     email; 16 or older; the no-photos option and its honest cost (avatar,
+     no guarantee).
+  4  The guarantee — what is promised in plain words, and why it is real
+     (the barber confirms before cutting).
+  Then: prep checklist (face a window, hat and glasses off, hair as you
+  normally wear it) → consent switch 1 → camera. The prep also primes the
+  phone's camera permission pop-up.
+  Everything else: a "Your questions" section.
+  Dutch and English, auto-detected (brand rule; the app is English-only today).
+
+Wording rules — only promise what is true:
+  - "We never sell your data": true, say it loudly.
+  - NOT "never shared with any company": photos pass through our storage
+    (Supabase) and the AI (Google) under contract. Say instead: seen by your
+    barber and the secure services that make this work, nobody else.
+  - "Stored in the EU": TRUE for our database and photo storage (Supabase
+    region eu-west-1, Ireland). The AI step may process outside the EU.
+  - "Never used to train AI": only true on Google's PAID Gemini tier (the
+    paid terms say prompts and responses are not used to improve Google's
+    products). Confirm billing is on for our Gemini key before saying it.
+  - "Delete anytime": only once the deletion flow exists (launch checklist).
