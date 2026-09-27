@@ -180,6 +180,7 @@ record of how the product got its shape.
 
 | Date | ID | What happened |
 |---|---|---|
+| 2026-09-27 | W43 | Revision asked by Bryan: make the twin straight after the reading (not during the questions: "two conversations at the same time"), narrate the wait, then check it against the client's own photo. 3 variants in `candidates/W43/r2-v*.html`: your photo in the corner, side by side, hold to see your photo. All use the locked W47 slider. |
 | 2026-09-27 | W47 | **LOCKED** — variant 2, photo with a turn slider. First look showed both sides facing the same way (the image model mirrored a side); twin-kitchen fixed and the sides remade before locking. |
 | 2026-09-27 | W47 | New widget (Bryan: "with their finger, turn the head of their avatar"). Option 1: blends the three checked pictures, always lands on a real one. 4 variants: drag the photo, turn slider, shows you first, tap to open and turn. |
 | 2026-09-27 | W46 | **LOCKED** — variant 4, stacked with drawings. |
