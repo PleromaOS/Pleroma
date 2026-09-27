@@ -16,8 +16,10 @@
 // the renderer's own answers (sides, fade height, beard) are worked out from
 // these and saved too, then the render starts on the next screen.
 //
-// Not here yet: "Build my own" (route B) arrives in the next step, so its
-// button is not shown until it works.
+// Route B, "Build my own": the top first (keep, shorter or longer, the
+// length, which way they wear it), then the same questions as route A. The
+// render is drawn from the closest catalogue cut that suits their hair
+// (data/wants.ts, closestCut); the brief keeps exactly what they built.
 
 import { useEffect, useMemo, useState } from "react";
 import { stylesFor, type Style } from "../api/catalogue";
@@ -25,7 +27,7 @@ import { saveAnswers } from "../api/doors";
 import { BackButton, Problem } from "../components/ui";
 import { Drawing, hasDrawing } from "../components/Drawing";
 import { labelOf, TEXTURES } from "../data/vocabulary";
-import { BARBERS_CHOICE, nextQuestion, QUESTIONS, rendererAnswers, type Answer, type Known, type Question } from "../data/wants";
+import { BARBERS_CHOICE, closestCut, nextQuestion, QUESTIONS, rendererAnswers, type Answer, type Known, type Question } from "../data/wants";
 import type { Flow } from "../flow/useConsultation";
 import { explain } from "../lib/messages";
 
@@ -53,13 +55,15 @@ export function Want({ flow }: { flow: Flow }) {
 
   const style = styles?.find((s) => s.id === c.answers.style_id);
   const answered = QUESTIONS.filter((q) => q.when(known) && q.key in c.answers);
-  const current = c.answers.style_id ? nextQuestion(known) : null;
-  const done = !!c.answers.style_id && !current;
+  const building = c.answers.route === "build";
+  const chosen = building || !!c.answers.style_id;   // a cut picked, or building their own
+  const current = chosen ? nextQuestion(known) : null;
+  const done = chosen && !current;
 
   // Keep the newest message in view as the conversation grows.
   useEffect(() => {
     window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
-  }, [answered.length, c.answers.style_id, done]);
+  }, [answered.length, chosen, done]);
 
   // Saves one or more answers; shows them straight away, takes them back if saving fails.
   function save(patch: Record<string, string | null>, extra?: Partial<typeof c>) {
@@ -73,26 +77,34 @@ export function Want({ flow }: { flow: Flow }) {
   }
 
   // A new cut clears the old cut's detail.
-  const pickStyle = (s: Style) => save({ style_id: s.id, style_option: null }, { styleName: s.display });
+  const pickStyle = (s: Style) => save({ route: "famous", style_id: s.id, style_option: null }, { styleName: s.display });
+  const buildOwn = () => save({ route: "build", style_id: null, style_option: null }, { styleName: undefined });
   const answer = (q: Question, value: string) => save({ [q.key]: value });
 
   // Back: take back the last answer; before any, the cut; before that, leave.
   function back() {
     const last = answered[answered.length - 1];
     if (last) return save({ [last.key]: null });
-    if (c.answers.style_id) return save({ style_id: null, style_option: null }, { styleName: undefined });
+    if (chosen) return save({ route: null, style_id: null, style_option: null }, { styleName: undefined });
     flow.back();
   }
 
   async function finish() {
     if (!c.ticket) return;
-    const patch = rendererAnswers(known);
+    const patch: Record<string, string | null> = rendererAnswers(known);
+    if (building) {
+      // Route B: the render is drawn from the closest cut that suits their hair.
+      const id = closestCut(known, styles ?? []);
+      if (!id) { setProblem("The cuts didn't load. Check your connection and try again."); return; }
+      patch.style_id = id;
+    }
     setBusy(true); setProblem(null);
     try {
       await saveAnswers(c.ticket, patch);
       const answers = { ...c.answers };
       for (const [k, v] of Object.entries(patch)) { if (v === null) delete answers[k]; else answers[k] = v; }
-      update({ answers });
+      // Route B shows as "Your own style" on the brief, never as the cut it was drawn from.
+      update({ answers, ...(building ? { styleName: "Your own style" } : {}) });
       go("wait");
     } catch (e) {
       setProblem(explain(e));
@@ -111,12 +123,13 @@ export function Want({ flow }: { flow: Flow }) {
         <Bot photo={photos?.front}><p>Now the fun part.</p></Bot>
         <Bot photo={photos?.front} ghost big><p className="chat__says">Pick a cut you like, or build your own.</p></Bot>
 
-        {c.answers.style_id && (
+        {!building && c.answers.style_id && (
           <>
             <Reply photo={style?.photo}>{c.styleName ?? style?.display}</Reply>
             <Bot photo={photos?.front}><p>Good choice.</p></Bot>
           </>
         )}
+        {building && <Reply>Build my own style</Reply>}
 
         {answered.map((q) => (
           <div key={q.key} className="chat__pair">
@@ -132,7 +145,7 @@ export function Want({ flow }: { flow: Flow }) {
       <div className="chat__answers">
         <Problem message={problem} />
 
-        {!c.answers.style_id && (
+        {!chosen && (
           <>
             {texture && <p className="chat__fit">These suit {labelOf(TEXTURES, texture).toLowerCase()} hair.</p>}
             {!styles && !problem && <p className="chat__fit">Loading the cuts…</p>}
@@ -147,6 +160,7 @@ export function Want({ flow }: { flow: Flow }) {
             {styles && styles.length > ROW && !all && (
               <button className="chat__more" onClick={() => setAll(true)}>See all {styles.length} styles &rarr;</button>
             )}
+            <button className="btn btn--glass chat__own" onClick={buildOwn}>Build my own, piece by piece</button>
           </>
         )}
 

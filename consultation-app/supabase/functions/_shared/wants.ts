@@ -7,6 +7,12 @@
 // both. Change together with pleroma-app/src/data/wants.ts.
 
 export const WANTS: Record<string, string[]> = {
+  // Which route: a famous cut, or built piece by piece (route B, 2026-09-27)
+  route: ["famous", "build"],
+  // Route B · the top
+  top_plan: ["keep", "shorter", "longer"],
+  top_length: ["very-short", "short", "medium", "medium-long", "long"],
+  top_direction: ["forward", "swept-back", "side-part", "up", "natural"],
   // A2 · the one detail of the chosen cut
   style_option: [
     "top-same-as-sides", "top-longer-than-sides",

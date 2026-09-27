@@ -337,3 +337,5 @@ html:has(.scan--light), body:has(.scan--light) { background: #ffffff; }
 .wa__bc small { font-size: var(--caption); }
 .wa__bc[aria-pressed="true"] b { color: var(--gold-text); }
 @media (prefers-reduced-motion: reduce) { .wa, .chat__reply { animation: none; } }
+.btn--glass { background: color-mix(in srgb, var(--surface) 44%, transparent); color: var(--ink); -webkit-backdrop-filter: blur(22px) saturate(140%); backdrop-filter: blur(22px) saturate(140%); border: 1px solid color-mix(in srgb, var(--ink) 18%, transparent); border-top-color: color-mix(in srgb, var(--ink) 30%, transparent); }
+.chat__own { font-size: var(--body); margin-top: var(--space-2); }

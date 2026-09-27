@@ -151,8 +151,21 @@ Stored as `style_option`, with the question's short name, e.g.
 - At the end ("Draw my new cut") the renderer's own answers are worked out
   and saved: sides_treatment, fade_height, beard_style. Barber's choice on
   fade start leaves fade_height empty (the renderer's default).
-- "Build my own" is not shown yet: route B (top questions, and a render
-  without a catalogue cut) is the next step.
+- Route B ("Build my own", built the same day): top first (keep the
+  length / shorter / let it grow longer; the length, only lengths below or
+  above what the reading found; which way they wear it), then the same
+  questions as route A. Answers `route`, `top_plan`, `top_length`,
+  `top_direction` (door 3 accepts them).
+- The render needs a reference photo of a known cut (words alone make the
+  model draw its stock, straight-haired idea of a style: hair-transfer,
+  build-request.ts). So a built style is drawn from the CLOSEST catalogue
+  cut that suits the client's hair: worn the same way, same length where
+  possible (table in pleroma-app/src/data/wants.ts, closestCut). The brief
+  keeps exactly what they built and shows "Your own style", never the name
+  of the cut it was drawn from. Demo: wavy, shorter, short, up → Fauxhawk.
+- Honest limit: the render of a built style is the nearest known cut, not
+  an exact drawing of every choice. A later renderer change can pass the
+  built answers into the prompt as well.
 - The row shows the first 8 cuts that suit the texture; "See all" opens the
   rest. Demo run (wavy, low fade, stubble, moustache): 11 questions after
   the cut when changing the sides, 7 when keeping them.

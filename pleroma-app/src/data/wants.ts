@@ -110,9 +110,43 @@ const faded = (k: Known) => k.a.sides_type === "faded" || (k.a.sides_keep === "y
 const keepsBeard = (k: Known) => hasBeard(k) && ["shape", "shorter"].includes(String(k.a.beard_plan ?? ""));
 
 // ---- The questions, in order ----------------------------------------------
+// Route B (build my own) starts with the top; route A already has its cut.
+const LENGTHS = ["very-short", "short", "medium", "medium-long", "long"];
+const LENGTH_WORDS: Record<string, [string, string]> = {
+  "very-short": ["Very short", "Under 1 cm, clipper length."],
+  short: ["Short", "A few centimetres."],
+  medium: ["Medium", "Long enough to push back or part."],
+  "medium-long": ["Medium-long", "Covers the ears or touches the collar."],
+  long: ["Long", "Past the collar."],
+};
+const building = (k: Known) => k.a.route === "build";
+const lengthNow = (k: Known) => LENGTHS.indexOf(k.f.length_top ?? "medium");
+
 export const QUESTIONS: Question[] = [
+  { key: "top_plan", when: building,
+    ask: () => "Let's start with the top. What do you want there?",
+    answers: (k) => [
+      A("keep", "Keep the length, just tidy it", "Same length, cleaned up.", "keep"),
+      ...(lengthNow(k) > 0 ? [A("shorter", "Shorter", "Take some length off.", "shorter")] : []),
+      ...(lengthNow(k) < LENGTHS.length - 1 ? [A("longer", "Let it grow longer", "Your barber plans the growing out with you.", "grow")] : []),
+    ] },
+  { key: "top_length", when: (k) => building(k) && (k.a.top_plan === "shorter" || k.a.top_plan === "longer"),
+    ask: (k) => k.a.top_plan === "shorter" ? "How short on top?" : "How long do you want it in the end?",
+    answers: (k) => LENGTHS
+      .filter((_, i) => k.a.top_plan === "shorter" ? i < lengthNow(k) : i > lengthNow(k))
+      .map((l) => A(l, LENGTH_WORDS[l][0], LENGTH_WORDS[l][1], `len-${LENGTHS.indexOf(l) + 1}`)) },
+  { key: "top_direction", when: building,
+    ask: () => "Which way do you wear it?",
+    answers: () => [
+      A("forward", "Forward", "Brushed forward, a fringe.", "fringe-2"),
+      A("swept-back", "Swept back", "Off the face.", "swept-back"),
+      A("side-part", "Side part", "Parted to one side.", "part-side"),
+      A("up", "Up, with volume", "Lifted at the front.", "up"),
+      A("natural", "Natural and loose", "However it falls.", "curl"),
+    ] },
+
   { key: "style_option",
-    when: (k) => !!STYLE_DETAILS[String(k.a.style_id ?? "")],
+    when: (k) => !building(k) && !!STYLE_DETAILS[String(k.a.style_id ?? "")],
     ask: (k) => STYLE_DETAILS[String(k.a.style_id)].ask,
     answers: (k) => STYLE_DETAILS[String(k.a.style_id)].answers },
 
@@ -177,7 +211,7 @@ export const QUESTIONS: Question[] = [
       A("soft", "Soft", "Cleaned up, not razor sharp.", "line-soft"),
       A("natural", "Natural", "Left as it grows.", "line-natural"),
     ] },
-  { key: "neckline", when: (k) => k.a.style_id !== "18", barbersChoice: true,
+  { key: "neckline", when: (k) => building(k) || k.a.style_id !== "18", barbersChoice: true,
     ask: () => "How should the back finish at your neck?",
     answers: () => [
       A("tapered", "Tapered", "Blends softly into your neck.", "neck-tapered"),
@@ -262,4 +296,29 @@ export function rendererAnswers(k: Known): Record<string, string | null> {
       : plan === "shorter" ? (shorter[now] ?? now) : (now || null);
   }
   return out;
+}
+
+// ---- Route B: the closest catalogue cut ------------------------------------
+// The renderer draws a cut from a reference photo of a known cut (words alone
+// made it draw its stock, straight-haired idea of a style: hair-transfer,
+// build-request.ts). So a style the client built is drawn from the closest
+// cut in the catalogue that suits their hair: same length where possible,
+// worn the same way. The brief still carries exactly what they built.
+const CLOSEST: Record<string, Record<string, string[]>> = {
+  forward:      { "very-short": ["04", "01"], short: ["05", "06", "04"], medium: ["15", "05"], "medium-long": ["19", "21"], long: ["21", "20"] },
+  "swept-back": { "very-short": ["03", "01"], short: ["03", "12"], medium: ["09", "10", "16"], "medium-long": ["09", "19"], long: ["20", "21"] },
+  "side-part":  { "very-short": ["01"], short: ["12", "03"], medium: ["13", "14", "12"], "medium-long": ["13", "19"], long: ["21", "20"] },
+  up:           { "very-short": ["02", "01"], short: ["07", "02", "05"], medium: ["08", "11", "10", "17"], "medium-long": ["08", "18"], long: ["21"] },
+  natural:      { "very-short": ["01"], short: ["03", "05", "16"], medium: ["16", "15", "12"], "medium-long": ["19", "16", "21"], long: ["21", "20", "16"] },
+};
+type Cut = { id: string; len: string; textures: string[] };
+
+export function closestCut(k: Known, cuts: Cut[]): string | null {
+  const texture = String(k.a.hair_texture ?? "");
+  const fits = cuts.filter((c) => c.textures.includes(texture));
+  const len = k.a.top_plan === "keep" ? (k.f.length_top ?? "medium") : String(k.a.top_length ?? k.f.length_top ?? "medium");
+  const wanted = CLOSEST[String(k.a.top_direction ?? "natural")]?.[len] ?? [];
+  return wanted.find((id) => fits.some((c) => c.id === id))   // worn the same way, same length
+    ?? fits.find((c) => c.len === len)?.id                     // same length
+    ?? fits[0]?.id ?? null;                                    // anything that suits their hair
 }

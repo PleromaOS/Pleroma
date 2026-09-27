@@ -64,6 +64,13 @@ const D: Record<string, React.ReactNode> = {
   blend: <><defs><linearGradient id="dblend" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor={INK} /><stop offset=".5" stopColor={INK} stopOpacity={0.25} /><stop offset="1" stopColor={INK} /></linearGradient></defs><rect x={12} y={6} width={16} height={28} rx={3} fill="url(#dblend)" /></>,
   separate: <><rect x={12} y={6} width={16} height={11} rx={3} fill={INK} /><rect x={12} y={23} width={16} height={11} rx={3} fill={INK} /></>,
   // Cut details
+  // Length on top: the bar grows.
+  "len-1": <>{head}<rect x={13} y={11} width={14} height={2} rx={1} fill={G} /></>,
+  "len-2": <>{head}<rect x={12} y={8} width={16} height={5} rx={2} fill={G} /></>,
+  "len-3": <>{head}<rect x={11} y={4} width={18} height={9} rx={3} fill={G} /></>,
+  "len-4": <>{head}<path d="M9 22 V10 Q20 0 31 10 V22 H28 V13 H12 V22 Z" fill={G} /></>,
+  "len-5": <>{head}<path d="M8 34 V10 Q20 -1 32 10 V34 H28 V13 H12 V34 Z" fill={G} /></>,
+  up: <>{head}<path d="M20 14 V2 M15 7 L20 2 L25 7" fill="none" stroke={G} strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round" /></>,
   "top-same": <rect x={8} y={14} width={24} height={14} rx={3} fill={INK} />,
   "top-longer": <path d="M8 28 V20 H14 V12 H26 V20 H32 V28 Z" fill={INK} />,
   "part-none": <>{head}</>, "part-side": <>{head}<line x1={15} y1={9} x2={15} y2={20} stroke={G} strokeWidth={2.4} /></>,
