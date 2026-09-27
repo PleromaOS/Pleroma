@@ -95,7 +95,7 @@ Added 2026-09-27 after grilling. See `docs/specs/scan-path.md`, `docs/specs/intr
 |---|---|:--:|---|---|---|---|
 | W36 | Introduction · welcome | ★ | **LOCKED** | 3c of 10 | `ui/locked/W36/` | 2026-09-27 |
 | W37 | Introduction · how it works | | **LOCKED** | 1 of 3 | `ui/locked/W37/` | 2026-09-27 |
-| W38 | Introduction · your face, your rules | | EXPLORING | 3 in `ui/candidates/W38/` | | |
+| W38 | Introduction · your face, your rules | | **LOCKED** | 3 of 3 | `ui/locked/W38/` | 2026-09-27 |
 | W39 | Introduction · the guarantee | | — | | | |
 | W40 | Prep checklist + consent | | — | | | |
 | W41 | Reading your hair | | — | | | |
@@ -178,6 +178,7 @@ record of how the product got its shape.
 
 | Date | ID | What happened |
 |---|---|---|
+| 2026-09-27 | W38 | **LOCKED** — variant 3, stories continued. Foundation first; photos and copy revisited later. |
 | 2026-09-27 | W38 | 3 variants: promises that open, three big promises + sheet, stories continued. |
 | 2026-09-27 | W37 | **LOCKED** — variant 1, classic stories. |
 | 2026-09-27 | W37 | 3 stories-style variants (auto-play, tap / hold / skip). Bryan chose stories over one crowded screen. |
