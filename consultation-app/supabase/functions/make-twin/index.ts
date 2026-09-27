@@ -18,6 +18,13 @@
 //                 It does not wait for the picture (30-60 s): the app asks
 //                 door 13 (twin-status).
 //
+// Three views (Bryan, 27 Sep): the front, and each side at the same angle as
+// the client's own side photos, so the barber can judge the sides and the
+// client can compare like for like. Each view is made by its own job
+// (twin-kitchen) at the same time, and each is checked.
+// The front instructions are exactly the ones Bryan approved; only the
+// framing sentence differs for the sides.
+//
 // Attempts: 1 on the first call. A 2nd only after the client said the first
 // does "not quite" look like them (door 14). There is no 3rd: after two
 // "not quite", the cut is drawn on their own front photo.
@@ -25,12 +32,9 @@
 //   POST { consultation_id, ticket }
 //   202  { twin_id, attempt }
 
-import { db, gatekeep, openConsultation, readBody, reply, tooManyKnocks } from "../_shared/door.ts";
+import { db, gatekeep, masterKey, openConsultation, readBody, reply, tooManyKnocks } from "../_shared/door.ts";
 
-const GEMINI_BASE = "https://generativelanguage.googleapis.com/v1beta";
 const IMAGE_MODEL = Deno.env.get("GEMINI_IMAGE_MODEL") ?? "gemini-3-pro-image";
-const CHECK_MODELS = (Deno.env.get("GEMINI_VISION_MODELS") ?? "gemini-3.8-flash,gemini-3.5-flash")
-  .split(",").map((s) => s.trim()).filter(Boolean);
 const RUNNING_STALE_MS = 4 * 60_000;
 
 // ---- The words for the confirmed findings ----------------------------------
@@ -68,113 +72,18 @@ function twinPrompt(f: Record<string, string>): string {
   ].join(" ");
 }
 
-// ---- The truth check ---------------------------------------------------------
-const CHECK_PROMPT = `You are checking an AI-made portrait against real photos of the same client.
-Photos 1 to 3 are the real client (front, two sides), taken at home. Photo 4 is the AI-made studio portrait ("the twin").
-The twin is only allowed to change the light, the background, the sharpness and the framing. Compare carefully and answer:
-- same_person: is photo 4 clearly the same person (face shape, features, age, build)?
-- hairline_moved: is the front hairline or the temples LOWER or fuller in photo 4 than in the real photos?
-- hair_added: is there visibly MORE hair (denser, fuller crown, filled-in patches) in photo 4?
-- texture_changed: is the hair texture different (for example curls straightened)?
-- colour_changed: is the hair colour or amount of grey clearly different?
-- beard_changed: is the beard or moustache clearly different (added, removed, reshaped)?
-- face_changed: is the face slimmer, younger or otherwise altered?
-Be strict: a barber will cut based on photo 4. Notes: one short sentence naming the biggest difference, or empty.`;
-const CHECK_SCHEMA = {
-  type: "OBJECT",
-  properties: Object.fromEntries([
-    ...["same_person", "hairline_moved", "hair_added", "texture_changed", "colour_changed", "beard_changed", "face_changed"].map((k) => [k, { type: "BOOLEAN" }]),
-    ["notes", { type: "STRING" }],
-  ]),
-  required: ["same_person", "hairline_moved", "hair_added", "texture_changed", "colour_changed", "beard_changed", "face_changed", "notes"],
-};
-type Check = Record<string, boolean | string> & { passed?: boolean };
+type View = "front" | "side_a" | "side_b";
 
-function toBase64(bytes: Uint8Array): string {
-  let s = "";
-  for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
-  return btoa(s);
-}
-const jpeg = (b64: string) => ({ inline_data: { mime_type: "image/jpeg", data: b64 } });
-
-async function makeImage(prompt: string, photos: string[]): Promise<Uint8Array> {
-  const res = await fetch(`${GEMINI_BASE}/models/${IMAGE_MODEL}:generateContent?key=${Deno.env.get("GEMINI_API_KEY")}`, {
-    method: "POST", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      contents: [{ parts: [{ text: prompt }, ...photos.map(jpeg)] }],
-      generationConfig: { imageConfig: { imageSize: "2K", aspectRatio: "3:4" } },
-    }),
-  });
-  const j = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(`image ${res.status}: ${JSON.stringify(j).slice(0, 300)}`);
-  for (const p of j.candidates?.[0]?.content?.parts ?? []) {
-    const d = p.inlineData?.data ?? p.inline_data?.data;
-    if (d) return Uint8Array.from(atob(d), (c) => c.charCodeAt(0));
-  }
-  throw new Error(`no image returned (${j.candidates?.[0]?.finishReason ?? "no reason"})`);
-}
-
-async function truthCheck(photos: string[], twin: Uint8Array): Promise<Check> {
-  const parts = [{ text: CHECK_PROMPT }, ...photos.map(jpeg), { inline_data: { mime_type: "image/png", data: toBase64(twin) } }];
-  let lastErr = "";
-  for (let round = 0; round < 3; round++) {
-    if (round) await new Promise((r) => setTimeout(r, round * 4000));
-    for (const model of CHECK_MODELS) {
-      const res = await fetch(`${GEMINI_BASE}/models/${model}:generateContent?key=${Deno.env.get("GEMINI_API_KEY")}`, {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ contents: [{ role: "user", parts }], generationConfig: { responseMimeType: "application/json", responseSchema: CHECK_SCHEMA, temperature: 0 } }),
-      });
-      const j = await res.json().catch(() => ({}));
-      if (res.status === 404 || res.status === 429 || res.status >= 500) { lastErr += `${model} ${res.status}; `; continue; }
-      if (!res.ok) throw new Error(`check ${model} ${res.status}`);
-      const text = j?.candidates?.[0]?.content?.parts?.find((p: { text?: string }) => p.text)?.text;
-      const c = JSON.parse(text ?? "{}") as Check;
-      c.passed = c.same_person === true && !c.hairline_moved && !c.hair_added && !c.texture_changed
-        && !c.colour_changed && !c.beard_changed && !c.face_changed;
-      c.model = model;
-      return c;
-    }
-  }
-  throw new Error(`check unavailable: ${lastErr}`);
-}
-
-// The slow part, after the door has already answered.
-async function build(client: ReturnType<typeof db>, twinId: string, paths: string[], prompt: string) {
-  const checks: Check[] = [];
-  try {
-    const photos: string[] = [];
-    for (const p of paths) {
-      const dl = await client.storage.from("client-photos").download(p);
-      if (dl.error || !dl.data) throw new Error("photo_download_failed");
-      photos.push(toBase64(new Uint8Array(await dl.data.arrayBuffer())));
-    }
-    let image: Uint8Array | null = null, tries = 0;
-    for (; tries < 2; ) {
-      tries++;
-      image = await makeImage(prompt + (tries > 1 ? " CRITICAL: the previous attempt changed him. Change NOTHING about his face, hairline, hair or beard." : ""), photos);
-      let check: Check;
-      try { check = await truthCheck(photos, image); }
-      catch (e) {
-        // The checker itself is down: keep this twin with a note for the
-        // barber rather than paying for a second picture nobody can check.
-        checks.push({ passed: false, ran: false, notes: `truth check could not run: ${String(e).slice(0, 120)}` });
-        break;
-      }
-      checks.push(check);
-      if (check.passed) break;
-    }
-    const path = `${twinId}.png`;
-    const up = await client.storage.from("ai-twins").upload(path, image!, { contentType: "image/png", upsert: true });
-    if (up.error) throw new Error(up.error.message);
-    await client.from("ai_twins").update({
-      status: "succeeded", output_path: path, tries, truth_check: checks,
-      needs_barber_note: !checks[checks.length - 1].passed, finished_at: new Date().toISOString(),
-    }).eq("id", twinId);
-  } catch (e) {
-    await client.from("ai_twins").update({
-      status: "failed", error: String(e).slice(0, 800), truth_check: checks, finished_at: new Date().toISOString(),
-    }).eq("id", twinId);
-  }
+// Hands each view to its own kitchen job (twin-kitchen), so no single job
+// runs into the 150-second limit. The door answers straight away.
+function dispatch(twinId: string, views: View[]) {
+  const url = `${Deno.env.get("SUPABASE_URL")}/functions/v1/twin-kitchen`;
+  // @ts-ignore EdgeRuntime is provided by the Supabase edge runtime
+  EdgeRuntime.waitUntil(Promise.allSettled(views.map((view) => fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${masterKey()}` },
+    body: JSON.stringify({ twin_id: twinId, view }),
+  }))));
 }
 
 Deno.serve(async (req: Request) => {
@@ -213,15 +122,29 @@ Deno.serve(async (req: Request) => {
   }
 
   // Which attempt: the first, or a second after "not quite". Never a third.
-  const { data: previous } = await client.from("ai_twins").select("id, attempt, status, client_verdict, created_at")
+  const { data: previous } = await client.from("ai_twins").select("id, attempt, status, client_verdict, created_at, finished_at, output_path")
     .eq("consultation_id", c.id).order("attempt", { ascending: false });
   const last = previous?.[0];
-  if (last && last.status === "running" && Date.now() - new Date(last.created_at).getTime() < RUNNING_STALE_MS) {
+  // "Running" since: when it started, or when sides were added to a finished front.
+  const since = last ? new Date(last.finished_at ?? last.created_at).getTime() : 0;
+  if (last && last.status === "running" && Date.now() - since < RUNNING_STALE_MS) {
     return reply(409, { error: "twin_already_running", twin_id: last.id });
+  }
+  // Adding sides got stuck: the front is still good, never throw it away.
+  if (last && last.status === "running" && last.output_path) {
+    await client.from("ai_twins").update({ status: "succeeded" }).eq("id", last.id);
+    last.status = "succeeded";
   }
   let attempt = 1;
   if (last) {
     if (last.status === "succeeded" && last.client_verdict !== "not-quite") {
+      // Made before the side views existed: add just the sides, keep the front.
+      const { data: full } = await client.from("ai_twins").select("side_a_path, prompt").eq("id", last.id).single();
+      if (full && !full.side_a_path && full.prompt) {
+        await client.from("ai_twins").update({ status: "running", finished_at: new Date().toISOString(), pending_views: ["side_a", "side_b"] }).eq("id", last.id);
+        dispatch(last.id, ["side_a", "side_b"]);
+        return reply(202, { twin_id: last.id, attempt: last.attempt, adding: "sides" });
+      }
       return reply(200, { twin_id: last.id, attempt: last.attempt, status: "succeeded" }); // already made: nothing to spend
     }
     if (last.status === "succeeded" && last.attempt >= 2) return reply(409, { error: "no_twin_attempts_left" });
@@ -236,11 +159,10 @@ Deno.serve(async (req: Request) => {
   const prompt = twinPrompt(f);
   const { data: row, error } = await client.from("ai_twins").insert({
     shop_id: c.shop_id, client_id: c.client_id, consultation_id: c.id, attempt,
-    source_paths: paths, model: IMAGE_MODEL, prompt,
+    source_paths: paths, model: IMAGE_MODEL, prompt, pending_views: ["front", "side_a", "side_b"],
   }).select("id").single();
   if (error || !row) return reply(500, { error: "could_not_start_twin" });
 
-  // @ts-ignore EdgeRuntime is provided by the Supabase edge runtime
-  EdgeRuntime.waitUntil(build(client, row.id, paths, prompt));
+  dispatch(row.id, ["front", "side_a", "side_b"]);
   return reply(202, { twin_id: row.id, attempt });
 });

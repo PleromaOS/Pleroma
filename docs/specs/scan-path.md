@@ -302,6 +302,22 @@ photos, "Reading your hair" for the reading, the twin check for the AI twin.
   the second → the cut is drawn on their own front photo.
 - First real test, Bryan's scan (27 Sep): ready in 44 s, passed the truth
   check on the first try. Likeness to be judged by Bryan.
+- Three angles (Bryan, same day: "make sure that we also get the sides"):
+  the front exactly as approved, plus each side at the same angle as the
+  client's own side photos, so the barber can judge the sides and the client
+  can compare like for like. Each view is made by its own job (function
+  `twin-kitchen`, service key only), because one job making all three ran
+  past the 150-second limit of a server function and was stopped halfway.
+  Each view gets its own truth check and one silent redo; the last view to
+  finish sets the status (database function twin_view_done).
+- Test on Bryan's scan: both sides ready in about 2 minutes (made at the
+  same time as each other). One side passed first time. The other failed
+  the truth check twice (first "forehead wrinkles smoothed", then "more
+  volume and height on top") and was kept with a note for the barber, as
+  designed. Clothing differs between the three views (T-shirt, another
+  T-shirt, bare shoulders); Bryan: clothing doesn't matter.
+- Door 15 `my-photos`: 1-hour private links to the client's OWN three scan
+  photos, for showing their real photo next to the twin or render.
 - Not built yet: the twin check screen in the app (W43), starting the twin
   in the background after the findings, drawing the render on the twin, and
   the truth check on the render.

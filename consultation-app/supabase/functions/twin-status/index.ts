@@ -10,7 +10,9 @@
 //
 //   POST { consultation_id, ticket }
 //   200  { status: "none" | "running" | "succeeded" | "failed",
-//          twin_id?, attempt?, image_url?, verdict?, attempts_left }
+//          twin_id?, attempt?, image_url?, side_a_url?, side_b_url?,
+//          verdict?, attempts_left }
+// image_url is the front; the two sides match the client's side photos.
 
 import { db, gatekeep, openConsultation, readBody, reply } from "../_shared/door.ts";
 
@@ -26,17 +28,18 @@ Deno.serve(async (req: Request) => {
   const c = opened.c;
 
   const { data: t } = await client.from("ai_twins")
-    .select("id, attempt, status, output_path, client_verdict")
+    .select("id, attempt, status, output_path, side_a_path, side_b_path, client_verdict")
     .eq("consultation_id", c.id).order("attempt", { ascending: false }).limit(1).maybeSingle();
   if (!t) return reply(200, { status: "none", attempts_left: 2 });
 
-  let image_url: string | undefined;
-  if (t.status === "succeeded" && t.output_path) {
-    const signed = await client.storage.from("ai-twins").createSignedUrl(t.output_path, 3600);
-    image_url = signed.data?.signedUrl;
-  }
+  const link = async (path: string | null) => {
+    if (t.status !== "succeeded" || !path) return undefined;
+    const signed = await client.storage.from("ai-twins").createSignedUrl(path, 3600);
+    return signed.data?.signedUrl;
+  };
+  const [image_url, side_a_url, side_b_url] = await Promise.all([link(t.output_path), link(t.side_a_path), link(t.side_b_path)]);
   return reply(200, {
-    status: t.status, twin_id: t.id, attempt: t.attempt, image_url,
+    status: t.status, twin_id: t.id, attempt: t.attempt, image_url, side_a_url, side_b_url,
     verdict: t.client_verdict ?? undefined,
     attempts_left: Math.max(0, 2 - t.attempt),
   });
