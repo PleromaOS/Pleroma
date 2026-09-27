@@ -99,7 +99,7 @@ Added 2026-09-27 after grilling. See `docs/specs/scan-path.md`, `docs/specs/intr
 | W39 | Introduction · the guarantee | | **LOCKED** | 2 of 2 | `ui/locked/W39/` | 2026-09-27 |
 | W40 | Prep checklist + consent | | **LOCKED** | 3 of 3 | `ui/locked/W40/` | 2026-09-27 |
 | W41 | Reading your hair | | — | | | |
-| W42 | Finding screen (yes / no) | ★ | — | | | |
+| W42 | Finding screen (yes / no) | ★ | EXPLORING | 7 in `ui/candidates/W42/` | | |
 | W43 | AI twin check | | — | | | |
 | W44 | Keep my AI twin | | — | | | |
 | W45 | Avatar picker (question path) | | — | | | |
@@ -178,6 +178,7 @@ record of how the product got its shape.
 
 | Date | ID | What happened |
 |---|---|---|
+| 2026-09-27 | W42 | 7 variants of the finding screen (anchor): spotlight, swipe, pointed out, conversation, billboard, brief builds, ring progress. |
 | 2026-09-27 | W40 | **LOCKED** — variant 3, the waiting ring. The introduction (W36–W40) is complete. |
 | 2026-09-27 | W40 | 3 variants: pre-flight check, tap as you do it, the waiting ring. Age line moved into the consent label. |
 | 2026-09-27 | W39 | **LOCKED** — variant 2, the seal. |
