@@ -97,6 +97,23 @@ The consultation has two ways in. Terms are defined in CONTEXT.md
     Separate purposes for face data get separate agreements (GDPR Article 9).
     Wording goes to legal review (launch checklist).
 
+13. **One conversation (27 Sep, Bryan).** The introduction tells a story
+    (stories, like Instagram, where campaign clients come from). From the
+    scan to the booking, everything is ONE conversation, like texting,
+    because texting is familiar to everyone. Two modes are fine; a third
+    switch in the middle (dropping out of the chat into a full-screen menu)
+    breaks the experience.
+    - Choices that need pictures live INSIDE the conversation as picture
+      replies (a row of cuts to swipe and tap), the way chat apps send cards.
+    - The typing dots appear only when something is really happening (the
+      AI reading or drawing), never as padding before a simple question.
+    - Still page-style and to be moved into the conversation: the email
+      screen (W34), the render wait (W28), the reveal and the confirm
+      screens. The render can arrive like a photo someone sends you, tapped
+      to open full screen, as the locked AI twin check (W43) already does.
+    - The question path (no photos) should become a conversation too, after
+      the scan path is done.
+
 ## The resulting flow
 
 SCAN PATH
