@@ -3,8 +3,9 @@
 // What it does:   sends the client's three stored scan photos (front, both
 //                 sides) to the AI and returns a reading of their CURRENT hair
 //                 and beard: texture, density, colour and greys, length on top
-//                 and sides, any fade, parting, hairline, crown, beard,
-//                 moustache. Each finding has a confidence (0-1); anything
+//                 and sides, any fade, parting, hairline (height and shape),
+//                 crown, bald spots, patchy growth, an uneven current cut,
+//                 cowlicks, beard, moustache. Each finding has a confidence (0-1); anything
 //                 below SURE is flagged `ask`, so the app asks it as a normal
 //                 question instead of a yes/no (scan-path.md decision 3).
 // What it does NOT do: it never guesses gender, age or ethnicity, never
@@ -14,7 +15,8 @@
 //
 // Refuses when: no email / no photo consent / not all three photos stored /
 //               a reading is already running / the connection asks too often.
-// Reading the same photos twice returns the first reading (no second charge).
+// Reading the same photos twice returns the first reading (no second charge),
+// unless the reader itself changed since (READER_VERSION).
 //
 //   POST { consultation_id, ticket }
 //   200  { reading_id, status: "succeeded" | "unreadable", findings, model }
@@ -23,11 +25,14 @@ import { db, gatekeep, openConsultation, readBody, reply, tooManyKnocks } from "
 
 const GEMINI_BASE = "https://generativelanguage.googleapis.com/v1beta";
 // Tried in order; a model that is gone, busy or down moves on to the next.
-const MODELS = (Deno.env.get("GEMINI_VISION_MODELS") ?? "gemini-3.8-flash,gemini-3.5-flash,gemini-2.5-flash")
+// When all are busy, wait a moment and go round again (BUSY_WAITS_MS).
+// gemini-2.5-flash was removed 2026-09-27: Google no longer offers it to new accounts.
+const MODELS = (Deno.env.get("GEMINI_VISION_MODELS") ?? "gemini-3.8-flash,gemini-3.5-flash")
   .split(",").map((s) => s.trim()).filter(Boolean);
 const SURE = 0.7;                 // below this, the app asks instead of confirming
 const RUNNING_STALE_MS = 90_000;
 const AI_TIMEOUT_MS = 60_000;
+const BUSY_WAITS_MS = [3_000, 8_000];   // pauses before the 2nd and 3rd round
 
 // The vocabulary. Values match the app's answer words where they overlap
 // (hair_texture, current_length, beard_style). Change together with the app.
@@ -45,7 +50,18 @@ export const VOCAB: Record<string, string[]> = {
   beard: ["none", "stubble", "short", "medium", "full"],
   beard_patchy: ["not-applicable", "even", "some-patches"],
   moustache: ["none", "natural", "styled"],
+  // Added 2026-09-27 (Bryan): things a barber must know before cutting.
+  bald_spots: ["none", "one-small", "several-or-large"],
+  hairline_shape: ["even", "uneven"],
+  growth_evenness: ["even", "patchy"],
+  cut_evenness: ["even", "uneven"],
+  cowlick: ["none", "front", "crown", "front-and-crown", "not-visible"],
 };
+// Bump when the questions or rules change: a new version reads again even
+// if the same photos were read before.
+const READER_VERSION = "2026-09-27c";
+// Values a phone photo cannot tell apart reliably: never "sure", always asked.
+const NEVER_SURE: Record<string, string[]> = { colour: ["black", "dark-brown"] };
 const UNREADABLE = ["none", "too-dark", "blurry", "hair-covered", "face-not-visible", "not-a-person"];
 
 const PROMPT = `You are an experienced barber looking at three photos of one client, taken on their phone before a consultation.
@@ -64,10 +80,16 @@ Definitions:
 - hairline: straight, slightly-higher-temples, clearly-higher-temples, higher-all-along.
 - crown: judge only if the crown can be seen; otherwise "not-visible" with low confidence.
 - beard_patchy: "not-applicable" when there is no beard.
+- bald_spots: patches where no hair grows (not a parting, not a deliberate shaved line). one-small, or several-or-large.
+- hairline_shape: uneven when the front hairline is crooked or clearly different on the two sides.
+- growth_evenness: patchy when hair grows noticeably thinner in some areas than others.
+- cut_evenness: uneven when the CURRENT cut is lopsided or grown out unevenly (for example one side longer).
+- cowlick: a swirl or strong growth direction that makes hair stand up or part by itself, at the front, the crown, or both.
+- colour: black and very dark brown are hard to tell apart in indoor light; give at most 0.6 confidence unless it is unmistakable.
 
 Rules:
 - Never guess or mention gender, age, ethnicity or health. Describe hair only.
-- Hairline and crown are neutral descriptions, never a diagnosis.
+- Hairline, crown, bald spots and evenness are neutral descriptions of what is visible, never a diagnosis or a cause.
 - If the hair is covered (hat, hood), the photos are too dark or blurred, or there is no face, set readable to false and give the reason; still fill every item with your best guess at confidence 0.
 - Keep notes to one short sentence a barber would find useful, or leave it empty.`;
 
@@ -98,10 +120,13 @@ function validate(raw: Record<string, unknown>) {
     const value = typeof f?.value === "string" && allowed.includes(f.value) ? f.value : null;
     let c = typeof f?.confidence === "number" ? f.confidence : 0;
     c = Math.max(0, Math.min(1, value ? c : 0));
-    out[k] = { value, confidence: Math.round(c * 100) / 100, ask: !value || c < SURE };
+    if (value && NEVER_SURE[k]?.includes(value)) c = Math.min(c, 0.6);
+    // "not-visible" means the AI could not judge it: always ask.
+    out[k] = { value, confidence: Math.round(c * 100) / 100, ask: !value || c < SURE || value === "not-visible" };
   }
   const reason = typeof raw.unreadable_reason === "string" && UNREADABLE.includes(raw.unreadable_reason) ? raw.unreadable_reason : "none";
   return {
+    version: READER_VERSION,
     readable: raw.readable === true && reason === "none",
     unreadable_reason: reason,
     items: out,
@@ -141,7 +166,8 @@ Deno.serve(async (req: Request) => {
   const { data: last } = await client.from("hair_readings")
     .select("id, status, findings, model, photo_paths, created_at")
     .eq("consultation_id", c.id).order("created_at", { ascending: false }).limit(1).maybeSingle();
-  const samePhotos = last && JSON.stringify(last.photo_paths) === JSON.stringify(paths);
+  const samePhotos = last && JSON.stringify(last.photo_paths) === JSON.stringify(paths)
+    && (last.status === "running" || last.findings?.version === READER_VERSION);
   if (samePhotos && (last.status === "succeeded" || last.status === "unreadable")) {
     return reply(200, { reading_id: last.id, status: last.status, findings: last.findings, model: last.model });
   }
@@ -172,32 +198,42 @@ Deno.serve(async (req: Request) => {
     parts.push({ inline_data: { mime_type: "image/jpeg", data: toBase64(new Uint8Array(await dl.data.arrayBuffer())) } });
   }
 
-  let out: unknown = null, used = "", lastErr = "";
-  for (const model of MODELS) {
-    const ctl = new AbortController();
-    const timer = setTimeout(() => ctl.abort(), AI_TIMEOUT_MS);
-    try {
-      const res = await fetch(`${GEMINI_BASE}/models/${model}:generateContent?key=${Deno.env.get("GEMINI_API_KEY")}`, {
-        method: "POST", signal: ctl.signal,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ role: "user", parts }],
-          generationConfig: { responseMimeType: "application/json", responseSchema: SCHEMA, temperature: 0.2 },
-        }),
-      });
-      const j = await res.json().catch(() => ({}));
-      // Gone (404), busy (429) or down (5xx): try the next model in the list.
-      if (res.status === 404 || res.status === 429 || res.status >= 500) { lastErr = `${model} ${res.status}`; continue; }
-      if (!res.ok) { lastErr = `${model} ${res.status}: ${JSON.stringify(j).slice(0, 300)}`; break; }
-      const text = j?.candidates?.[0]?.content?.parts?.find((p: { text?: string }) => p.text)?.text;
-      out = text ? JSON.parse(text) : null; used = model;
-      if (!out) lastErr = `${model}: empty answer`;
-      break;
-    } catch (e) {
-      lastErr = `${model}: ${String(e).slice(0, 200)}`;
-      break;
-    } finally {
-      clearTimeout(timer);
+  let out: unknown = null, used = "", lastErr = "", stop = false;
+  const gone = new Set<string>();
+  for (let round = 0; round <= BUSY_WAITS_MS.length && !out && !stop; round++) {
+    if (round > 0) await new Promise((r) => setTimeout(r, BUSY_WAITS_MS[round - 1]));
+    for (const model of MODELS) {
+      if (gone.has(model)) continue;
+      const ctl = new AbortController();
+      const timer = setTimeout(() => ctl.abort(), AI_TIMEOUT_MS);
+      try {
+        const res = await fetch(`${GEMINI_BASE}/models/${model}:generateContent?key=${Deno.env.get("GEMINI_API_KEY")}`, {
+          method: "POST", signal: ctl.signal,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ role: "user", parts }],
+            generationConfig: { responseMimeType: "application/json", responseSchema: SCHEMA, temperature: 0 },
+          }),
+        });
+        const j = await res.json().catch(() => ({}));
+        // Gone (404), busy (429) or down (5xx): try the next model in the list.
+        if (res.status === 404 || res.status === 429 || res.status >= 500) {
+          if (res.status === 404) gone.add(model);
+          lastErr += `r${round + 1} ${model} ${res.status} ${String(j?.error?.message ?? "").slice(0, 80)}; `;
+          continue;
+        }
+        if (!res.ok) { lastErr += `${model} ${res.status}: ${JSON.stringify(j).slice(0, 300)}`; stop = true; break; }
+        const text = j?.candidates?.[0]?.content?.parts?.find((p: { text?: string }) => p.text)?.text;
+        out = text ? JSON.parse(text) : null; used = model;
+        if (!out) { lastErr += `${model}: empty answer; `; stop = true; }
+        break;
+      } catch (e) {
+        lastErr += `${model}: ${String(e).slice(0, 200)}; `;
+        stop = true;
+        break;
+      } finally {
+        clearTimeout(timer);
+      }
     }
   }
   if (!out || typeof out !== "object") return fail(lastErr || "no_answer");

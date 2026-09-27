@@ -189,19 +189,37 @@ photos, "Reading your hair" for the reading, the twin check for the AI twin.
 ## The hair analyser (door 10, read-hair) — built 2026-09-27
 
 - Reads the three stored scan photos with Gemini (vision model; tries
-  gemini-3.8-flash, then 3.5-flash, then 2.5-flash when one is busy or gone;
-  override with the GEMINI_VISION_MODELS secret).
-- Returns 13 findings, each a value from a fixed vocabulary plus a confidence
+  gemini-3.8-flash, then 3.5-flash; override with the GEMINI_VISION_MODELS
+  secret). When every model is busy it waits 3 s, then 8 s, and tries the
+  list again (three rounds at most). A model that answers "gone" (404) is
+  skipped for the rest of that reading. gemini-2.5-flash was removed from the
+  list on 27 Sep: Google no longer offers it to new accounts.
+- Returns 18 findings, each a value from a fixed vocabulary plus a confidence
   0-1: texture, density, colour, grey, length_top, sides_now, fade_now,
   parting (from the person's own left/right), hairline, crown, beard,
-  beard_patchy, moustache; plus readable / unreadable_reason and one note.
+  beard_patchy, moustache, and (added 27 Sep at Bryan's request) bald_spots,
+  hairline_shape (even / uneven), growth_evenness (even / patchy),
+  cut_evenness (is the current cut lopsided) and cowlick; plus
+  readable / unreadable_reason and one note.
 - Below 0.7 confidence a finding is marked `ask`: the app asks it as a normal
   question instead of a yes/no. Anything outside the vocabulary becomes an ask.
-- Never guesses gender, age, ethnicity or health.
+- Always asked, whatever the AI's confidence:
+  - colour when it reads black or dark brown (a phone photo cannot tell them
+    apart; Bryan's very dark brown hair read as black);
+  - any "not-visible" answer (crown, cowlick).
+- The AI is run at temperature 0 (its steadiest setting).
+- Never guesses gender, age, ethnicity or health. Hairline, crown, bald spots
+  and evenness are worded as neutral descriptions, never a diagnosis.
 - Stored in `hair_readings` exactly as returned (never edited). The client's
   confirmations and corrections go in `confirmations` on the same row, so the
   analyser's real accuracy can be measured.
-- The same photos read twice return the first reading (no second charge).
-- First real test, Bryan's own scan (27 Sep): readable, 6.3 s, 12 of 13
-  findings confident; the crown was correctly "not visible" (asked instead).
-  Accuracy to be judged by Bryan.
+- The same photos read twice return the first reading (no second charge),
+  unless READER_VERSION changed (then it reads again). Current: 2026-09-27c.
+- A failed reading stores every model's answer in `error`, for diagnosis.
+- Tests on Bryan's own scan (27 Sep): readable in 6-7 s. Bryan judged the
+  reading "spot on" except colour (very dark brown read as black; now always
+  asked). The five new findings all came back none / even, which matches.
+  Known wobble: the hairline read "slightly higher temples" once and
+  "straight" twice on the same photos. Temperature 0 should steady it; if it
+  keeps moving on other test scans, options are to always ask the hairline,
+  or read twice and ask when the two disagree.
