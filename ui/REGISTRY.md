@@ -59,7 +59,7 @@ variation budget, and everything else on that screen is designed around them.
 |---|---|:--:|---|---|---|---|
 | W01 | Quiz question screen | ★ | **LOCKED** | 2c of 5 | `ui/locked/W01/` | 2026-09-22 |
 | W02 | Style grid + tile | | — | | | |
-| W03 | Route chooser | | CANDIDATES | 5 | `ui/candidates/W03/` | |
+| W03 | Route chooser | | **LOCKED** | 5 of 5 | `ui/locked/W03/` | 2026-09-27 |
 | W04 | Hair texture picker | | — | | | |
 | W05 | Skin tone picker | | — | | | |
 | W06 | Preview screen | | — | | | |
@@ -178,6 +178,7 @@ record of how the product got its shape.
 
 | Date | ID | What happened |
 |---|---|---|
+| 2026-09-27 | W03 | **LOCKED** — variant 5, conversation with picture replies. |
 | 2026-09-27 | W03 | Variant 5: the conversation with picture replies (cuts that suit your hair, Build my own under them). Decision 13 in scan-path.md: story introduction, then one conversation to the booking. |
 | 2026-09-27 | W03 | 4 route chooser variants (scan path, after "All checked"): in the conversation, two picture cards, the cuts are the choice, three routes (adds "keep my style, just fresh", not in the spec). New gallery for the "what you want" widgets. |
 | 2026-09-27 | W44 | **LOCKED** — variant 1, in the conversation. Scan path screens complete (W45 belongs to the question path). |
