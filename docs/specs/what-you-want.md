@@ -136,3 +136,23 @@ with a drawing, except where marked. Cuts with no detail skip A2.
 
 Stored as `style_option`, with the question's short name, e.g.
 `fringe_length: medium`.
+
+## Built (27 Sep) · route A in the app
+
+- New room `want` (pleroma-app/src/screens/Want.tsx), right after the
+  findings: the route chooser (W03) and the questions (W46) as one
+  conversation. The list above lives in pleroma-app/src/data/wants.ts; the
+  drawings are placeholders in components/Drawing.tsx.
+- Every answer is saved through door 3 on tap. Door 3 now accepts the new
+  answers with fixed words only (_shared/wants.ts), including fade_style,
+  line_sharpness and neckline, which were free text before.
+- Door 3 fix: two answers sent at the same moment used to overwrite each
+  other. Saving is now one database step (function merge_answers).
+- At the end ("Draw my new cut") the renderer's own answers are worked out
+  and saved: sides_treatment, fade_height, beard_style. Barber's choice on
+  fade start leaves fade_height empty (the renderer's default).
+- "Build my own" is not shown yet: route B (top questions, and a render
+  without a catalogue cut) is the next step.
+- The row shows the first 8 cuts that suit the texture; "See all" opens the
+  rest. Demo run (wavy, low fade, stubble, moustache): 11 questions after
+  the cut when changing the sides, 7 when keeping them.

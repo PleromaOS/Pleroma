@@ -135,7 +135,7 @@ export function Reading({ flow }: { flow: Flow }) {
       const answers = { ...c.answers };
       for (const [k, v] of Object.entries(patch)) { if (v === null) delete answers[k]; else answers[k] = v; }
       update({ answers, findingsDone: true });
-      go("style");
+      go("want");
     } catch (e) {
       setProblem(explain(e));
     } finally {

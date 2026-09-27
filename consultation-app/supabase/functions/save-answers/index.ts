@@ -15,6 +15,7 @@ import {
   BEARDS, db, EFFORTS, FADE_HEIGHTS, FREE_TEXT_ANSWERS, gatekeep, LENGTHS, openConsultation,
   readBody, reply, SIDES, STYLE_IDS, TEXTURES, tooManyKnocks,
 } from "../_shared/door.ts";
+import { WANTS } from "../_shared/wants.ts";
 
 const CHOICES: Record<string, string[]> = {
   style_id: STYLE_IDS,
@@ -24,6 +25,10 @@ const CHOICES: Record<string, string[]> = {
   beard_style: BEARDS,
   styling_effort: EFFORTS,
   current_length: LENGTHS,   // feeds the length-gap check in the feasibility gate
+  // What the client wants (scan path, 2026-09-27). Listed here, these win over
+  // the free-text list, so fade_style, line_sharpness and neckline are now
+  // checked against fixed words too.
+  ...WANTS,
 };
 
 Deno.serve(async (req: Request) => {
@@ -67,13 +72,13 @@ Deno.serve(async (req: Request) => {
     }
   }
 
-  const merged: Record<string, unknown> = { ...(c.answers ?? {}) };
-  for (const [k, v] of Object.entries(clean)) {
-    if (v === null) delete merged[k];
-    else merged[k] = v;
-  }
-
-  const { error } = await client.from("consultations").update({ answers: merged }).eq("id", c.id);
+  // One database step (merge_answers), so two answers sent at the same moment
+  // can never overwrite each other (found 2026-09-27).
+  const set = Object.fromEntries(Object.entries(clean).filter(([, v]) => v !== null));
+  const clear = Object.keys(clean).filter((k) => clean[k] === null);
+  const { data: merged, error } = await client.rpc("merge_answers", {
+    p_consultation: c.id, p_set: set, p_clear: clear,
+  });
   if (error) return reply(500, { error: "could_not_save" });
 
   return reply(200, { answers: merged });

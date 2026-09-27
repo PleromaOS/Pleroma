@@ -22,12 +22,14 @@ import { EffortQuestion, LengthQuestion, StyleQuestion, TextureQuestion } from "
 import { Refine, Reveal } from "./screens/Reveal";
 import { Scan } from "./screens/Scan";
 import { Wait } from "./screens/Wait";
+import { Want } from "./screens/Want";
 
 const ROOMS: Record<StepId, (p: { flow: Flow }) => React.ReactNode> = {
   landing: Landing,
   scan: Scan,
   email: EmailGate,
   reading: Reading,
+  want: Want,
   texture: TextureQuestion,
   length: LengthQuestion,
   style: StyleQuestion,
