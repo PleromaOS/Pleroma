@@ -5,7 +5,8 @@
 // Every value has three pieces of wording:
 //   says    the reading, as a message; the gold part sits inside <em>
 //   label   the short answer shown when the client taps "Not quite"
-//   (the question) asked instead of a yes/no when the AI is not sure
+//   question the plain question, for the question path (the scan path
+//            always shows the reading with yes / no, since 27 Sep)
 //
 // Wording rules (scan-path.md decision 2): hairline, crown, patches and
 // evenness are described neutrally, as what is visible. Never a diagnosis,

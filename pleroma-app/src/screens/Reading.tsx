@@ -12,8 +12,9 @@
 //      client's own photo, e.g. "Your hair looks wavy", with "Yes, that's
 //      right" and "Not quite". "Not quite" opens that finding's answers on the
 //      same screen, the AI's reading marked "our reading".
-//      A finding the AI is NOT sure about is asked as a plain question instead
-//      (scan-path.md decision 3). Colour is always asked for very dark hair.
+//      Every finding is shown this way, sure or not: the client only ever
+//      sees the answers after "Not quite" (Bryan, 27 Sep: least thinking).
+//      Findings the AI could not see (a crown out of view) are left out.
 //   3. Every answer goes to door 11 the moment it is tapped, so the reading's
 //      accuracy can be measured and nothing is lost if the client leaves.
 //      At the end, texture and current length are also saved as normal quiz
@@ -96,7 +97,13 @@ export function Reading({ flow }: { flow: Flow }) {
   // 2 · Which findings to walk through, and where we are.
   const items = c.reading?.items ?? {};
   const confirmed = c.confirmed ?? {};
-  const queue = FINDINGS.filter((f) => items[f.key]?.value !== undefined && applies(f.key, { ...answersFromItems(items), ...confirmed }));
+  // Only what the AI could actually see (Bryan, 27 Sep): a finding it could
+  // not judge ("not visible", or no usable answer) is not brought up at all.
+  const seen = (f: FindingText) => {
+    const value = items[f.key]?.value;
+    return !!value && value !== "not-visible" && f.values.some((v) => v.value === value);
+  };
+  const queue = FINDINGS.filter((f) => seen(f) && applies(f.key, { ...answersFromItems(items), ...confirmed }));
   const current = queue.find((f) => !(f.key in confirmed));
   const answeredCount = queue.filter((f) => f.key in confirmed).length;
 
@@ -225,10 +232,10 @@ function Finding({ f, item, photos, onAnswer }: {
   f: FindingText; item: FindingItem; photos: Flow["photos"];
   onAnswer: (f: FindingText, value: string) => void;
 }) {
-  const [choosing, setChoosing] = useState(item.ask);
+  const [choosing, setChoosing] = useState(false);
   const [picked, setPicked] = useState<string | null>(null);
   const reading = f.values.find((v) => v.value === item.value);
-  const ourReading = item.value && item.value !== "not-visible" ? item.value : null;
+  const ourReading = item.value;
   const zoom = ZOOM[f.zoom];
   const photo = photos ? photos[zoom.photo] : null;
 
@@ -239,14 +246,12 @@ function Finding({ f, item, photos, onAnswer }: {
     <>
       <Message photo={photo} zoom={zoom} big>
         <p className="chat__label">{f.topic}</p>
-        {item.ask || !reading
-          ? <p className="chat__says">{f.question}</p>
-          : <p className="chat__says" dangerouslySetInnerHTML={{ __html: reading.says }} />}
+        <p className="chat__says" dangerouslySetInnerHTML={{ __html: reading!.says }} />
       </Message>
 
       {choosing ? (
         <div className="chat__options">
-          {!item.ask && <p className="eyebrow eyebrow--muted">Which is closer?</p>}
+          <p className="eyebrow eyebrow--muted">Which is closer?</p>
           {f.values.map((v) => (
             <button key={v.value} className={`chat__option${v.value === ourReading ? " is-ours" : ""}`}
               aria-pressed={picked === v.value} onClick={() => pick(v.value)}>

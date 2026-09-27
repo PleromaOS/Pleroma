@@ -29,8 +29,11 @@ The consultation has two ways in. Terms are defined in CONTEXT.md
    straight on (auto-advance, like the quiz). No opens that item's normal
    answer options on the same screen, the AI's reading marked. Chosen over
    grouped screens because each screen asks for one small thought.
-   A finding the AI is NOT sure about (dark photo, hair tied up, a hat) is
-   asked as a normal question instead of a yes/no.
+   ~~A finding the AI is NOT sure about is asked as a normal question.~~
+   Changed 27 Sep (Bryan): EVERY finding is shown as the reading plus
+   Yes / No, sure or not; the options appear only after "Not quite", so the
+   client never has to think through a list up front. A finding the AI
+   could not see at all (crown out of view, "not visible") is not brought up.
 
 4. **The wait: "Reading your hair".** The AI can only start once the photos
    are stored (after the email). The client sees their photo with a scanning
@@ -236,12 +239,13 @@ photos, "Reading your hair" for the reading, the twin check for the AI twin.
   is skipped without a real beard. Wording for every value lives in
   pleroma-app/src/data/findings.ts (neutral, never a diagnosis; to be
   polished in the copy pass).
-- A sure finding: statement + "Yes, that's right" / "Not quite" (opens the
-  answers, "our reading" marked). An unsure one: asked as a question with
-  the answers straight away. Back un-answers the previous finding.
+- Every finding: the reading + "Yes, that's right" / "Not quite" (opens the
+  answers, "our reading" marked), whether the AI was sure or not. Findings
+  the AI could not see are skipped. Back un-answers the previous finding.
 - Each answer goes to door 11, confirm-finding, the moment it is tapped. The
   door (not the app) records whether the client agreed with the AI, and
-  whether it was asked or shown as yes/no, in `hair_readings.confirmations`.
+  whether the AI was unsure (ai_unsure), in `hair_readings.confirmations`.
+  That shows later whether unsure readings are corrected more often.
   One database step per answer (function confirm_finding), so fast taps
   can't overwrite each other.
 - At the end ("All checked" → "Next: choose your cut"): texture and length on
@@ -253,5 +257,5 @@ photos, "Reading your hair" for the reading, the twin check for the AI twin.
   reads again.
 - The zoomed photo crop per topic (top, colour, hairline, side, beard) is a
   rough frame; tune it on real scans.
-- Demo: add ?demo (a made-up reading, two findings asked); add &unreadable to
+- Demo: add ?demo (a made-up reading; the crown is skipped); add &unreadable to
   see the can't-read path.

@@ -12,7 +12,7 @@
 //                 the app sends those through door 3 like any other answer.
 //
 //   POST { consultation_id, ticket, reading_id, key: "texture", value: "wavy" }
-//   200  { confirmations: { texture: { value, agreed, was_asked, at }, ... } }
+//   200  { confirmations: { texture: { value, agreed, ai_unsure, at }, ... } }
 
 import { db, gatekeep, openConsultation, readBody, reply, tooManyKnocks } from "../_shared/door.ts";
 import { VOCAB } from "../_shared/hair.ts";
@@ -50,7 +50,8 @@ Deno.serve(async (req: Request) => {
   const entry = {
     value,
     agreed: item?.value === value,           // did the client end up where the AI was?
-    was_asked: item?.ask ?? true,            // asked as a question, or shown as yes / no
+    ai_unsure: item?.ask ?? true,            // the AI was below its confidence bar (the client
+                                             // still saw it as yes / no: Bryan, 27 Sep)
     at: new Date().toISOString(),
   };
   const { data, error } = await client.rpc("confirm_finding", {
