@@ -1,6 +1,6 @@
 # What you want — the question list (scan path)
 
-Draft 27 September 2026, for Bryan's approval. Comes straight after the
+Approved 27 September 2026 (Bryan). Comes straight after the
 findings ("All checked") and the route chooser (W03, locked). Everything is
 one conversation (scan-path.md decision 13), built from two locked pieces:
 
@@ -101,8 +101,38 @@ the brief keep working.
   edge sharpness, neckline shapes, top length.
 - Fix the Afro Fade library image (visible join line).
 
-## Open for Bryan
+## Decided (Bryan, 27 Sep)
 
-1. The "same as now" shortcut for sides (S0) and beard: yes?
-2. The one cut-specific detail (A2): now, or after launch?
-3. Clean-shaven clients: ask about the beard at all, or skip entirely?
+1. **"Same as now" shortcut: yes.** When the reading found a fade, a taper
+   or a beard, the first answer is "Keep it like now" (S0 and the beard
+   row), which skips the detail questions.
+2. **The one cut detail (A2): now.** Every cut with an important detail
+   asks it, right after the cut is picked. The list is below.
+3. **Clean-shaven clients: one quick question.** "Keep it clean shaven?"
+   Yes · I want stubble · I want to grow a beard.
+
+## A2 · the one detail per cut
+
+The single most important detail of each cut (from brief-male.md). Words
+with a drawing, except where marked. Cuts with no detail skip A2.
+
+| Cut | Question | Answers |
+|---|---|---|
+| Buzz Cut, Crew Cut, Caesar Cut | How short on top? | The same as the sides · A little longer than the sides |
+| Crop | How should the top look? | Straight fringe · Textured and messy · Spiked · Natural curl |
+| Classic Pompadour, Modern Pompadour | Where does it part? | No part · Side part · Middle part |
+| Classic Men's Haircut | How do you style it? | Side part · Swept back, wet look · Blow-dried |
+| Comb Over, Comb Over Fade | How should the parting line look? | Shaved in, sharp · Natural |
+| Flat Top | How high on top? | Low · Medium · High |
+| Mohawk | What shape at the neck? | Square · V-shape · Round (replaces L2 for this cut) |
+| Curly Afro, Afro Fade | What shape overall? | Round · Angular (pictures) |
+| Modern Mullet, Classic Mullet | How long at the back? | To the collar · Below the collar |
+| Curtains | How long should the fringe be? | Short · Medium · Long |
+| Quiff | How much height? | Low · Mid · High |
+| Slick Back | What finish? | Wet shine · Natural, matte |
+| Edgar Cut | Where does the fringe line sit? | Just below the hairline · Mid-forehead · At the eyebrows |
+| Wolf Cut | How much layering? | Light texture · Full shag |
+| Fauxhawk | (none) | |
+
+Stored as `style_option`, with the question's short name, e.g.
+`fringe_length: medium`.
