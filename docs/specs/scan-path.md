@@ -278,3 +278,30 @@ photos, "Reading your hair" for the reading, the twin check for the AI twin.
   rough frame; tune it on real scans.
 - Demo: add ?demo (a made-up reading; the crown is skipped); add &unreadable to
   see the can't-read path.
+
+## The AI twin, backend (built 2026-09-27)
+
+- Table `ai_twins` (one row per attempt, at most 2 per consultation) and a
+  private storage bucket `ai-twins` (a twin is the client's face).
+- Door 12 `make-twin`: made from the three scan photos and the CONFIRMED
+  findings (texture, thickness, colour and grey, lengths, fade, hairline,
+  crown, beard, moustache), with gemini-3-pro-image (the renderer's model),
+  as a studio portrait, 3:4. The instructions only allow light, background,
+  sharpness and framing to change: never a lower hairline, never more hair,
+  never a younger or slimmer face.
+- The truth check runs on every twin before anyone sees it: a second AI
+  compares it with the photos (same person? hairline moved? hair added?
+  texture, colour, beard or face changed?). Failed → made once more,
+  silently, at our cost. Failed twice → kept, flagged for the barber
+  (`needs_barber_note`). If the checker itself is down, the twin is kept and
+  flagged rather than paying for a second picture nobody can check.
+- Door 13 `twin-status`: running / ready (private link, 1 hour) / failed.
+  The truth check details are never shown to the client.
+- Door 14 `twin-verdict`: "looks like me" → the cut is drawn on the twin;
+  "not quite" on the first → one more try (door 12 again); "not quite" on
+  the second → the cut is drawn on their own front photo.
+- First real test, Bryan's scan (27 Sep): ready in 44 s, passed the truth
+  check on the first try. Likeness to be judged by Bryan.
+- Not built yet: the twin check screen in the app (W43), starting the twin
+  in the background after the findings, drawing the render on the twin, and
+  the truth check on the render.
