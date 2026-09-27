@@ -19,6 +19,18 @@ const PLACEHOLDER = "data:image/svg+xml;utf8," + encodeURIComponent(
   </svg>`);
 
 
+// A made-up reading: two findings the AI is unsure of (asked as questions),
+// the rest shown as "Yes, that's right / Not quite".
+const DEMO_READING = "00000000-0000-4000-8000-00000000000a";
+const f = (value: string, confidence = 0.9) => ({ value, confidence, ask: confidence < 0.7 || value === "not-visible" });
+const DEMO_ITEMS = {
+  texture: f("wavy"), density: f("medium"), colour: f("dark-brown", 0.6), grey: f("some", 0.8),
+  length_top: f("medium"), sides_now: f("short"), fade_now: f("low", 0.75), parting: f("left", 0.8),
+  cowlick: f("none", 0.8), hairline: f("slightly-higher-temples", 0.85), hairline_shape: f("even"),
+  crown: f("not-visible", 0.3), bald_spots: f("none"), growth_evenness: f("even"), cut_evenness: f("even", 0.8),
+  beard: f("stubble"), beard_patchy: f("not-applicable"), moustache: f("natural", 0.8),
+};
+
 export async function demoDoor(door: string, body: Record<string, unknown>): Promise<unknown> {
   await wait(350);
   switch (door) {
@@ -55,6 +67,17 @@ export async function demoDoor(door: string, body: Record<string, unknown>): Pro
     case "confirm-render":
       state.confirmed = true;
       return { brief_id: "demo-brief", guarantee_eligible: true, valid_until: new Date(Date.now() + 14 * 864e5).toISOString() };
+    case "read-hair": {
+      if (!state.photos) throw new DemoError("photos_required", 409);
+      // Add &unreadable to the address to see the "couldn't read" path.
+      if (new URLSearchParams(window.location.search).has("unreadable")) {
+        return { reading_id: DEMO_READING, status: "unreadable", findings: { readable: false, unreadable_reason: "too-dark", items: {}, notes: "" } };
+      }
+      await wait(4000); // roughly what the real reading takes
+      return { reading_id: DEMO_READING, status: "succeeded", findings: { readable: true, unreadable_reason: "none", items: DEMO_ITEMS, notes: "" } };
+    }
+    case "confirm-finding":
+      return { confirmations: { [String(body.key)]: { value: body.value } } };
     case "booking-handoff":
       return { kind: "pass", code: "4729", shop_name: "Barber Jansen", address: "Eerste van der Helststraat 41" };
   }

@@ -8,11 +8,13 @@
 // What it deliberately does NOT keep: the photos. A photo of a face is
 // Article 9 data, so the three scan photos live only in memory on the phone
 // until the email step sends them to private storage (door 9), and are never
-// written to the phone's storage by us.
+// written to the phone's storage by us. The hair READING (words like "wavy",
+// "short beard") is kept in the session like the answers, so a refresh
+// mid-way does not re-read or re-ask.
 
 import { useCallback, useEffect, useState } from "react";
 import type { Handoff, Ticket } from "../api/doors";
-import type { PhotoSet } from "../api/doors";
+import type { FindingItem, PhotoSet } from "../api/doors";
 import type { StepId } from "./steps";
 
 export type Consultation = {
@@ -26,6 +28,9 @@ export type Consultation = {
   emailGiven?: boolean;
   photosSaved?: boolean;          // the current photos are in private storage
   answers: Record<string, string | boolean>;
+  reading?: { id: string; items: Record<string, FindingItem> }; // the AI's reading of the photos (door 10)
+  confirmed?: Record<string, string>;  // finding → the value the client settled on (door 11)
+  findingsDone?: boolean;
   styleName?: string;             // for display only; the door stores the style id
   renderId?: string;
   rendersLeft: number;

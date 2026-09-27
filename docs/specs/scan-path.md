@@ -223,3 +223,35 @@ photos, "Reading your hair" for the reading, the twin check for the AI twin.
   "straight" twice on the same photos. Temperature 0 should steady it; if it
   keeps moving on other test scans, options are to always ask the hairline,
   or read twice and ask when the two disagree.
+
+## Reading and findings in the app (built 2026-09-27)
+
+- New room `reading` (pleroma-app/src/screens/Reading.tsx), right after the
+  email: W41 narration while door 10 reads, then W42 findings one by one.
+  The narration runs on a timer; the first finding (or bad news) never lands
+  before it finishes (about 5.6 s). After 20 s: "taking a little longer".
+- Order, as a barber looks: texture, thickness, colour, grey, length on top,
+  sides, fade, parting, cowlick, hairline, hairline shape, crown, bare
+  patches, growth, current cut, beard, beard growth, moustache. Beard growth
+  is skipped without a real beard. Wording for every value lives in
+  pleroma-app/src/data/findings.ts (neutral, never a diagnosis; to be
+  polished in the copy pass).
+- A sure finding: statement + "Yes, that's right" / "Not quite" (opens the
+  answers, "our reading" marked). An unsure one: asked as a question with
+  the answers straight away. Back un-answers the previous finding.
+- Each answer goes to door 11, confirm-finding, the moment it is tapped. The
+  door (not the app) records whether the client agreed with the AI, and
+  whether it was asked or shown as yes/no, in `hair_readings.confirmations`.
+  One database step per answer (function confirm_finding), so fast taps
+  can't overwrite each other.
+- At the end ("All checked" → "Next: choose your cut"): texture and length on
+  top are saved as the quiz answers hair_texture and current_length (door 3),
+  so the scan path skips those two questions and goes straight to the cut.
+- Can't read the photos → "Answer questions" (the texture question onwards)
+  or "Scan again". The AI down → "Try again" or "Answer questions instead".
+- A rescan before the questions are done throws the old reading away and
+  reads again.
+- The zoomed photo crop per topic (top, colour, hairline, side, beard) is a
+  rough frame; tune it on real scans.
+- Demo: add ?demo (a made-up reading, two findings asked); add &unreadable to
+  see the can't-read path.

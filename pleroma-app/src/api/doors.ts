@@ -71,6 +71,19 @@ export type PhotoSet = { front: string; sideA: string; sideB: string; source: "s
 export const savePhotos = (t: Ticket, p: PhotoSet) =>
   knock<{ ok: true }>("save-photos", { ...t, source: p.source, front: p.front, side_a: p.sideA, side_b: p.sideB });
 
+// 10 · the hair reading. Returns the stored reading if these photos were read already.
+export type FindingItem = { value: string | null; confidence: number; ask: boolean };
+export type Reading = {
+  reading_id: string;
+  status: "succeeded" | "unreadable";
+  findings: { readable: boolean; unreadable_reason: string; items: Record<string, FindingItem>; notes: string };
+};
+export const readHair = (t: Ticket) => knock<Reading>("read-hair", { ...t });
+
+// 11 · the client's answer to one finding (the door works out if it agrees with the AI)
+export const confirmFinding = (t: Ticket, reading_id: string, key: string, value: string) =>
+  knock<{ confirmations: Record<string, unknown> }>("confirm-finding", { ...t, reading_id, key, value });
+
 // 8
 export type Handoff =
   | { kind: "booking"; url: string; shop_name: string }

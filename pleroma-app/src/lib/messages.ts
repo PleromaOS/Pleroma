@@ -30,6 +30,12 @@ const WORDS: Record<string, string> = {
   renderer_unavailable: "Our render service is busy. Try again in a minute.",
   render_not_confirmable: "This render can't be confirmed. Try again.",
   terms_version_required: "Something went wrong confirming. Try again.",
+  photos_required: "We need your photos first.",
+  reading_failed: "We couldn't read your photos just now. Try again in a moment.",
+  reading_already_running: "We're still reading your photos.",
+  reading_not_ready: "We're still reading your photos.",
+  reading_not_found: "Something went wrong with your reading. Scan again.",
+  value_not_allowed: "That answer didn't save. Try again.",
   confirm_render_first: "Confirm your cut first.",
 };
 

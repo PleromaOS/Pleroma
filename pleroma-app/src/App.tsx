@@ -17,6 +17,7 @@ import { EmailGate } from "./screens/EmailGate";
 import { Handoff } from "./screens/Handoff";
 import { Landing } from "./screens/Landing";
 import { PhotoCheckTest } from "./screens/PhotoCheckTest";
+import { Reading } from "./screens/Reading";
 import { EffortQuestion, LengthQuestion, StyleQuestion, TextureQuestion } from "./screens/Questions";
 import { Refine, Reveal } from "./screens/Reveal";
 import { Scan } from "./screens/Scan";
@@ -26,6 +27,7 @@ const ROOMS: Record<StepId, (p: { flow: Flow }) => React.ReactNode> = {
   landing: Landing,
   scan: Scan,
   email: EmailGate,
+  reading: Reading,
   texture: TextureQuestion,
   length: LengthQuestion,
   style: StyleQuestion,

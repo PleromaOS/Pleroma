@@ -9,20 +9,25 @@
 // the phone until the email step, which records the consent.
 
 export type StepId =
-  | "landing" | "email" | "texture" | "length" | "style" | "effort"
+  | "landing" | "email" | "reading" | "texture" | "length" | "style" | "effort"
   | "scan" | "wait" | "reveal" | "refine" | "confirm-you" | "confirm-cut" | "handoff";
+
+// Scan path (2026-09-27): after the email the AI reads the photos and the
+// client confirms each finding ("reading"), so texture and current length are
+// no longer asked; the reading answers them. The texture and length questions
+// stay for the question path and for photos that can't be read.
 
 // The main road. "refine" is a side room reached from the reveal, not a step
 // on the road, so it is not in this list.
 export const ROAD: StepId[] = [
-  "landing", "scan", "email", "texture", "length", "style", "effort",
+  "landing", "scan", "email", "reading", "style", "effort",
   "wait", "reveal", "confirm-you", "confirm-cut", "handoff",
 ];
 
 // The label on the sheet's top edge (W01: section name, never a screen count).
 export const SECTION: Partial<Record<StepId, string>> = {
   texture: "Your hair", length: "Your hair", style: "Your cut", effort: "Your cut",
-  scan: "Your photos", "confirm-you": "Your result", "confirm-cut": "Your result",
+  scan: "Your photos", reading: "Your hair", "confirm-you": "Your result", "confirm-cut": "Your result",
 };
 
 // How far along the progress hairline is, for the question screens.

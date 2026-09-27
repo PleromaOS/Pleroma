@@ -22,6 +22,7 @@
 //   200  { reading_id, status: "succeeded" | "unreadable", findings, model }
 
 import { db, gatekeep, openConsultation, readBody, reply, tooManyKnocks } from "../_shared/door.ts";
+import { VOCAB } from "../_shared/hair.ts";
 
 const GEMINI_BASE = "https://generativelanguage.googleapis.com/v1beta";
 // Tried in order; a model that is gone, busy or down moves on to the next.
@@ -34,29 +35,8 @@ const RUNNING_STALE_MS = 90_000;
 const AI_TIMEOUT_MS = 60_000;
 const BUSY_WAITS_MS = [3_000, 8_000];   // pauses before the 2nd and 3rd round
 
-// The vocabulary. Values match the app's answer words where they overlap
-// (hair_texture, current_length, beard_style). Change together with the app.
-export const VOCAB: Record<string, string[]> = {
-  texture: ["straight-fine", "straight-coarse", "wavy", "curly", "coily"],
-  density: ["thin", "medium", "thick"],
-  colour: ["black", "dark-brown", "medium-brown", "light-brown", "blond", "red", "grey", "white"],
-  grey: ["none", "some", "lots"],
-  length_top: ["very-short", "short", "medium", "medium-long", "long"],
-  sides_now: ["skin", "very-short", "short", "medium", "long"],
-  fade_now: ["none", "low", "mid", "high"],
-  parting: ["none", "left", "right", "middle"],
-  hairline: ["straight", "slightly-higher-temples", "clearly-higher-temples", "higher-all-along"],
-  crown: ["full", "some-thinning", "clear-thinning", "not-visible"],
-  beard: ["none", "stubble", "short", "medium", "full"],
-  beard_patchy: ["not-applicable", "even", "some-patches"],
-  moustache: ["none", "natural", "styled"],
-  // Added 2026-09-27 (Bryan): things a barber must know before cutting.
-  bald_spots: ["none", "one-small", "several-or-large"],
-  hairline_shape: ["even", "uneven"],
-  growth_evenness: ["even", "patchy"],
-  cut_evenness: ["even", "uneven"],
-  cowlick: ["none", "front", "crown", "front-and-crown", "not-visible"],
-};
+// The vocabulary lives in _shared/hair.ts (shared with door 11, confirm-finding).
+
 // Bump when the questions or rules change: a new version reads again even
 // if the same photos were read before.
 const READER_VERSION = "2026-09-27c";

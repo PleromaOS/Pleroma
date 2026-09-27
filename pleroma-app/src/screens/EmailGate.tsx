@@ -6,6 +6,7 @@
 // and the email is what makes them one. Nothing about the photos has left the
 // phone before this point; right after the consent, door 9 stores the three
 // photos privately. If a refresh cleared the photos, the client rescans next.
+// Then the AI reads the photos (the "reading" room).
 
 import { useMemo, useState } from "react";
 import { giveConsent, giveEmail, savePhotos } from "../api/doors";
@@ -46,7 +47,7 @@ export function EmailGate({ flow }: { flow: Flow }) {
       if (!photos) return go("scan"); // cleared by a refresh: quick rescan, then on
       await savePhotos(c.ticket, photos);
       update({ photosSaved: true });
-      go("texture");
+      go("reading");
     } catch (e) {
       setProblem(explain(e));
     } finally {

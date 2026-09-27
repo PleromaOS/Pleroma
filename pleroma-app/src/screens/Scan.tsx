@@ -49,8 +49,11 @@ export function Scan({ flow }: { flow: Flow }) {
     setBusy(true); setProblem(null);
     try {
       await savePhotos(c.ticket, photos);
-      update({ photosSaved: true, renderId: undefined });
-      go(c.answers.styling_effort ? "wait" : "texture");
+      // New photos: the old reading no longer describes them, unless the
+      // client is past the questions and only needs a new render.
+      const pastQuestions = !!c.answers.styling_effort;
+      update({ photosSaved: true, renderId: undefined, ...(pastQuestions ? {} : { reading: undefined, confirmed: undefined, findingsDone: undefined }) });
+      go(pastQuestions ? "wait" : "reading");
     } catch (e) {
       setProblem(explain(e));
     } finally {
