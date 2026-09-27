@@ -185,3 +185,23 @@ goes back), hold to pause, Skip jumps to the last slide. With "reduce motion"
 on, it only moves when tapped. The intro gives the SHAPE only; each step is
 explained properly when it happens (just-in-time): the prep screen for the
 photos, "Reading your hair" for the reading, the twin check for the AI twin.
+
+## The hair analyser (door 10, read-hair) — built 2026-09-27
+
+- Reads the three stored scan photos with Gemini (vision model; tries
+  gemini-3.8-flash, then 3.5-flash, then 2.5-flash when one is busy or gone;
+  override with the GEMINI_VISION_MODELS secret).
+- Returns 13 findings, each a value from a fixed vocabulary plus a confidence
+  0-1: texture, density, colour, grey, length_top, sides_now, fade_now,
+  parting (from the person's own left/right), hairline, crown, beard,
+  beard_patchy, moustache; plus readable / unreadable_reason and one note.
+- Below 0.7 confidence a finding is marked `ask`: the app asks it as a normal
+  question instead of a yes/no. Anything outside the vocabulary becomes an ask.
+- Never guesses gender, age, ethnicity or health.
+- Stored in `hair_readings` exactly as returned (never edited). The client's
+  confirmations and corrections go in `confirmations` on the same row, so the
+  analyser's real accuracy can be measured.
+- The same photos read twice return the first reading (no second charge).
+- First real test, Bryan's own scan (27 Sep): readable, 6.3 s, 12 of 13
+  findings confident; the crown was correctly "not visible" (asked instead).
+  Accuracy to be judged by Bryan.

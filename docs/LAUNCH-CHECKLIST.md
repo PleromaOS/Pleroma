@@ -79,6 +79,11 @@ Tick an item only when it is done and tested, and add the date.
 - [ ] **Confirm billing is on for the Gemini key** before the intro says
       "your photos are never used to train AI" (only true on the paid tier).
 
+- [ ] **Measure the hair analyser's accuracy** before launch: run it on scans
+      your team can judge (different hair types, lighting, beards) and compare
+      with what the clients confirm (`hair_readings.confirmations`). Decide
+      the confidence level below which a finding is asked (now 0.7).
+
 ## Already done
 
 - [x] 2026-09-26 Private photo storage: door 9 (save-photos) stores the three scan
