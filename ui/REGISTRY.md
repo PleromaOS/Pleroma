@@ -103,6 +103,7 @@ Added 2026-09-27 after grilling. See `docs/specs/scan-path.md`, `docs/specs/intr
 | W43 | AI twin check | | **LOCKED** | 1 of 3 | `ui/locked/W43/` | 2026-09-27 |
 | W44 | Keep my AI twin | | **LOCKED** | 1 of 3 | `ui/locked/W44/` | 2026-09-27 |
 | W45 | Avatar picker (question path) | | — | | | |
+| W46 | Conversation question · word answers (reusable) | | CANDIDATES | 4 | `ui/candidates/W46/` | |
 
 ### Shared — built once, used in several flows
 
@@ -178,6 +179,7 @@ record of how the product got its shape.
 
 | Date | ID | What happened |
 |---|---|---|
+| 2026-09-27 | W46 | New reusable widget: word answers inside the conversation, styled like the W03 picture replies. 4 variants: a row to swipe, stacked cards, grid of two, stacked with drawings. Demo: styling effort, then neckline with Barber's choice. |
 | 2026-09-27 | W03 | **LOCKED** — variant 5, conversation with picture replies. |
 | 2026-09-27 | W03 | Variant 5: the conversation with picture replies (cuts that suit your hair, Build my own under them). Decision 13 in scan-path.md: story introduction, then one conversation to the booking. |
 | 2026-09-27 | W03 | 4 route chooser variants (scan path, after "All checked"): in the conversation, two picture cards, the cuts are the choice, three routes (adds "keep my style, just fresh", not in the spec). New gallery for the "what you want" widgets. |
