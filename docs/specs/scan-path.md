@@ -175,3 +175,13 @@ Wording rules — only promise what is true:
     paid terms say prompts and responses are not used to improve Google's
     products). Confirm billing is on for our Gemini key before saying it.
   - "Delete anytime": only once the deletion flow exists (launch checklist).
+
+## How it works (W37) — decision 2026-09-27
+
+Five steps on one screen overloaded it. Chosen: **stories-style**, like
+Instagram (where campaign traffic comes from): one short line and one picture
+per slide, auto-advancing about every 4 seconds; tap to go forward (left edge
+goes back), hold to pause, Skip jumps to the last slide. With "reduce motion"
+on, it only moves when tapped. The intro gives the SHAPE only; each step is
+explained properly when it happens (just-in-time): the prep screen for the
+photos, "Reading your hair" for the reading, the twin check for the AI twin.

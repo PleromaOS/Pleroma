@@ -94,7 +94,7 @@ Added 2026-09-27 after grilling. See `docs/specs/scan-path.md`, `docs/specs/intr
 | ID | Widget | Anchor | Status | Variants | Locked | Decided |
 |---|---|:--:|---|---|---|---|
 | W36 | Introduction · welcome | ★ | **LOCKED** | 3c of 10 | `ui/locked/W36/` | 2026-09-27 |
-| W37 | Introduction · how it works | | — | | | |
+| W37 | Introduction · how it works | | EXPLORING | 3 in `ui/candidates/W37/` (stories-style) | | |
 | W38 | Introduction · your face, your rules | | — | | | |
 | W39 | Introduction · the guarantee | | — | | | |
 | W40 | Prep checklist + consent | | — | | | |
@@ -178,6 +178,7 @@ record of how the product got its shape.
 
 | Date | ID | What happened |
 |---|---|---|
+| 2026-09-27 | W37 | 3 stories-style variants (auto-play, tap / hold / skip). Bryan chose stories over one crowded screen. |
 | 2026-09-27 | W36 | **LOCKED** — variant 3c, the scan ring. Glass added to the design system. |
 | 2026-09-27 | W36 | Round 2: 3a–3c from variant 3 — top-down Z path, words arrive one by one, drifting photo. |
 | 2026-09-27 | W36 | 7 variants of the introduction welcome screen, glass and solid. Placeholder photo from the style library; awaiting Bryan's pick. |
