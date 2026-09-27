@@ -114,6 +114,8 @@ The consultation has two ways in. Terms are defined in CONTEXT.md
     - The question path (no photos) should become a conversation too, after
       the scan path is done.
 
+The questions after the route chooser: docs/specs/what-you-want.md (draft).
+
 ## The resulting flow
 
 SCAN PATH
