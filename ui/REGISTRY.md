@@ -104,6 +104,7 @@ Added 2026-09-27 after grilling. See `docs/specs/scan-path.md`, `docs/specs/intr
 | W44 | Keep my AI twin | | **LOCKED** | 1 of 3 | `ui/locked/W44/` | 2026-09-27 |
 | W45 | Avatar picker (question path) | | — | | | |
 | W46 | Conversation question · word answers (reusable) | | **LOCKED** | 4 of 4 | `ui/locked/W46/` | 2026-09-27 |
+| W47 | Turn your twin (finger turns the head; reusable for the new cut) | | CANDIDATES | 4 | `ui/candidates/W47/` | |
 
 ### Shared — built once, used in several flows
 
@@ -179,6 +180,7 @@ record of how the product got its shape.
 
 | Date | ID | What happened |
 |---|---|---|
+| 2026-09-27 | W47 | New widget (Bryan: "with their finger, turn the head of their avatar"). Option 1: blends the three checked pictures, always lands on a real one. 4 variants: drag the photo, turn slider, shows you first, tap to open and turn. |
 | 2026-09-27 | W46 | **LOCKED** — variant 4, stacked with drawings. |
 | 2026-09-27 | W46 | New reusable widget: word answers inside the conversation, styled like the W03 picture replies. 4 variants: a row to swipe, stacked cards, grid of two, stacked with drawings. Demo: styling effort, then neckline with Barber's choice. |
 | 2026-09-27 | W03 | **LOCKED** — variant 5, conversation with picture replies. |
