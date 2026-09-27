@@ -93,7 +93,7 @@ Added 2026-09-27 after grilling. See `docs/specs/scan-path.md`, `docs/specs/intr
 
 | ID | Widget | Anchor | Status | Variants | Locked | Decided |
 |---|---|:--:|---|---|---|---|
-| W36 | Introduction · welcome | ★ | EXPLORING | 7 in `ui/candidates/W36/` | | |
+| W36 | Introduction · welcome | ★ | EXPLORING | 7 + 3 (3a–3c, from v3) in `ui/candidates/W36/` | | |
 | W37 | Introduction · how it works | | — | | | |
 | W38 | Introduction · your face, your rules | | — | | | |
 | W39 | Introduction · the guarantee | | — | | | |
@@ -178,6 +178,7 @@ record of how the product got its shape.
 
 | Date | ID | What happened |
 |---|---|---|
+| 2026-09-27 | W36 | Round 2: 3a–3c from variant 3 — top-down Z path, words arrive one by one, drifting photo. |
 | 2026-09-27 | W36 | 7 variants of the introduction welcome screen, glass and solid. Placeholder photo from the style library; awaiting Bryan's pick. |
 | 2026-09-27 | W36–W45 | Scan path widgets added. ADR 0015. |
 | 2026-09-22 | W01 | **LOCKED** — variant 2c, two-zone chassis. Both modes ship off one frame. |

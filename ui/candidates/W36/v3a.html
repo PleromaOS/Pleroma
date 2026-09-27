@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>W36 · variant 3a</title>
+<link rel="stylesheet" href="../../tokens.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ---- harness: not part of the widget, stripped at assembly ---------------- */
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-ui); display: flex; justify-content: center; }
+.harness { width: 100%; max-width: 430px; }
+.harness__label, .harness__note { font-size: var(--micro); line-height: var(--micro-lh); font-weight: 600; text-transform: uppercase; letter-spacing: var(--micro-tracking); color: var(--ink-3); margin: 0; padding: var(--space-3) var(--space-4); }
+.harness__note { color: var(--gold-text); min-height: 38px; }
+.harness__bar { display: flex; justify-content: space-between; gap: var(--space-3); padding: 0 var(--space-4) var(--space-6); }
+.harness__bar a, .harness__bar button { font: inherit; font-size: var(--body-sm); font-weight: 600; color: var(--ink); background: var(--surface); border: 1px solid var(--line-strong); border-radius: var(--r-pill); min-height: 44px; padding: 0 var(--space-4); display: inline-flex; align-items: center; text-decoration: none; cursor: pointer; }
+/* ---- the widget ---------------------------------------------------------- */
+
+[data-component="W36"] {
+  --glass:      color-mix(in srgb, var(--surface) 62%, transparent);
+  --glass-2:    color-mix(in srgb, var(--surface) 44%, transparent);
+  --glass-edge: color-mix(in srgb, var(--ink) 18%, transparent);
+  --glass-hi:   color-mix(in srgb, var(--ink) 30%, transparent);
+  --glass-blur: blur(22px) saturate(140%);
+  position: relative; width: 100%; min-height: 780px; overflow: hidden;
+  background: var(--bg); color: var(--ink);
+  font-family: var(--font-ui); font-size: var(--body); line-height: var(--body-lh);
+  display: flex; flex-direction: column;
+}
+[data-component="W36"] * { box-sizing: border-box; }
+[data-component="W36"] h1 { font-family: var(--font-display); font-weight: 600; margin: 0; text-wrap: balance; }
+[data-component="W36"] h1 em { font-style: normal; color: var(--gold-text); }
+[data-component="W36"] p { margin: 0; }
+[data-component="W36"] .wm { font-family: var(--font-display); font-weight: 600; letter-spacing: .01em; }
+[data-component="W36"] .wm b { font-family: var(--font-ui); font-weight: 700; color: var(--gold-text); letter-spacing: .02em; }
+[data-component="W36"] .micro { font-size: var(--micro); line-height: var(--micro-lh); font-weight: 600; text-transform: uppercase; letter-spacing: var(--micro-tracking); }
+/* Language pill: one pill, two halves (ux-context rule 6) */
+[data-component="W36"] .lang { display: inline-flex; border: 1px solid var(--glass-edge); border-radius: var(--r-pill); padding: 2px; background: var(--glass); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); }
+[data-component="W36"] .lang button { color: var(--ink); }
+[data-component="W36"] .lang button { appearance: none; border: 0; background: transparent; color: var(--ink); font: inherit; font-size: var(--caption); font-weight: 600; min-width: 48px; min-height: 36px; border-radius: var(--r-pill); cursor: pointer; }
+[data-component="W36"] .lang button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+[data-component="W36"] .btn { appearance: none; cursor: pointer; font: inherit; font-weight: 600; font-size: var(--heading); border-radius: var(--r-pill); border: 0; min-height: 52px; padding: 0 var(--space-6); width: 100%; display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); transition: transform var(--t-state) ease-out, background var(--t-state) ease-out; }
+[data-component="W36"] .btn:active { transform: scale(.98); }
+[data-component="W36"] .btn:focus-visible, [data-component="W36"] button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+[data-component="W36"] .btn--primary { background: var(--gold); color: var(--ink-on-gold); }
+[data-component="W36"] .opt { appearance: none; cursor: pointer; font: inherit; font-weight: 500; color: var(--ink); text-align: left; min-height: 48px; padding: var(--space-3) var(--space-4); border-radius: var(--r-md); border: 1px solid var(--line); background: var(--surface); transition: background var(--t-state) ease-out, border-color var(--t-state) ease-out; }
+[data-component="W36"] .opt[aria-pressed="true"] { border-color: var(--gold); background: var(--gold-wash); font-weight: 600; }
+[data-component="W36"] .opt[aria-pressed="true"]::after { content: " ✓"; color: var(--gold-text); }
+[data-component="W36"] .facts { display: flex; flex-wrap: wrap; gap: var(--space-2); list-style: none; padding: 0; margin: 0; }
+[data-component="W36"] .facts li { font-size: var(--body-sm); font-weight: 600; padding: var(--space-1) var(--space-3); border-radius: var(--r-pill); border: 1px solid var(--line-strong); color: var(--ink); }
+/* Glass: a translucent, blurred panel with a fine edge. No shadow (tokens.css). */
+[data-component="W36"] .glass { background: var(--glass); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-edge); border-top-color: var(--glass-hi); }
+[data-component="W36"] .btn--glass { background: var(--glass-2); color: var(--ink); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-edge); border-top-color: var(--glass-hi); }
+[data-component="W36"] .btn--glass-gold { background: color-mix(in srgb, var(--gold) 82%, transparent); color: var(--ink-on-gold); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); border: 1px solid color-mix(in srgb, var(--gold) 60%, var(--ink)); }
+/* Entrance: one soft rise, staggered. Old phones: transform + opacity only. */
+[data-component="W36"] .rise { opacity: 0; transform: translateY(12px); animation: w36rise var(--t-enter) var(--ease) forwards; }
+[data-component="W36"] .d1 { animation-delay: 80ms; } [data-component="W36"] .d2 { animation-delay: 160ms; }
+[data-component="W36"] .d3 { animation-delay: 240ms; } [data-component="W36"] .d4 { animation-delay: 320ms; }
+[data-component="W36"] .d5 { animation-delay: 400ms; }
+@keyframes w36rise { to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { [data-component="W36"] .rise { animation: none; opacity: 1; transform: none; } }
+
+
+/* Words arrive one by one: out of focus, then sharp (the "scan" feeling). */
+[data-component="W36"] .w { display: inline-block; opacity: 0; filter: blur(8px); transform: translateY(10px);
+  animation: w36word 560ms var(--ease) forwards; animation-delay: calc(var(--base, 0ms) + var(--i) * 70ms); }
+@keyframes w36word { to { opacity: 1; filter: none; transform: none; } }
+/* Things that float: a slow, small bob so the screen breathes. */
+[data-component="W36"] .float { animation: w36float 6s ease-in-out infinite; }
+@keyframes w36float { 50% { transform: translateY(-6px); } }
+/* The photo drifts slowly behind everything. */
+[data-component="W36"] .drift { animation: w36drift 24s ease-in-out infinite alternate; }
+@keyframes w36drift { from { transform: scale(1.04) translate(0, 0); } to { transform: scale(1.12) translate(-2%, -2%); } }
+/* A light passes over the main button every few seconds. */
+[data-component="W36"] .sheen { position: relative; overflow: hidden; isolation: isolate; }
+[data-component="W36"] .sheen::after { content: ""; position: absolute; inset: -20% auto -20% -40%; width: 30%; z-index: -1;
+  background: linear-gradient(100deg, transparent, color-mix(in srgb, var(--ink-on-gold) 0%, rgba(255,255,255,.45)), transparent);
+  transform: skewX(-18deg); animation: w36sheen 4.5s var(--ease) infinite 1.6s; }
+@keyframes w36sheen { 0% { left: -40%; } 35%, 100% { left: 130%; } }
+/* Staggered entrance for blocks, driven by --i so the order is the Z order. */
+[data-component="W36"] .pop { opacity: 0; transform: translateY(14px) scale(.98); animation: w36pop 480ms var(--ease) forwards;
+  animation-delay: calc(var(--base, 0ms) + var(--i, 0) * 90ms); }
+@keyframes w36pop { to { opacity: 1; transform: none; } }
+[data-component="W36"] .beat[hidden] { display: none; }
+[data-component="W36"] .back { appearance: none; width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; cursor: pointer; color: var(--ink); font-size: 20px; }
+[data-component="W36"] .dots { display: flex; gap: var(--space-1); }
+[data-component="W36"] .dots i { width: 22px; height: 4px; border-radius: 2px; background: var(--line-strong); transition: background var(--t-progress) var(--ease); }
+[data-component="W36"] .dots i.on { background: var(--gold); }
+[data-component="W36"] .quote { font-family: var(--font-display); font-weight: 600; font-size: var(--title-2); line-height: var(--title-2-lh); color: var(--gold-text); }
+[data-component="W36"] .q2 { font-size: var(--body-sm); line-height: var(--body-sm-lh); color: var(--ink-2); }
+[data-component="W36"] .promise { color: var(--ink-2); }
+[data-component="W36"] .qtitle { font-family: var(--font-display); font-weight: 600; font-size: var(--display-2); line-height: var(--display-2-lh); margin: 0; }
+[data-component="W36"] .opts { display: grid; grid-template-columns: 1fr 1fr; gap: var(--tile-gap); }
+[data-component="W36"] .opts .opt { min-height: 104px; border-radius: var(--r-lg); background: var(--glass); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); border-color: var(--glass-edge); border-top-color: var(--glass-hi); font-size: var(--heading); font-weight: 600; display: flex; align-items: flex-end; }
+[data-component="W36"] .opts .opt[aria-pressed="true"] { border-color: var(--gold); background: color-mix(in srgb, var(--gold-wash) 82%, transparent); }
+@media (prefers-reduced-motion: reduce) {
+  [data-component="W36"] .w, [data-component="W36"] .pop { animation: none; opacity: 1; filter: none; transform: none; }
+  [data-component="W36"] .float, [data-component="W36"] .drift, [data-component="W36"] .sheen::after { animation: none; }
+}
+
+[data-component="W36"] { min-height: 100dvh; }
+[data-component="W36"] .top { display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); }
+[data-component="W36"] .beat { position: relative; z-index: 1; flex: 1; display: flex; flex-direction: column; padding: var(--space-4); gap: var(--space-4); }
+[data-component="W36"] .b2 .qtitle { margin-top: var(--space-4); }
+[data-component="W36"] .b2 .btn { margin-top: auto; }
+
+[data-component="W36"] .bg { position: absolute; left: 0; right: 0; bottom: 0; height: 58%; overflow: hidden; }
+[data-component="W36"] .bg div { position: absolute; inset: 0; background: url(data:image/jpeg;base64,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) center 30%/cover; }
+[data-component="W36"] .bg::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to bottom, var(--bg), color-mix(in srgb, var(--bg) 35%, transparent) 45%, color-mix(in srgb, var(--bg) 55%, transparent)); }
+[data-component="W36"] .hero { display: flex; flex-direction: column; gap: var(--space-3); margin-top: var(--space-5); }
+[data-component="W36"] .hero .micro { color: var(--gold-text); }
+[data-component="W36"] h1 { font-size: var(--display-1); line-height: var(--display-1-lh); }
+[data-component="W36"] .quoteline { display: flex; align-items: baseline; gap: var(--space-2); flex-wrap: wrap; margin-top: var(--space-2); }
+[data-component="W36"] .b1 .btn { margin-top: auto; }
+
+</style>
+</head>
+<body>
+<div class="harness">
+  <section data-component="W36" lang="en">
+
+<div class="bg" aria-hidden="true"><div class="drift"></div></div>
+<div class="beat b1" data-beat="1">
+  <div class="top"><span class="wm">Pleroma<b>OS</b></span><div class="dots" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i></div><div class="lang" role="group" aria-label="Language"><button type="button" data-lang="en" aria-pressed="true">EN</button><button type="button" data-lang="nl" aria-pressed="false">NL</button></div></div>
+  <div class="hero">
+    <p class="micro pop" data-en="Barber Jansen invites you" data-nl="Barber Jansen nodigt je uit" style="--i:0">Barber Jansen invites you</p>
+    <h1 data-en="Your next cut, <em>exactly</em> how you want it." data-nl="Je volgende coupe, <em>precies</em> zoals jij wilt." data-split style="--base:150ms">Your next cut, <em>exactly</em> how you want it.</h1>
+    <p class="promise pop" data-en="We turn it into a picture your barber works from, and a promise the shop backs." data-nl="Wij maken er een beeld van waar je barber mee werkt, en een belofte waar de zaak achter staat." style="--i:6">We turn it into a picture your barber works from, and a promise the shop backs.</p>
+    <div class="quoteline pop float" style="--i:8"><span class="quote" data-en="“A bit shorter?”" data-nl="“Een beetje korter?”">“A bit shorter?”</span><span class="q2" data-en="Means something different to everyone." data-nl="Betekent voor iedereen iets anders.">Means something different to everyone.</span></div>
+    <div style="--base:900ms"><ul class="facts"><li class="pop" style="--i:0"><span data-en="3 min" data-nl="3 min">3 min</span></li><li class="pop" style="--i:1"><span data-en="Free" data-nl="Gratis">Free</span></li><li class="pop" style="--i:2"><span data-en="Yours to keep" data-nl="Van jou">Yours to keep</span></li></ul></div>
+  </div>
+  <button type="button" class="btn btn--glass-gold sheen pop" style="--i:12" data-go="2"><span data-en="Let's start" data-nl="Aan de slag">Let's start</span></button>
+</div>
+<div class="beat b2" data-beat="2" hidden>
+  <div class="top"><button type="button" class="back glass" data-go="1" aria-label="Back">&larr;</button><div class="dots" aria-hidden="true"><i class="on"></i><i class="on"></i><i></i><i></i></div><div class="lang" role="group" aria-label="Language"><button type="button" data-lang="en" aria-pressed="true">EN</button><button type="button" data-lang="nl" aria-pressed="false">NL</button></div></div>
+  
+  <h2 class="qtitle" data-en="What brings you here?" data-nl="Waarvoor kom je?" data-split>What brings you here?</h2>
+  <div class="opts" style="--base:300ms"><button type="button" class="opt pop" style="--i:0" aria-pressed="false"><span data-en="New look" data-nl="Nieuwe look">New look</span></button><button type="button" class="opt pop" style="--i:1" aria-pressed="false"><span data-en="Sharper version of my cut" data-nl="Strakkere versie van mijn coupe">Sharper version of my cut</span></button><button type="button" class="opt pop" style="--i:2" aria-pressed="false"><span data-en="Fix a bad cut" data-nl="Mislukte coupe herstellen">Fix a bad cut</span></button><button type="button" class="opt pop" style="--i:3" aria-pressed="false"><span data-en="Just curious" data-nl="Gewoon nieuwsgierig">Just curious</span></button></div>
+  <button type="button" class="btn btn--glass-gold sheen pop" style="--i:5;--base:300ms" data-next><span data-en="How it works" data-nl="Hoe het werkt">How it works</span></button>
+</div>
+  </section>
+  <p class="harness__label">W36 &middot; variant 3a &middot; Reads like a page from the top: logo and language, then the headline arriving word by word, the promise, the facts. The photo sits low and drifts; the button closes the Z at the bottom right, where the thumb is.</p>
+  <p class="harness__note" aria-live="polite"></p>
+  <div class="harness__bar"><a href="index.html">&larr; All variants</a><button type="button" id="theme-flip">Switch light / dark</button></div>
+</div>
+<script>
+
+(function () {
+  var root = document.querySelector('[data-component="W36"]');
+  // Language: swaps every [data-en]/[data-nl] string.
+  root.querySelectorAll('.lang button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var lang = b.dataset.lang;
+      root.querySelectorAll('.lang button').forEach(function (x) { x.setAttribute('aria-pressed', x === b); });
+      root.querySelectorAll('[data-' + lang + ']').forEach(function (el) { el.innerHTML = el.getAttribute('data-' + lang); });
+      root.setAttribute('lang', lang);
+    });
+  });
+  // "What brings you here?" — one choice, tap again to clear.
+  root.querySelectorAll('.opt').forEach(function (o) {
+    o.addEventListener('click', function () {
+      var on = o.getAttribute('aria-pressed') !== 'true';
+      root.querySelectorAll('.opt').forEach(function (x) { x.setAttribute('aria-pressed', 'false'); });
+      o.setAttribute('aria-pressed', on);
+    });
+  });
+  // The main button leads to screen 2, which is not built yet: say so honestly.
+  root.querySelectorAll('[data-next]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var n = document.querySelector('.harness__note');
+      if (n) { n.textContent = 'Next: screen 2 · How it works (not built yet)'; }
+    });
+  });
+  
+  // Split marked text into words so each can arrive on its own.
+  function split(el) {
+    var i = 0, nodes = Array.prototype.slice.call(el.childNodes);
+    el.textContent = '';
+    nodes.forEach(function (n) {
+      if (n.nodeType === 3) {
+        n.textContent.split(/(\s+)/).forEach(function (part) {
+          if (!part) return;
+          if (/^\s+$/.test(part)) { el.appendChild(document.createTextNode(' ')); return; }
+          var s = document.createElement('span'); s.className = 'w'; s.style.setProperty('--i', i++); s.textContent = part; el.appendChild(s);
+        });
+      } else { var w = document.createElement('span'); w.className = 'w'; w.style.setProperty('--i', i++); w.appendChild(n); el.appendChild(w); }
+    });
+  }
+  function splitAll(scope) { (scope || root).querySelectorAll('[data-split]').forEach(split); }
+  splitAll();
+  // After a language switch the words arrive again, in the new language.
+  root.querySelectorAll('.lang button').forEach(function (b) { b.addEventListener('click', function () { splitAll(); }); });
+  // Beat 1 -> beat 2, and back. The dots and the back button say where you are.
+  function show(n) {
+    root.querySelectorAll('.beat').forEach(function (b) { b.hidden = b.dataset.beat !== String(n); });
+    var shown = root.querySelector('.beat[data-beat="' + n + '"]');
+    shown.querySelectorAll('.dots i').forEach(function (d, i) { d.classList.toggle('on', i < n); });
+    shown.querySelectorAll('.pop').forEach(function (p) { p.style.animation = 'none'; p.offsetWidth; p.style.animation = ''; });
+    splitAll(shown);
+  }
+  root.querySelectorAll('[data-go]').forEach(function (b) { b.addEventListener('click', function () { show(+b.dataset.go); }); });
+
+})();
+
+document.getElementById('theme-flip').addEventListener('click', function () {
+  var el = document.documentElement;
+  el.setAttribute('data-theme', el.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+});
+// Theme check: press T to flip.
+document.addEventListener('keydown', function (e) {
+  if (e.key.toLowerCase() !== 't') return;
+  var el = document.documentElement;
+  el.setAttribute('data-theme', el.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+});
+</script>
+</body>
+</html>
