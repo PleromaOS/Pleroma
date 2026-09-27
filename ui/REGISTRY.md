@@ -98,7 +98,7 @@ Added 2026-09-27 after grilling. See `docs/specs/scan-path.md`, `docs/specs/intr
 | W38 | Introduction · your face, your rules | | **LOCKED** | 3 of 3 | `ui/locked/W38/` | 2026-09-27 |
 | W39 | Introduction · the guarantee | | **LOCKED** | 2 of 2 | `ui/locked/W39/` | 2026-09-27 |
 | W40 | Prep checklist + consent | | **LOCKED** | 3 of 3 | `ui/locked/W40/` | 2026-09-27 |
-| W41 | Reading your hair | | EXPLORING | 3 in `ui/candidates/W41/` (conversation) | | |
+| W41 | Reading your hair | | **LOCKED** | 3 of 3 | `ui/locked/W41/` | 2026-09-27 |
 | W42 | Finding screen (yes / no) | ★ | **LOCKED** | 4 of 7 | `ui/locked/W42/` | 2026-09-27 |
 | W43 | AI twin check | | — | | | |
 | W44 | Keep my AI twin | | — | | | |
@@ -178,6 +178,7 @@ record of how the product got its shape.
 
 | Date | ID | What happened |
 |---|---|---|
+| 2026-09-27 | W41 | **LOCKED** — variant 3, narrated. |
 | 2026-09-27 | W41 | 3 conversation variants with typing dots, incl. slow and can't-read states. |
 | 2026-09-27 | W42 | **LOCKED** — variant 4, conversation. |
 | 2026-09-27 | W42 | 7 variants of the finding screen (anchor): spotlight, swipe, pointed out, conversation, billboard, brief builds, ring progress. |
