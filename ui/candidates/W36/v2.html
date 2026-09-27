@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>W36 · variant 2</title>
+<link rel="stylesheet" href="../../tokens.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ---- harness: not part of the widget, stripped at assembly ---------------- */
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-ui); display: flex; justify-content: center; }
+.harness { width: 100%; max-width: 430px; }
+.harness__label, .harness__note { font-size: var(--micro); line-height: var(--micro-lh); font-weight: 600; text-transform: uppercase; letter-spacing: var(--micro-tracking); color: var(--ink-3); margin: 0; padding: var(--space-3) var(--space-4); }
+.harness__note { color: var(--gold-text); min-height: 38px; }
+.harness__bar { display: flex; justify-content: space-between; gap: var(--space-3); padding: 0 var(--space-4) var(--space-6); }
+.harness__bar a, .harness__bar button { font: inherit; font-size: var(--body-sm); font-weight: 600; color: var(--ink); background: var(--surface); border: 1px solid var(--line-strong); border-radius: var(--r-pill); min-height: 44px; padding: 0 var(--space-4); display: inline-flex; align-items: center; text-decoration: none; cursor: pointer; }
+/* ---- the widget ---------------------------------------------------------- */
+
+[data-component="W36"] {
+  --glass:      color-mix(in srgb, var(--surface) 62%, transparent);
+  --glass-2:    color-mix(in srgb, var(--surface) 44%, transparent);
+  --glass-edge: color-mix(in srgb, var(--ink) 18%, transparent);
+  --glass-hi:   color-mix(in srgb, var(--ink) 30%, transparent);
+  --glass-blur: blur(22px) saturate(140%);
+  position: relative; width: 100%; min-height: 780px; overflow: hidden;
+  background: var(--bg); color: var(--ink);
+  font-family: var(--font-ui); font-size: var(--body); line-height: var(--body-lh);
+  display: flex; flex-direction: column;
+}
+[data-component="W36"] * { box-sizing: border-box; }
+[data-component="W36"] h1 { font-family: var(--font-display); font-weight: 600; margin: 0; text-wrap: balance; }
+[data-component="W36"] h1 em { font-style: normal; color: var(--gold-text); }
+[data-component="W36"] p { margin: 0; }
+[data-component="W36"] .wm { font-family: var(--font-display); font-weight: 600; letter-spacing: .01em; }
+[data-component="W36"] .wm b { font-family: var(--font-ui); font-weight: 700; color: var(--gold-text); letter-spacing: .02em; }
+[data-component="W36"] .micro { font-size: var(--micro); line-height: var(--micro-lh); font-weight: 600; text-transform: uppercase; letter-spacing: var(--micro-tracking); }
+/* Language pill: one pill, two halves (ux-context rule 6) */
+[data-component="W36"] .lang { display: inline-flex; border: 1px solid var(--glass-edge); border-radius: var(--r-pill); padding: 2px; background: var(--glass); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); }
+[data-component="W36"] .lang button { color: var(--ink); }
+[data-component="W36"] .lang button { appearance: none; border: 0; background: transparent; color: var(--ink); font: inherit; font-size: var(--caption); font-weight: 600; min-width: 48px; min-height: 36px; border-radius: var(--r-pill); cursor: pointer; }
+[data-component="W36"] .lang button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+[data-component="W36"] .btn { appearance: none; cursor: pointer; font: inherit; font-weight: 600; font-size: var(--heading); border-radius: var(--r-pill); border: 0; min-height: 52px; padding: 0 var(--space-6); width: 100%; display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); transition: transform var(--t-state) ease-out, background var(--t-state) ease-out; }
+[data-component="W36"] .btn:active { transform: scale(.98); }
+[data-component="W36"] .btn:focus-visible, [data-component="W36"] button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+[data-component="W36"] .btn--primary { background: var(--gold); color: var(--ink-on-gold); }
+[data-component="W36"] .opt { appearance: none; cursor: pointer; font: inherit; font-weight: 500; color: var(--ink); text-align: left; min-height: 48px; padding: var(--space-3) var(--space-4); border-radius: var(--r-md); border: 1px solid var(--line); background: var(--surface); transition: background var(--t-state) ease-out, border-color var(--t-state) ease-out; }
+[data-component="W36"] .opt[aria-pressed="true"] { border-color: var(--gold); background: var(--gold-wash); font-weight: 600; }
+[data-component="W36"] .opt[aria-pressed="true"]::after { content: " ✓"; color: var(--gold-text); }
+[data-component="W36"] .facts { display: flex; flex-wrap: wrap; gap: var(--space-2); list-style: none; padding: 0; margin: 0; }
+[data-component="W36"] .facts li { font-size: var(--body-sm); font-weight: 600; padding: var(--space-1) var(--space-3); border-radius: var(--r-pill); border: 1px solid var(--line-strong); color: var(--ink); }
+/* Glass: a translucent, blurred panel with a fine edge. No shadow (tokens.css). */
+[data-component="W36"] .glass { background: var(--glass); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-edge); border-top-color: var(--glass-hi); }
+[data-component="W36"] .btn--glass { background: var(--glass-2); color: var(--ink); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-edge); border-top-color: var(--glass-hi); }
+[data-component="W36"] .btn--glass-gold { background: color-mix(in srgb, var(--gold) 82%, transparent); color: var(--ink-on-gold); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); border: 1px solid color-mix(in srgb, var(--gold) 60%, var(--ink)); }
+/* Entrance: one soft rise, staggered. Old phones: transform + opacity only. */
+[data-component="W36"] .rise { opacity: 0; transform: translateY(12px); animation: w36rise var(--t-enter) var(--ease) forwards; }
+[data-component="W36"] .d1 { animation-delay: 80ms; } [data-component="W36"] .d2 { animation-delay: 160ms; }
+[data-component="W36"] .d3 { animation-delay: 240ms; } [data-component="W36"] .d4 { animation-delay: 320ms; }
+[data-component="W36"] .d5 { animation-delay: 400ms; }
+@keyframes w36rise { to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { [data-component="W36"] .rise { animation: none; opacity: 1; transform: none; } }
+
+
+[data-component="W36"] { padding: var(--space-4); gap: var(--space-5); }
+[data-component="W36"] .top { display: flex; justify-content: space-between; align-items: center; }
+[data-component="W36"] .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: var(--space-7) var(--space-5); display: flex; flex-direction: column; gap: var(--space-4); text-align: center; align-items: center; }
+[data-component="W36"] .seal { width: 64px; height: 64px; border-radius: 50%; border: 1px solid var(--gold-dim); display: grid; place-items: center; font-family: var(--font-display); font-size: var(--title-1); color: var(--gold-text); }
+[data-component="W36"] .card .micro { color: var(--ink-2); }
+[data-component="W36"] h1 { font-size: var(--display-2); line-height: var(--display-2-lh); }
+[data-component="W36"] .rule { width: 48px; height: 1px; background: var(--gold-dim); }
+[data-component="W36"] .body { color: var(--ink-2); }
+[data-component="W36"] .facts { justify-content: center; }
+[data-component="W36"] .ask { display: flex; flex-direction: column; gap: var(--space-2); }
+[data-component="W36"] .ask .micro { color: var(--ink-2); margin-bottom: var(--space-1); }
+[data-component="W36"] .foot { margin-top: auto; display: flex; flex-direction: column; gap: var(--space-3); align-items: center; }
+
+</style>
+</head>
+<body>
+<div class="harness">
+  <p class="harness__label">W36 &middot; variant 2 &middot; No photo at all: a formal invitation card, like a printed letter from the shop. Quiet, solid, typographic.</p>
+  <section data-component="W36" lang="en">
+
+<div class="top rise"><span class="wm">Pleroma<b>OS</b></span><div class="lang" role="group" aria-label="Language"><button type="button" data-lang="en" aria-pressed="true">EN</button><button type="button" data-lang="nl" aria-pressed="false">NL</button></div></div>
+<div class="card">
+  <div class="seal rise d1" aria-hidden="true">BJ</div>
+  <p class="micro rise d1" data-en="Barber Jansen invites you" data-nl="Barber Jansen nodigt je uit">Barber Jansen invites you</p>
+  <h1 class="rise d2" data-en="Your next cut, <em>exactly</em> how you want it." data-nl="Je volgende coupe, <em>precies</em> zoals jij wilt.">Your next cut, <em>exactly</em> how you want it.</h1>
+  <div class="rule rise d2"></div>
+  <p class="body rise d3" data-en="“A bit shorter” means something different to everyone. We turn what you want into a picture your barber works from, and a promise the shop backs." data-nl="“Een beetje korter” betekent voor iedereen iets anders. Wij maken van jouw wens een beeld waar je barber mee werkt, en een belofte waar de zaak achter staat.">“A bit shorter” means something different to everyone. We turn what you want into a picture your barber works from, and a promise the shop backs.</p>
+  <ul class="facts rise d3"><li><span data-en="3 min" data-nl="3 min">3 min</span></li><li><span data-en="Free" data-nl="Gratis">Free</span></li><li><span data-en="Yours to keep" data-nl="Van jou">Yours to keep</span></li></ul>
+</div>
+<div class="ask rise d4"><p class="micro" data-en="What brings you here?" data-nl="Waarvoor kom je?">What brings you here?</p><button type="button" class="opt" aria-pressed="false"><span data-en="New look" data-nl="Nieuwe look">New look</span></button><button type="button" class="opt" aria-pressed="false"><span data-en="Sharper version of my cut" data-nl="Strakkere versie van mijn coupe">Sharper version of my cut</span></button><button type="button" class="opt" aria-pressed="false"><span data-en="Fix a bad cut" data-nl="Mislukte coupe herstellen">Fix a bad cut</span></button><button type="button" class="opt" aria-pressed="false"><span data-en="Just curious" data-nl="Gewoon nieuwsgierig">Just curious</span></button></div>
+<div class="foot rise d5"><button type="button" class="btn btn--primary" data-next><span data-en="How it works" data-nl="Hoe het werkt">How it works</span></button></div>
+  </section>
+  <p class="harness__note" aria-live="polite"></p>
+  <div class="harness__bar"><a href="index.html">&larr; All variants</a><button type="button" id="theme-flip">Switch light / dark</button></div>
+</div>
+<script>
+
+(function () {
+  var root = document.querySelector('[data-component="W36"]');
+  // Language: swaps every [data-en]/[data-nl] string.
+  root.querySelectorAll('.lang button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var lang = b.dataset.lang;
+      root.querySelectorAll('.lang button').forEach(function (x) { x.setAttribute('aria-pressed', x === b); });
+      root.querySelectorAll('[data-' + lang + ']').forEach(function (el) { el.innerHTML = el.getAttribute('data-' + lang); });
+      root.setAttribute('lang', lang);
+    });
+  });
+  // "What brings you here?" — one choice, tap again to clear.
+  root.querySelectorAll('.opt').forEach(function (o) {
+    o.addEventListener('click', function () {
+      var on = o.getAttribute('aria-pressed') !== 'true';
+      root.querySelectorAll('.opt').forEach(function (x) { x.setAttribute('aria-pressed', 'false'); });
+      o.setAttribute('aria-pressed', on);
+    });
+  });
+  // The main button leads to screen 2, which is not built yet: say so honestly.
+  root.querySelectorAll('[data-next]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var n = document.querySelector('.harness__note');
+      if (n) { n.textContent = 'Next: screen 2 · How it works (not built yet)'; }
+    });
+  });
+  
+})();
+
+document.getElementById('theme-flip').addEventListener('click', function () {
+  var el = document.documentElement;
+  el.setAttribute('data-theme', el.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+});
+// Theme check: press T to flip.
+document.addEventListener('keydown', function (e) {
+  if (e.key.toLowerCase() !== 't') return;
+  var el = document.documentElement;
+  el.setAttribute('data-theme', el.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+});
+</script>
+</body>
+</html>
