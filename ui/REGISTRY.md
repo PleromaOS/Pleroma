@@ -101,7 +101,7 @@ Added 2026-09-27 after grilling. See `docs/specs/scan-path.md`, `docs/specs/intr
 | W41 | Reading your hair | | **LOCKED** | 3 of 3 | `ui/locked/W41/` | 2026-09-27 |
 | W42 | Finding screen (yes / no) | ★ | **LOCKED** | 4 of 7 | `ui/locked/W42/` | 2026-09-27 |
 | W43 | AI twin check | | **LOCKED** | 1 of 3 | `ui/locked/W43/` | 2026-09-27 |
-| W44 | Keep my AI twin | | — | | | |
+| W44 | Keep my AI twin | | EXPLORING | 3 in `ui/candidates/W44/` | | |
 | W45 | Avatar picker (question path) | | — | | | |
 
 ### Shared — built once, used in several flows
@@ -178,6 +178,7 @@ record of how the product got its shape.
 
 | Date | ID | What happened |
 |---|---|---|
+| 2026-09-27 | W44 | 3 variants: in the conversation, switch off by default, two equal cards. |
 | 2026-09-27 | W43 | **LOCKED** — variant 1, twin as a message. |
 | 2026-09-27 | W43 | 3 variants: twin as a message, side by side, slider. Retry once, then own photo. |
 | 2026-09-27 | W41 | **LOCKED** — variant 3, narrated. |
