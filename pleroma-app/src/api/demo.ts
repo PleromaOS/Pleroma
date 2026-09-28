@@ -36,6 +36,12 @@ function twinPicture(view: "front" | "left side" | "right side", attempt: number
     </svg>`);
 }
 
+// The demo "new cut": the demo twin with a gold cut drawn on top.
+function cutPicture(view: "front" | "left side" | "right side") {
+  return twinPicture(view, 1).replace(encodeURIComponent("fill='#1f1a17'"), encodeURIComponent("fill='#c9a96e'"))
+    .replace(encodeURIComponent("DEMO TWIN 1"), encodeURIComponent("DEMO CUT"));
+}
+
 // A made-up reading: two findings the AI is unsure of (asked as questions),
 // the rest shown as "Yes, that's right / Not quite".
 const DEMO_READING = "00000000-0000-4000-8000-00000000000a";
@@ -76,10 +82,17 @@ export async function demoDoor(door: string, body: Record<string, unknown>): Pro
       renderStartedAt = Date.now();
       return { render_id: `demo-${state.renders}`, renders_left: 4 - state.renders };
     case "render-status": {
-      const done = Date.now() - renderStartedAt > 9000;
-      return done
-        ? { status: "succeeded", image_url: PLACEHOLDER, guarantee_eligible: true, renders_left: 4 - state.renders }
-        : { status: "running", renders_left: 4 - state.renders };
+      const age = Date.now() - renderStartedAt;
+      // Drawn on the demo twin when the client said it looks like them: the
+      // sides follow the front about 10 seconds later (a minute in real life).
+      const onTwin = state.twin?.verdict === "looks-like-me";
+      if (age < 9000) return { status: "running", renders_left: 4 - state.renders };
+      const sidesDone = age > 19000;
+      return {
+        status: "succeeded", image_url: onTwin ? cutPicture("front") : PLACEHOLDER, guarantee_eligible: true, renders_left: 4 - state.renders,
+        ...(onTwin ? { on_twin: true, sides_pending: !sidesDone,
+          side_a_url: sidesDone ? cutPicture("left side") : null, side_b_url: sidesDone ? cutPicture("right side") : null } : {}),
+      };
     }
     case "confirm-render":
       state.confirmed = true;

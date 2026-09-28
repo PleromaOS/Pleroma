@@ -25,7 +25,7 @@ const SPOKEN = ["Your left side", "Front", "Your right side"];
 // Most of the move holds a real picture; the blend happens in the middle only.
 const ease = (x: number) => { const t = Math.max(0, Math.min(1, (x - 0.3) / 0.4)); return t * t * (3 - 2 * t); };
 
-export function TwinCompare({ own, twin }: { own: Views | null; twin: Views }) {
+export function TwinCompare({ own, twin, label = "AI twin" }: { own: Views | null; twin: Views; label?: string }) {
   const turnable = !!(twin.left && twin.right && (!own || (own.left && own.right)));
   const [p, setP] = useState(0);         // -1 left side … 0 front … 1 right side
   const [settling, setSettling] = useState(false);
@@ -68,7 +68,7 @@ export function TwinCompare({ own, twin }: { own: Views | null; twin: Views }) {
     return Math.max(-1, Math.min(1, ((e.clientX - r.left - 14) / (r.width - 28)) * 2 - 1));
   };
 
-  const picture = (v: Views, who: "Your photo" | "AI twin") => (
+  const picture = (v: Views, who: string) => (
     <div className={`tc__stage${settling ? " is-settling" : ""}`}
       tabIndex={turnable ? 0 : -1} role={turnable ? "slider" : undefined}
       aria-label={turnable ? `${who}. Turn to see the sides.` : `${who}, from the front`}
@@ -85,7 +85,7 @@ export function TwinCompare({ own, twin }: { own: Views | null; twin: Views }) {
     <div className="tc">
       <div className={`tc__pair${own ? "" : " is-single"}`}>
         {own && <div className="tc__col"><span className="tc__cap">Your photo</span>{picture(own, "Your photo")}</div>}
-        <div className="tc__col"><span className="tc__cap">AI twin</span>{picture(twin, "AI twin")}</div>
+        <div className="tc__col">{own && <span className="tc__cap">{label}</span>}{picture(twin, label)}</div>
       </div>
       {turnable && (
         <div className="tc__rail">

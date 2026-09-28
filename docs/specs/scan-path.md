@@ -368,3 +368,34 @@ photos, "Reading your hair" for the reading, the twin check for the AI twin.
 - Not yet: drawing the cut on the twin (all three angles) and the truth check
   on the render; the "keep my twin" question (W44) at the end.
 
+### The new cut on the twin, from three angles (28 Sep)
+
+- request-render draws on the AI twin when the client said it looks like
+  them (door 14); otherwise on their own front photo, as before.
+- hair-transfer draws the front (with the style photo, as before), then one
+  job per side. Each side gets the twin's side plus the finished front
+  ("this exact haircut, from here"), with the direction written out in words.
+- Every picture gets a truth check against what it was drawn on: same
+  person, face unchanged, hairline not lowered, no hair added, texture and
+  colour kept, beard as asked, and for the sides: facing the right way and
+  the same cut as the front. One silent redo, then kept with a note for the
+  barber (renders.needs_barber_note, truth_check, truth_passed).
+- The render counts as ready when the front is done; render-status hands
+  out the sides as they arrive, and the reveal lets the client turn the new
+  cut with the W47 slider (the reveal itself is still the placeholder W21).
+- Test on Bryan's twin (Crew Cut, mid fade, coily), three renders:
+  1. one side came out much shorter on top than the front; the check then
+     only compared with the before picture. Added: the side is also checked
+     against the finished front ("same cut").
+  2. one side came out mirrored. Added: the side's direction is read first
+     and written into the instructions.
+  3. all three angles right way round and the same cut.
+- Known weak spot: the vision models used for the checks answered "busy"
+  (503) on 4 of 9 checks today. When the check cannot run, the picture is
+  kept with a note for the barber, but the client still sees it.
+- Open decision for Bryan: should a render that fails the truth check (or
+  could not be checked) lose the guarantee badge? Today the badge only
+  follows the feasibility gate.
+- Cost: a render on the twin is 3 pictures instead of 1, plus up to 3 redos,
+  plus the checks.
+

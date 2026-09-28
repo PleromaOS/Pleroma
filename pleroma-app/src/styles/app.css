@@ -372,3 +372,7 @@ html:has(.scan--light), body:has(.scan--light) { background: #ffffff; }
 .tc__names { display: flex; justify-content: space-between; font-size: var(--caption); color: var(--ink-2); }
 .tc__names .is-on { color: var(--ink); font-weight: 600; }
 @media (prefers-reduced-motion: reduce) { .tc__stage.is-settling img { transition: none; } }
+
+/* The new cut, turnable (W47 inside the provisional W21 reveal) */
+.reveal__turn { border: 1px solid var(--line); border-radius: var(--r-lg); overflow: hidden; background: var(--surface); }
+.reveal__turn .caption { text-align: center; padding: 0 var(--space-4) var(--space-3); margin: 0; }

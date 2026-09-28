@@ -41,7 +41,7 @@ export function Wait({ flow }: { flow: Flow }) {
     if (c.renderId || !c.photosSaved || !c.ticket || asked.current) return;
     asked.current = true;
     requestRender(c.ticket)
-      .then((r) => update({ renderId: r.render_id, rendersLeft: r.renders_left, imageUrl: undefined, eligible: undefined }))
+      .then((r) => update({ renderId: r.render_id, rendersLeft: r.renders_left, imageUrl: undefined, eligible: undefined, renderSides: undefined }))
       .catch((e) => { setProblem(explain(e)); setFailed(true); });
   }, [c.renderId, c.ticket, c.photosSaved, update]);
 
@@ -55,7 +55,8 @@ export function Wait({ flow }: { flow: Flow }) {
       try {
         const s = await renderStatus(c.ticket!, c.renderId!);
         if (s.status === "succeeded") {
-          update({ imageUrl: s.image_url, eligible: s.guarantee_eligible, rendersLeft: s.renders_left });
+          update({ imageUrl: s.image_url, eligible: s.guarantee_eligible, rendersLeft: s.renders_left,
+            renderSides: s.on_twin ? { left: s.side_a_url, right: s.side_b_url, pending: s.sides_pending } : undefined });
           setReady(true);
         } else if (s.status === "failed") {
           update({ rendersLeft: s.renders_left });

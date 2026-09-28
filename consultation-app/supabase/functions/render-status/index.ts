@@ -10,7 +10,8 @@
 //                 copy; that is made later, when the client takes the image away.
 //
 //   POST { consultation_id, ticket, render_id }
-//   200  { status, image_url?, guarantee_eligible?, renders_left }
+//   200  { status, image_url?, side_a_url?, side_b_url?, sides_pending?, on_twin?,
+//          guarantee_eligible?, renders_left }
 
 import { db, gatekeep, openConsultation, readBody, reply } from "../_shared/door.ts";
 
@@ -30,7 +31,7 @@ Deno.serve(async (req: Request) => {
 
   const renderId = typeof body.render_id === "string" ? body.render_id : "";
   const { data: all } = await client
-    .from("renders").select("id, status, output_path")
+    .from("renders").select("id, status, output_path, side_a_path, side_b_path, pending_views, source_kind")
     .eq("consultation_id", c.id);
   const renders = all ?? [];
   const r = renders.find((x) => x.id === renderId);
@@ -43,14 +44,22 @@ Deno.serve(async (req: Request) => {
     return reply(200, { status: r.status, renders_left: rendersLeft });
   }
 
-  const [{ data: signed }, { data: gate }] = await Promise.all([
+  const side = async (path: string | null) =>
+    path ? (await client.storage.from("renders").createSignedUrl(path, 3600)).data?.signedUrl ?? null : null;
+  const [{ data: signed }, { data: gate }, side_a_url, side_b_url] = await Promise.all([
     client.storage.from("renders").createSignedUrl(r.output_path, 3600),
     client.rpc("feasibility_gate", { p_consultation_id: c.id }),
+    side(r.side_a_path), side(r.side_b_path),
   ]);
 
   return reply(200, {
     status: "succeeded",
     image_url: signed?.signedUrl ?? null,
+    // The new cut from both sides (drawn on the AI twin only). They follow the
+    // front by about a minute; sides_pending says whether to keep asking.
+    side_a_url, side_b_url,
+    sides_pending: (r.pending_views ?? []).length > 0,
+    on_twin: r.source_kind === "twin",
     guarantee_eligible: gate?.passed === true,
     renders_left: rendersLeft,
   });

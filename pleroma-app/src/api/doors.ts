@@ -55,6 +55,10 @@ export const requestRender = (t: Ticket) =>
 export type RenderStatus = {
   status: "queued" | "running" | "succeeded" | "failed";
   image_url?: string;
+  side_a_url?: string | null;   // the new cut from the sides (drawn on the AI twin only)
+  side_b_url?: string | null;
+  sides_pending?: boolean;      // the sides follow the front by about a minute
+  on_twin?: boolean;
   guarantee_eligible?: boolean;
   renders_left: number;
 };

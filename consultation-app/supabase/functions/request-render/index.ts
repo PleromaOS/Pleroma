@@ -2,7 +2,9 @@
 //
 // What it does:   the only way a render happens. Checks that everything needed
 //                 is in place, then asks the renderer (hair-transfer) to start.
-//                 It draws on the client's stored FRONT scan photo (door 9,
+//                 Since 28 Sep it draws on the client's AI twin when they said
+//                 it looks like them (door 14), from the front and both sides.
+//                 Otherwise it draws on the client's stored FRONT scan photo (door 9,
 //                 save-photos). A photo sent in the call still wins, and an
 //                 older consultation without scan photos reuses its first
 //                 render's photo.
@@ -100,6 +102,14 @@ Deno.serve(async (req: Request) => {
   const reusePath = front?.storage_path ?? renders.find((r) => r.source_photo_path)?.source_photo_path ?? null;
   if (!photo && !reusePath) return reply(400, { error: "photo_required" });
 
+  // Drawn on the AI twin when the client said it looks like them (W43), from
+  // three angles; otherwise on their own front photo, as before.
+  const { data: twin } = await client.from("ai_twins")
+    .select("id, output_path, side_a_path, side_b_path")
+    .eq("consultation_id", c.id).eq("status", "succeeded").eq("client_verdict", "looks-like-me")
+    .order("attempt", { ascending: false }).limit(1).maybeSingle();
+  const onTwin = !photo && !!twin?.output_path;
+
   // Hand the order to the kitchen, with the key only doors hold.
   const res = await fetch(`${Deno.env.get("SUPABASE_URL")}/functions/v1/hair-transfer`, {
     method: "POST",
@@ -113,7 +123,9 @@ Deno.serve(async (req: Request) => {
       fadeHeight: a.fade_height,
       beard: a.beard_style,
       partingLine: a.parting_line === true,
-      ...(photo ? { photoBase64: photo } : { photoPath: reusePath }),
+      ...(onTwin
+        ? { source: "twin", twinId: twin!.id, photoPath: twin!.output_path, sidePaths: { side_a: twin!.side_a_path, side_b: twin!.side_b_path } }
+        : photo ? { photoBase64: photo } : { photoPath: reusePath }),
     }),
   });
   const out = await res.json().catch(() => ({}));
