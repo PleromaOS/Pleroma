@@ -20,7 +20,7 @@ export type Texture =
 export type Sides =
   | "skin-fade" | "close-fade" | "shadow-fade" | "taper" | "undercut" | "natural";
 export type FadeHeight = "low" | "mid" | "high" | "drop";
-export type Beard = "none" | "stubble" | "short" | "medium" | "full";
+export type Beard = "none" | "stubble" | "short" | "medium" | "full" | "goatee";
 
 export interface StyleRecord {
   id: string; slug: string; display: string; len: string; lenLabel: string;
@@ -79,6 +79,11 @@ const BEARD: Record<Beard, string> = {
   short: "He has a short trimmed beard and keeps it",
   medium: "He has a medium-length beard and keeps it",
   full: "He has a full beard and keeps it",
+  // Bryan, 28 Sep: cheeks shaved clean, the goatee kept exactly as it grows,
+  // only tidied. A barber can do this today, so nothing may be added.
+  goatee: "Shave his cheeks, jawline and neck completely clean: smooth skin, no stubble. " +
+    "Keep his goatee, the moustache and the hair on his chin, in exactly its current shape, width and length, " +
+    "only with clean, sharp edges. Do not add any hair to it and do not make it fuller, longer or wider",
 };
 
 // Names the part of the head that must end up different. Without this the

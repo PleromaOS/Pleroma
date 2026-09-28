@@ -56,6 +56,7 @@ terms of consequences, once, and then follow his decision.
 | Why was this decided, and what did it cost? | `docs/adr/` |
 | What are the design rules? | `brand/DESIGN-SYSTEM.md` |
 | What does the product actually do, screen by screen? | `docs/specs/consultation-flow.md` |
+| Where did the last session stop? What is next? | the newest `docs/HANDOFF-*.md` (now `docs/HANDOFF-2026-09-28-render-reliability.md`) |
 | What is built, what is locked? | `ui/REGISTRY.md` |
 | How do I build a widget? | `ui/BUILD-PLAN.md` |
 | What usability rule did we learn the hard way? | `ux-context.md` |

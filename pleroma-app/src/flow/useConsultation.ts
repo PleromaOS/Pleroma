@@ -40,7 +40,7 @@ export type Consultation = {
   renderId?: string;
   rendersLeft: number;
   imageUrl?: string;              // private link to the render; expires after an hour
-  renderSides?: { left?: string | null; right?: string | null; pending?: boolean }; // the new cut from both sides (twin renders)
+  renderSides?: { left?: string | null; right?: string | null; pending?: boolean; busy?: boolean }; // the new cut from both sides (twin renders)
   eligible?: boolean;             // may this render carry the guarantee badge?
   handoff?: Handoff;
 };

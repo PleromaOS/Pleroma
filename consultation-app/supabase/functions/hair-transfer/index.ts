@@ -28,15 +28,36 @@
 //      the twin plus the finished front: "this exact haircut, from here".
 //   The render counts as ready when the FRONT is done; the sides follow and
 //   render-status hands them out as they arrive.
+//
+// 2026-09-28 (later): patience when Google is busy (patient.ts). The first
+//   picture of each view is asked for again every few seconds while Google
+//   answers "busy"; when the job's time runs out it hands the same view to a
+//   fresh job (mode "front" or "view" with relayNo), about ten minutes in all.
+//   While waiting, renders.busy_at is set so the app can say "Google is busy,
+//   still trying" instead of showing a failure. Only after ten minutes does
+//   the view fail, with the error "google_busy".
+//   The backup artist: in each job the big image AI is asked for about 40
+//   seconds; if it is still busy, the smaller Google image AI (BACKUP_MODEL)
+//   draws the picture instead. Every picture still goes through the truth
+//   check, and each check records which artist drew it ("artist").
 
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "jsr:@supabase/supabase-js@2";
 import { decode, Image } from "https://deno.land/x/imagescript@1.3.0/mod.ts";
 import { buildRenderRequest } from "./build-request.ts";
 import { STYLES } from "./styles.ts";
+import { MAX_RELAYS, patiently, relay, StillBusy } from "./patient.ts";
 
 const GEMINI_BASE = "https://generativelanguage.googleapis.com/v1beta";
-const MODEL = Deno.env.get("GEMINI_IMAGE_MODEL") ?? "gemini-3-pro-image";
+// The artists. Bryan, 28 Sep: when Google's big image AI is busy, the smaller
+// Google image AI (3.1 Flash Image) draws instead; it passed the goatee test
+// on three angles. Gemini 2.5 anything is banned: on the same test it
+// airbrushed the skin, slimmed the face and left stubble. A banned name in the
+// settings is ignored and the default is used.
+const BANNED_MODELS = /gemini-2\.5/i;
+const pickModel = (m: string | undefined, fallback: string) => (m && !BANNED_MODELS.test(m) ? m : fallback);
+const MODEL = pickModel(Deno.env.get("GEMINI_IMAGE_MODEL"), "gemini-3-pro-image");
+const BACKUP_MODEL = pickModel(Deno.env.get("GEMINI_BACKUP_IMAGE_MODEL"), "gemini-3.1-flash-image");
 const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
 const supabase = createClient(Deno.env.get("SUPABASE_URL")!, SERVICE_KEY);
@@ -105,7 +126,13 @@ Deno.serve(async (req: Request) => {
       if (body.mode === "view") {
         if (body.view !== "side_a" && body.view !== "side_b") return json({ error: "view" }, 400);
         // @ts-ignore EdgeRuntime is provided by the Supabase edge runtime
-        EdgeRuntime.waitUntil(cookSide(String(body.renderId), body.view));
+        EdgeRuntime.waitUntil(cookSide(String(body.renderId), body.view, Number(body.relayNo ?? 0)));
+        return json({ accepted: true }, 202);
+      }
+      // A fresh job picking up a front that Google was too busy to draw.
+      if (body.mode === "front") {
+        // @ts-ignore EdgeRuntime is provided by the Supabase edge runtime
+        EdgeRuntime.waitUntil(resumeFront(String(body.renderId), Number(body.relayNo ?? 0)));
         return json({ accepted: true }, 202);
       }
       return await submit(body);
@@ -188,7 +215,7 @@ async function submit(body: Record<string, any>): Promise<Response> {
 }
 
 async function callGemini(
-  prompt: string, photoB64: string, refB64: string | null, ratio: string,
+  prompt: string, photoB64: string, refB64: string | null, ratio: string, deadline = Infinity, model = MODEL,
 ) {
   const parts: unknown[] = [{ text: prompt }];
   // Each picture is named right before it (found 27 Sep on the twin: unnamed
@@ -196,10 +223,16 @@ async function callGemini(
   parts.push({ text: "IMAGE 1:" }, img(photoB64));
   if (refB64) parts.push({ text: "IMAGE 2:" }, img(refB64));
 
+  // A picture that is not back before the job's own time limit is given up,
+  // so the job can still write down what happened (found 28 Sep: a slow
+  // picture let the job be stopped at 150 seconds, and the render stayed
+  // "running" for ever).
+  if (Date.now() > deadline - 5_000) throw new Error("out of time before drawing");
   const res = await fetch(
-    `${GEMINI_BASE}/models/${MODEL}:generateContent?key=${Deno.env.get("GEMINI_API_KEY")}`,
+    `${GEMINI_BASE}/models/${model}:generateContent?key=${Deno.env.get("GEMINI_API_KEY")}`,
     {
       method: "POST",
+      signal: Number.isFinite(deadline) ? AbortSignal.timeout(Math.max(1_000, deadline - Date.now())) : undefined,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         contents: [{ parts }],
@@ -221,9 +254,10 @@ async function callGemini(
 
 async function runRender(
   renderId: string, prompt: string, photoPath: string, refPath: string | null,
-  bucket: string, beard: string, sides: string[],
+  bucket: string, beard: string, sides: string[], relayNo = 0,
 ) {
   const checks: Check[] = [];
+  const started = Date.now();
   try {
     const photo = await supabase.storage.from(bucket).download(photoPath);
     if (photo.error) throw new Error(`source photo: ${photo.error.message}`);
@@ -250,9 +284,22 @@ async function runRender(
     }
 
     let out: Uint8Array = new Uint8Array();
+    let artist = MODEL;
     for (let tries = 1; tries <= 2; tries++) {
       const p = prompt + (tries > 1 ? REDO : "");
-      let raw = await callGemini(p, photoB64, refB64, ratio);
+      let raw: string;
+      try {
+        if (tries === 1) {
+          ({ raw, artist } = await drawPatiently(
+            (model, deadline) => callGemini(p, photoB64, refB64, ratio, deadline, model), started, renderId));
+        } else raw = await callGemini(p, photoB64, refB64, ratio, started + JOB_LIMIT_MS, artist);
+      }
+      catch (e) {
+        if (tries === 1) throw e;
+        // The redo did not come back in time: keep the first picture with its note.
+        checks.push({ passed: false, ran: false, notes: `redo not finished: ${String(e).slice(0, 80)}` });
+        break;
+      }
       out = Uint8Array.from(atob(raw), (c) => c.charCodeAt(0));
 
       // Collage guard: markedly wider out than in means two options side by side.
@@ -262,15 +309,18 @@ async function runRender(
           raw = await callGemini(
             p + " CRITICAL: return a single portrait of one man, cropped" +
               " exactly like the input photo. Do not return two images side by side.",
-            photoB64, refB64, ratio,
+            photoB64, refB64, ratio, started + JOB_LIMIT_MS, artist,
           );
           out = Uint8Array.from(atob(raw), (c) => c.charCodeAt(0));
         }
       } catch { /* if it will not decode, store it and let the eye judge */ }
 
-      const check = await truthCheck(photoB64, out, beard, false);
+      const check = await truthCheck(photoB64, out, beard, false, undefined, started + CHECK_DEADLINE_MS);
+      check.artist = artist;
       checks.push(check);
       if (check.passed || check.ran === false) break;
+      // No time for a second picture inside the job's time limit: keep this one with the note.
+      if (Date.now() - started > REDO_CUTOFF_MS) { checks.push({ passed: false, ran: false, notes: "no time left for a redo" }); break; }
     }
 
     const outPath = `${renderId}.png`;
@@ -278,11 +328,47 @@ async function runRender(
       .upload(outPath, out, { contentType: "image/png", upsert: true });
     if (up.error) throw new Error(up.error.message);
 
+    if (artist !== MODEL) await supabase.from("renders").update({ model: `${artist} (backup)` }).eq("id", renderId);
     await supabase.rpc("render_view_done", { p_render: renderId, p_view: "front", p_path: outPath, p_checks: checks, p_passed: !!checks[checks.length - 1]?.passed, p_error: null });
     if (sides.length) await dispatchSides(renderId, sides);
   } catch (e) {
-    await supabase.rpc("render_view_done", { p_render: renderId, p_view: "front", p_path: null, p_checks: checks, p_passed: false, p_error: String(e).slice(0, 800) });
+    // Google still busy: a fresh job tries again, up to about ten minutes.
+    if (e instanceof StillBusy && relayNo < MAX_RELAYS) {
+      await relay("hair-transfer", { mode: "front", renderId, relayNo: relayNo + 1 }, { Authorization: `Bearer ${SERVICE_KEY}` });
+      return;
+    }
+    const error = e instanceof StillBusy ? `google_busy: ${e.message}` : String(e);
+    await supabase.rpc("render_view_done", { p_render: renderId, p_view: "front", p_path: null, p_checks: checks, p_passed: false, p_error: error.slice(0, 800) });
   }
+}
+
+// The front again, in a fresh job: everything it needs is on the render row.
+async function resumeFront(renderId: string, relayNo: number) {
+  const { data: r } = await supabase.from("renders").select("*").eq("id", renderId).single();
+  if (!r || r.status !== "running" || r.output_path) return;
+  await runRender(renderId, r.prompt, r.source_photo_path, r.reference_image_url, r.source_bucket ?? "client-photos",
+    beardWords(r.beard), r.pending_views ?? [], relayNo);
+}
+
+// Tells the app "Google is busy, still trying" (render-status reads busy_at).
+function markBusy(renderId: string) {
+  supabase.from("renders").update({ busy_at: new Date().toISOString() }).eq("id", renderId).then(() => {}, () => {});
+}
+
+// The first picture of a view: the big artist first, for about 40 seconds of
+// "busy"; then the backup artist; if both stay busy, StillBusy (a fresh job
+// takes over). A real refusal from either is passed on at once.
+async function drawPatiently(
+  draw: (model: string, deadline: number) => Promise<string>, started: number, renderId: string,
+): Promise<{ raw: string; artist: string }> {
+  try {
+    const raw = await patiently(() => draw(MODEL, started + BIG_ARTIST_DEADLINE_MS), started + BIG_ARTIST_UNTIL_MS + ROOM_FOR_A_PICTURE_MS, () => markBusy(renderId));
+    return { raw, artist: MODEL };
+  } catch (e) {
+    if (!(e instanceof StillBusy)) throw e;
+  }
+  const raw = await patiently(() => draw(BACKUP_MODEL, started + JOB_LIMIT_MS), started + PATIENT_UNTIL_MS, () => markBusy(renderId));
+  return { raw, artist: BACKUP_MODEL };
 }
 
 // ---- The sides (renders on a twin only) -------------------------------------
@@ -295,8 +381,9 @@ function dispatchSides(renderId: string, views: string[]) {
   })));
 }
 
-async function cookSide(renderId: string, view: "side_a" | "side_b") {
+async function cookSide(renderId: string, view: "side_a" | "side_b", relayNo = 0) {
   const checks: Check[] = [];
+  const started = Date.now();
   const done = (path: string | null, passed: boolean, error: string | null) =>
     supabase.rpc("render_view_done", { p_render: renderId, p_view: view, p_path: path, p_checks: checks, p_passed: passed, p_error: error });
   try {
@@ -333,21 +420,39 @@ async function cookSide(renderId: string, view: "side_a" | "side_b") {
       : "";
 
     let out: Uint8Array = new Uint8Array();
+    let artist = MODEL;
     for (let tries = 1; tries <= 2; tries++) {
       const last = checks[checks.length - 1];
       const redo = tries > 1 ? REDO + (last?.cut_differs ? " The haircut MUST be exactly the one in IMAGE 2: the same length on top and the same texture." : "") : "";
-      const raw = await callGemini(prompt + facing + redo, sideB64, frontB64, "3:4");
+      let raw: string;
+      try {
+        if (tries === 1) {
+          ({ raw, artist } = await drawPatiently(
+            (model, deadline) => callGemini(prompt + facing + redo, sideB64, frontB64, "3:4", deadline, model), started, renderId));
+        } else raw = await callGemini(prompt + facing + redo, sideB64, frontB64, "3:4", started + JOB_LIMIT_MS, artist);
+      }
+      catch (e) {
+        if (tries === 1) throw e;
+        checks.push({ passed: false, ran: false, notes: `redo not finished: ${String(e).slice(0, 80)}` });
+        break;
+      }
       out = Uint8Array.from(atob(raw), (c) => c.charCodeAt(0));
-      const check = await truthCheck(sideB64, out, beardWords(r.beard), true, frontB64);
+      const check = await truthCheck(sideB64, out, beardWords(r.beard), true, frontB64, started + CHECK_DEADLINE_MS);
+      check.artist = artist;
       checks.push(check);
       if (check.passed || check.ran === false) break;
+      if (Date.now() - started > REDO_CUTOFF_MS) { checks.push({ passed: false, ran: false, notes: "no time left for a redo" }); break; }
     }
     const path = `${renderId}-${view}.png`;
     const up = await supabase.storage.from("renders").upload(path, out, { contentType: "image/png", upsert: true });
     if (up.error) throw new Error(up.error.message);
     await done(path, !!checks[checks.length - 1]?.passed, null);
   } catch (e) {
-    await done(null, false, String(e).slice(0, 300));
+    if (e instanceof StillBusy && relayNo < MAX_RELAYS) {
+      await relay("hair-transfer", { mode: "view", renderId, view, relayNo: relayNo + 1 }, { Authorization: `Bearer ${SERVICE_KEY}` });
+      return;
+    }
+    await done(null, false, (e instanceof StillBusy ? `google_busy: ${e.message}` : String(e)).slice(0, 300));
   }
 }
 
@@ -358,11 +463,11 @@ async function readPose(b64: string): Promise<"left" | "right" | null> {
     if (round) await new Promise((r) => setTimeout(r, 5000));
     for (const model of CHECK_MODELS) {
       const res = await fetch(`${GEMINI_BASE}/models/${model}:generateContent?key=${Deno.env.get("GEMINI_API_KEY")}`, {
-        method: "POST", headers: { "Content-Type": "application/json" },
+        method: "POST", headers: { "Content-Type": "application/json" }, signal: AbortSignal.timeout(20_000),
         body: JSON.stringify({ contents: [{ role: "user", parts: [{ text: "As seen in the picture (not from his point of view), does this man's nose point toward the left or the right edge of the picture?" }, img(b64)] }],
           generationConfig: { responseMimeType: "application/json", responseSchema: schema, temperature: 0 } }),
-      });
-      if (!res.ok) continue;
+      }).catch(() => null);
+      if (!res || !res.ok) continue;
       try {
         const j = await res.json();
         const v = JSON.parse(j?.candidates?.[0]?.content?.parts?.find((p: { text?: string }) => p.text)?.text ?? "{}").nose_points;
@@ -378,8 +483,26 @@ async function readPose(b64: string): Promise<"left" | "right" | null> {
 // hairline, fill in thin areas, change the face, or change the texture. A
 // render that does any of that is a promise the barber cannot keep.
 type Check = Record<string, boolean | string> & { passed?: boolean; ran?: boolean };
+// The job is stopped at 150 seconds (found 28 Sep: a front with a busy checker
+// and a redo ran over, and the render stayed "running" for ever). A redo only
+// starts in the first 70 seconds; the checks give up at 125.
+const REDO_CUTOFF_MS = 70_000;
+// Every picture must be back by here, leaving time to write the result down.
+const JOB_LIMIT_MS = 138_000;
+const CHECK_DEADLINE_MS = 125_000;
+// While Google is busy, a job keeps asking for its first picture until here,
+// which still leaves the picture (up to 40 s) and the check time to finish.
+const PATIENT_UNTIL_MS = 110_000;
+// The big artist is asked until about here (tries start up to ~40 s into the
+// job), then the backup artist takes over for the rest of the job's patience.
+const BIG_ARTIST_UNTIL_MS = 40_000;
+const ROOM_FOR_A_PICTURE_MS = 53_000;   // patient.ts: a try starts only with 8 s pause + 45 s room left
+// A picture from the big artist that is really being drawn may take until
+// here; a busy answer comes back in under a second, so this only matters
+// when Google is slow rather than busy.
+const BIG_ARTIST_DEADLINE_MS = 95_000;
 const REDO = " CRITICAL: the previous attempt changed him. Change ONLY the haircut. His face, hairline position, hair density, texture, colour and everything else stay exactly as in IMAGE 1.";
-const CHECK_MODELS = (Deno.env.get("GEMINI_VISION_MODELS") ?? "gemini-3.8-flash,gemini-3.5-flash").split(",").map((s) => s.trim()).filter(Boolean);
+const CHECK_MODELS = (Deno.env.get("GEMINI_VISION_MODELS") ?? "gemini-3.8-flash,gemini-3.5-flash").split(",").map((s) => s.trim()).filter((m) => m && !BANNED_MODELS.test(m));
 const CHECK_KEYS = ["same_person", "face_changed", "hairline_lowered", "hair_added", "texture_changed", "colour_changed", "beard_wrong", "wrong_direction", "cut_differs"];
 const CHECK_SCHEMA = {
   type: "OBJECT",
@@ -389,12 +512,13 @@ const CHECK_SCHEMA = {
 function beardWords(beard?: string | null): string {
   const B: Record<string, string> = {
     none: "clean shaven", stubble: "short stubble", short: "a short trimmed beard", medium: "a medium-length beard", full: "a full beard",
+    goatee: "cheeks and jawline shaved clean, with only his own goatee (moustache and chin hair) kept in its current shape, tidied, with nothing added",
   };
   return beard && B[beard] ? B[beard] : "keep the beard exactly as it is";
 }
 // For a side, frontCutB64 is the finished front: the side must show the SAME
 // cut (found 28 Sep: one side came out far shorter on top than the front).
-async function truthCheck(beforeB64: string, after: Uint8Array, beard: string, side: boolean, frontCutB64?: string): Promise<Check> {
+async function truthCheck(beforeB64: string, after: Uint8Array, beard: string, side: boolean, frontCutB64?: string, deadline = Infinity): Promise<Check> {
   const prompt = `Photo 1 is a man before a haircut. Photo 2 is an AI drawing of the SAME man after a new haircut. The haircut is allowed to make hair shorter and change its shape and the beard is meant to be: ${beard}. Nothing else may change. Answer strictly:
 - same_person: is photo 2 clearly the same person (face, features, age, build)?
 - face_changed: is the face slimmer, younger, smoother or otherwise altered?
@@ -410,12 +534,23 @@ A barber will cut from photo 2, so be strict. Notes: one short sentence naming t
     ...(side && frontCutB64 ? [img(frontCutB64)] : [])];
   let lastErr = "";
   for (let round = 0; round < 3; round++) {
+    // Google's checker busy on the first round: ask the backup checker (Claude) before waiting.
+    if (round === 1 && Date.now() < deadline - 5_000) {
+      const backup = await claudeCheck(prompt, [beforeB64, toB64(after.buffer as ArrayBuffer), ...(side && frontCutB64 ? [frontCutB64] : [])], deadline);
+      if (backup) return backup;
+      lastErr += "backup checker unavailable; ";
+    }
     if (round) await new Promise((r) => setTimeout(r, round * 4000));
     for (const model of CHECK_MODELS) {
-      const res = await fetch(`${GEMINI_BASE}/models/${model}:generateContent?key=${Deno.env.get("GEMINI_API_KEY")}`, {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ contents: [{ role: "user", parts }], generationConfig: { responseMimeType: "application/json", responseSchema: CHECK_SCHEMA, temperature: 0 } }),
-      });
+      if (Date.now() > deadline) { lastErr += "out of time; "; break; }
+      let res: Response;
+      try {
+        res = await fetch(`${GEMINI_BASE}/models/${model}:generateContent?key=${Deno.env.get("GEMINI_API_KEY")}`, {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          signal: AbortSignal.timeout(Math.max(1_000, Math.min(30_000, deadline - Date.now()))),
+          body: JSON.stringify({ contents: [{ role: "user", parts }], generationConfig: { responseMimeType: "application/json", responseSchema: CHECK_SCHEMA, temperature: 0 } }),
+        });
+      } catch { lastErr += `${model} too slow; `; continue; }
       const j = await res.json().catch(() => ({}));
       if (res.status === 404 || res.status === 429 || res.status >= 500) { lastErr += `${model} ${res.status}; `; continue; }
       if (!res.ok) { lastErr += `${model} ${res.status}; `; continue; }
@@ -428,8 +563,51 @@ A barber will cut from photo 2, so be strict. Notes: one short sentence naming t
       } catch { lastErr += `${model} unreadable; `; }
     }
   }
-  // The checker itself is down: keep the picture with a note, never pay twice blind.
+  // Both checkers are down: keep the picture with a note, never pay twice blind.
   return { passed: false, ran: false, notes: `truth check could not run: ${lastErr.slice(0, 120)}` };
+}
+
+// ---- The backup checker (Bryan, 28 Sep: Anthropic) ----------------------------
+// What it does:   the same truth check, the same questions and the same pass
+//                 rule, asked of Claude when Google's checker is busy. The
+//                 answer is marked model: "claude-…" so we can see which one judged.
+// What it does NOT do: it never draws. It is skipped (returns null) when no
+//                 ANTHROPIC_API_KEY is set, or when a picture is too big to send
+//                 (over about 3.7 MB, e.g. some phone photos), and the check
+//                 then stays "could not run", as before.
+const CLAUDE_MODEL = Deno.env.get("CLAUDE_CHECK_MODEL") ?? "claude-sonnet-5";
+async function claudeCheck(prompt: string, images: string[], deadline: number): Promise<Check | null> {
+  const key = Deno.env.get("ANTHROPIC_API_KEY");
+  if (!key || images.some((b) => b.length > 5_000_000)) return null;
+  const content = [
+    ...images.flatMap((b, i) => [
+      { type: "text", text: `Photo ${i + 1}:` },
+      { type: "image", source: { type: "base64", media_type: b.startsWith("iVBOR") ? "image/png" : "image/jpeg", data: b } },
+    ]),
+    { type: "text", text: `${prompt}\n\nReply with ONLY one JSON object, no other text, with these keys: ${CHECK_KEYS.join(", ")} (each true or false) and notes (a string).` },
+  ];
+  for (let tries = 0; tries < 2 && Date.now() < deadline - 5_000; tries++) {
+    try {
+      const res = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "x-api-key": key, "anthropic-version": "2023-06-01", "content-type": "application/json" },
+        signal: AbortSignal.timeout(Math.max(1_000, Math.min(40_000, deadline - Date.now()))),
+        body: JSON.stringify({ model: CLAUDE_MODEL, max_tokens: 600, messages: [{ role: "user", content }] }),
+      });
+      if (!res.ok) { await res.text(); if (res.status === 429 || res.status >= 500) { await new Promise((r) => setTimeout(r, 3000)); continue; } return null; }
+      const j = await res.json();
+      const text = (j.content ?? []).filter((c: { type: string }) => c.type === "text").map((c: { text: string }) => c.text).join("");
+      const m = text.match(/\{[\s\S]*\}/);
+      if (!m) return null;
+      const c = JSON.parse(m[0]) as Check;
+      if (CHECK_KEYS.some((k) => typeof c[k] !== "boolean")) return null;
+      c.passed = c.same_person === true && !c.face_changed && !c.hairline_lowered && !c.hair_added
+        && !c.texture_changed && !c.colour_changed && !c.beard_wrong && !c.wrong_direction && !c.cut_differs;
+      c.model = CLAUDE_MODEL;
+      return c;
+    } catch { /* too slow or unreadable: one more try, then give up */ }
+  }
+  return null;
 }
 
 async function poll(req: Request): Promise<Response> {

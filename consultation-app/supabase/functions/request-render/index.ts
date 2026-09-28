@@ -28,7 +28,8 @@ import { db, gatekeep, masterKey, openConsultation, readBody, reply, tooManyKnoc
 
 const MAX_GOOD_RENDERS = 4;       // the first render + 3 re-renders
 const MAX_ATTEMPTS = 8;           // including failed ones
-const STALE_RUNNING_MS = 3 * 60_000;
+// A render may keep trying for about ten minutes while Google is busy (hair-transfer, patient.ts).
+const STALE_RUNNING_MS = 12 * 60_000;
 const MAX_PHOTO_CHARS = 10_000_000; // about 7.5 MB of image
 
 Deno.serve(async (req: Request) => {

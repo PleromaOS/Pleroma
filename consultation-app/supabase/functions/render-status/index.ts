@@ -31,7 +31,7 @@ Deno.serve(async (req: Request) => {
 
   const renderId = typeof body.render_id === "string" ? body.render_id : "";
   const { data: all } = await client
-    .from("renders").select("id, status, output_path, side_a_path, side_b_path, pending_views, source_kind")
+    .from("renders").select("id, status, output_path, side_a_path, side_b_path, pending_views, source_kind, busy_at")
     .eq("consultation_id", c.id);
   const renders = all ?? [];
   const r = renders.find((x) => x.id === renderId);
@@ -41,7 +41,11 @@ Deno.serve(async (req: Request) => {
 
   if (r.status !== "succeeded" || !r.output_path) {
     // A failure is reported plainly; the technical reason stays on the server.
-    return reply(200, { status: r.status, renders_left: rendersLeft });
+    // waiting_on_google: Google answered "busy" in the last two minutes and the
+    // kitchen is still trying (up to about ten minutes). The app says so
+    // calmly instead of showing a failure.
+    const waiting = r.status === "running" && !!r.busy_at && Date.now() - new Date(r.busy_at).getTime() < 120_000;
+    return reply(200, { status: r.status, renders_left: rendersLeft, waiting_on_google: waiting });
   }
 
   const side = async (path: string | null) =>
@@ -59,6 +63,7 @@ Deno.serve(async (req: Request) => {
     // front by about a minute; sides_pending says whether to keep asking.
     side_a_url, side_b_url,
     sides_pending: (r.pending_views ?? []).length > 0,
+    waiting_on_google: (r.pending_views ?? []).length > 0 && !!r.busy_at && Date.now() - new Date(r.busy_at).getTime() < 120_000,
     on_twin: r.source_kind === "twin",
     guarantee_eligible: gate?.passed === true,
     renders_left: rendersLeft,

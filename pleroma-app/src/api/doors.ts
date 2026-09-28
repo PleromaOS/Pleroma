@@ -61,6 +61,7 @@ export type RenderStatus = {
   on_twin?: boolean;
   guarantee_eligible?: boolean;
   renders_left: number;
+  waiting_on_google?: boolean;  // Google said "busy"; the kitchen keeps trying for up to ~10 minutes
 };
 export const renderStatus = (t: Ticket, render_id: string) =>
   knock<RenderStatus>("render-status", { ...t, render_id });

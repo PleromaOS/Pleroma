@@ -34,7 +34,7 @@ export function Reveal({ flow }: { flow: Flow }) {
     const t = window.setInterval(async () => {
       try {
         const s = await renderStatus(c.ticket!, c.renderId!);
-        if (s.status === "succeeded") update({ renderSides: { left: s.side_a_url, right: s.side_b_url, pending: s.sides_pending } });
+        if (s.status === "succeeded") update({ renderSides: { left: s.side_a_url, right: s.side_b_url, pending: s.sides_pending, busy: s.waiting_on_google } });
       } catch { /* the next tick asks again */ }
     }, 4000);
     return () => window.clearInterval(t);
@@ -45,7 +45,7 @@ export function Reveal({ flow }: { flow: Flow }) {
       {c.imageUrl && sides ? (
         <div className="reveal__turn">
           <TwinCompare own={null} twin={{ front: c.imageUrl, left: sides.left, right: sides.right }} label="Your new cut" />
-          {sides.pending && <p className="caption">Drawing both sides of your new cut…</p>}
+          {sides.pending && <p className="caption">{sides.busy ? "The picture service is busy. Still drawing your sides, for up to ten minutes." : "Drawing both sides of your new cut…"}</p>}
         </div>
       ) : (
         <div className="render">

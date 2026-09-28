@@ -399,3 +399,18 @@ photos, "Reading your hair" for the reading, the twin check for the AI twin.
 - Cost: a render on the twin is 3 pictures instead of 1, plus up to 3 redos,
   plus the checks.
 
+## 28 Sep (later): when Google is busy, and the grey leak
+
+Full notes: `docs/HANDOFF-2026-09-28-render-reliability.md`. In short:
+- The picture engine now waits up to about 10 minutes when Google is busy,
+  switches to the smaller Google image AI (Gemini 3.1 Flash Image) when the
+  big one stays busy, never uses Gemini 2.5, and can ask Claude to do the
+  truth check once `ANTHROPIC_API_KEY` is set.
+- Beard only (hair untouched) works in the lab when no example photo is used.
+  Not in the app yet.
+- **Open and next:** the client's hair colour must never change (Bryan). Today
+  the guardrail is prompt words plus a truth check that can be skipped when the
+  checker is busy, and a grey example photo leaked grey twice. Fix before
+  anything else.
+- The comparison picture: `docs/research/2026-09-28-goatee-backup-models.jpg`.
+

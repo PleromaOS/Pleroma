@@ -24,13 +24,15 @@ import { explain } from "../lib/messages";
 
 const STAGES = ["Reading your photo", "Finding your hairline", "Drawing the sides", "Shaping the top", "Matching your light"];
 const POLL_MS = 2500;
-const GIVE_UP_MS = 180_000;
+// The kitchen keeps trying for about ten minutes while Google is busy (patient.ts).
+const GIVE_UP_MS = 12 * 60_000;
 
 export function Wait({ flow }: { flow: Flow }) {
   const { c, update, go } = flow;
   const [elapsed, setElapsed] = useState(0);
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
+  const [busy, setBusy] = useState(false);   // Google answered "busy"; still trying
   const [problem, setProblem] = useState<string | null>(null);
   const started = useRef(Date.now());
   const asked = useRef(false);
@@ -54,6 +56,7 @@ export function Wait({ flow }: { flow: Flow }) {
     const poll = setInterval(async () => {
       try {
         const s = await renderStatus(c.ticket!, c.renderId!);
+        setBusy(!!s.waiting_on_google);
         if (s.status === "succeeded") {
           update({ imageUrl: s.image_url, eligible: s.guarantee_eligible, rendersLeft: s.renders_left,
             renderSides: s.on_twin ? { left: s.side_a_url, right: s.side_b_url, pending: s.sides_pending } : undefined });
@@ -119,6 +122,9 @@ export function Wait({ flow }: { flow: Flow }) {
       </dl>
 
       <Problem message={problem} />
+      {busy && !ready && !failed && (
+        <p className="caption" role="status">The picture service is busy right now. We keep trying for up to ten minutes. Your answers and your brief are safe.</p>
+      )}
       {ready && <Button onClick={() => go("reveal")}>Reveal my cut</Button>}
       {failed && (
         <>
