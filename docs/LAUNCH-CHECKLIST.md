@@ -29,13 +29,24 @@ Tick an item only when it is done and tested, and add the date.
       guarantee terms (EU and Dutch rules on misleading commercial practices).
 - [ ] **Privacy notice and a data processing agreement** with each shop; check
       Google's terms for sending client photos to Gemini.
-- [ ] **Remove the development functions** `gemini-test`, `dev-seed` and `tryon`.
-      They are open to the public.
+- [ ] **Remove the development functions** `gemini-test`, `dev-seed`, `tryon`
+      and `edit-lab` (a test-only tool, 28 Sep). They are not part of the app.
 - [ ] **Host the client app** (`pleroma-app/`) on a web address with https,
       one link per shop (`/<shop-slug>` for adverts, `/<shop-slug>/in-shop`
       for the QR code). A phone camera only works on https.
 - [ ] **Retire the old quiz app** in `consultation-app/app/`. It saves to table
       shapes that no longer exist.
+- [ ] **Guaranteed AI capacity (decided by Bryan, 28 Sep).** Today the pictures
+      go through Google's public door to its image AI, which everyone shares:
+      on 28 Sep it answered "busy" for minutes at a time, and the goatee test
+      could not run at all. Before shops are onboarded:
+  - [ ] move the image AI and the checker to the same Google models through
+        Google Cloud (Vertex AI), which has its own capacity, in an EU region
+  - [ ] reserve capacity there ("provisioned throughput", a monthly fee), sized
+        to the number of shops, so a client is never put in a queue
+  - [ ] keep the public door as the automatic second route if Cloud is busy
+  Not chosen: a backup image AI from another company (drawings differ, and
+  each would need its own truth-check testing on real faces).
 
 ## Should have
 
