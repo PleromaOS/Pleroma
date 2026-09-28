@@ -31,6 +31,11 @@ export type Consultation = {
   reading?: { id: string; items: Record<string, FindingItem> }; // the AI's reading of the photos (door 10)
   confirmed?: Record<string, string>;  // finding → the value the client settled on (door 11)
   findingsDone?: boolean;
+  twin?: {                        // the AI twin (doors 12-14)
+    id: string;
+    attempt: number;
+    outcome?: "use-twin" | "use-own-photo";  // what the cut will be drawn on
+  };
   styleName?: string;             // for display only; the door stores the style id
   renderId?: string;
   rendersLeft: number;

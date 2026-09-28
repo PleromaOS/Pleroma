@@ -9,7 +9,7 @@
 // the phone until the email step, which records the consent.
 
 export type StepId =
-  | "landing" | "email" | "reading" | "want" | "texture" | "length" | "style" | "effort"
+  | "landing" | "email" | "reading" | "twin" | "want" | "texture" | "length" | "style" | "effort"
   | "scan" | "wait" | "reveal" | "refine" | "confirm-you" | "confirm-cut" | "handoff";
 
 // Scan path (2026-09-27): after the email the AI reads the photos and the
@@ -21,17 +21,22 @@ export type StepId =
 // as one conversation (docs/specs/what-you-want.md). The old style and effort
 // question screens stay for the question path.
 
+// Then "twin" (2026-09-28, W43 revised): straight after the reading the AI
+// twin is made while the conversation narrates it, and the client checks it
+// next to their own photo. Bryan: making it in the background during the
+// questions would be "two conversations at the same time".
+
 // The main road. "refine" is a side room reached from the reveal, not a step
 // on the road, so it is not in this list.
 export const ROAD: StepId[] = [
-  "landing", "scan", "email", "reading", "want",
+  "landing", "scan", "email", "reading", "twin", "want",
   "wait", "reveal", "confirm-you", "confirm-cut", "handoff",
 ];
 
 // The label on the sheet's top edge (W01: section name, never a screen count).
 export const SECTION: Partial<Record<StepId, string>> = {
   texture: "Your hair", length: "Your hair", style: "Your cut", effort: "Your cut",
-  scan: "Your photos", reading: "Your hair", want: "Your cut", "confirm-you": "Your result", "confirm-cut": "Your result",
+  scan: "Your photos", reading: "Your hair", twin: "Your twin", want: "Your cut", "confirm-you": "Your result", "confirm-cut": "Your result",
 };
 
 // How far along the progress hairline is, for the question screens.

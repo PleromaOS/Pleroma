@@ -347,3 +347,24 @@ photos, "Reading your hair" for the reading, the twin check for the AI twin.
 - Not built yet: the twin check screen in the app (W43), starting the twin
   in the background after the findings, drawing the render on the twin, and
   the truth check on the render.
+
+### The twin in the app (28 Sep)
+
+- New room "twin" between the reading and "what you want" (flow/steps.ts).
+  The reading's button now says "Next: your AI twin".
+- screens/Twin.tsx: asks door 12 for a twin (door 12 never pays twice: an
+  existing twin comes back as it is), then door 13 every 3 seconds. Four
+  steps tick off; the first two follow the clock but never run ahead of the
+  real status. The front shows the moment it exists (door 13 now links each
+  picture as soon as it is stored). When both sides are done: the W43
+  side-by-side check (components/TwinCompare.tsx, W47 slider), then
+  Yes / Not quite through door 14. A second twin is narrated the same way.
+  After two "not quite", or a twin that failed, the cut goes on their own
+  photo; the conversation says so in one line.
+- What the cut is drawn on is kept as `twin.outcome` ("use-twin" or
+  "use-own-photo") for the render step, which still uses the own photo.
+- Demo mode simulates it (front after 6 s, sides after 11 s); add
+  `&twinfail` to see a failed twin.
+- Not yet: drawing the cut on the twin (all three angles) and the truth check
+  on the render; the "keep my twin" question (W44) at the end.
+

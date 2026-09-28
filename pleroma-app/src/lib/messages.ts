@@ -37,6 +37,10 @@ const WORDS: Record<string, string> = {
   reading_not_found: "Something went wrong with your reading. Scan again.",
   value_not_allowed: "That answer didn't save. Try again.",
   confirm_render_first: "Confirm your cut first.",
+  reading_required: "We need to read your photos first.",
+  could_not_start_twin: "Your AI twin couldn't be started just now. Try again.",
+  twin_not_found: "Something went wrong with your AI twin. Try again.",
+  no_twin_attempts_left: "No more AI twins for this consultation. We'll use your own photo.",
 };
 
 export function explain(e: unknown): string {

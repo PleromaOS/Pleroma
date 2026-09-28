@@ -3,8 +3,8 @@
 // What it does:   tells the app where the client's latest AI twin is: still
 //                 being made, ready (with a private link to the picture that
 //                 expires after an hour), or failed. The app asks every few
-//                 seconds while the client answers the "what you want"
-//                 questions, so the twin is usually ready before they are.
+//                 seconds while it narrates the making (W43, revised 28 Sep);
+//                 the front's link comes as soon as the front exists.
 // What it does NOT do: it never shows the truth check's details to the client;
 //                 those are for the barber.
 //
@@ -32,8 +32,10 @@ Deno.serve(async (req: Request) => {
     .eq("consultation_id", c.id).order("attempt", { ascending: false }).limit(1).maybeSingle();
   if (!t) return reply(200, { status: "none", attempts_left: 2 });
 
+  // Each picture is linked as soon as it exists: the conversation shows the
+  // front while the sides are still being made (W43 revised, 28 Sep).
   const link = async (path: string | null) => {
-    if (t.status !== "succeeded" || !path) return undefined;
+    if (!path || t.status === "failed") return undefined;
     const signed = await client.storage.from("ai-twins").createSignedUrl(path, 3600);
     return signed.data?.signedUrl;
   };

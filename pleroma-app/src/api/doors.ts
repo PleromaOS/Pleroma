@@ -84,6 +84,34 @@ export const readHair = (t: Ticket) => knock<Reading>("read-hair", { ...t });
 export const confirmFinding = (t: Ticket, reading_id: string, key: string, value: string) =>
   knock<{ confirmations: Record<string, unknown> }>("confirm-finding", { ...t, reading_id, key, value });
 
+// 12 · make the AI twin: the same person, same hair, in studio light (about two minutes).
+// Answers straight away; the app then asks door 13 how it is going.
+export const makeTwin = (t: Ticket) =>
+  knock<{ twin_id: string; attempt: number; status?: "succeeded" }>("make-twin", { ...t });
+
+// 13 · how far the twin is. The front link appears the moment the front
+// exists, before the sides are done, so the conversation can show it early.
+export type TwinStatus = {
+  status: "none" | "running" | "succeeded" | "failed";
+  twin_id?: string;
+  attempt?: number;
+  image_url?: string;   // the front
+  side_a_url?: string;  // matches the client's first side photo (shown as "Left side")
+  side_b_url?: string;  // matches the second side photo ("Right side")
+  verdict?: string | null;
+  attempts_left: number;
+};
+export const twinStatus = (t: Ticket) => knock<TwinStatus>("twin-status", { ...t });
+
+// 14 · "does this look like you?"
+export const twinVerdict = (t: Ticket, twin_id: string, verdict: "looks-like-me" | "not-quite") =>
+  knock<{ next: "use-twin" | "try-again" | "use-own-photo" }>("twin-verdict", { ...t, twin_id, verdict });
+
+// 15 · private links to the client's OWN three scan photos, for comparing with the twin
+// (used when the photos are no longer in the phone's memory, after a refresh).
+export const myPhotos = (t: Ticket) =>
+  knock<{ front?: string; side_a?: string; side_b?: string }>("my-photos", { ...t });
+
 // 8
 export type Handoff =
   | { kind: "booking"; url: string; shop_name: string }

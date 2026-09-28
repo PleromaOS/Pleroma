@@ -6,7 +6,10 @@
 
 import { DoorError as DemoError } from "./errors";
 
-let state: { email?: string; consent?: boolean; photos?: boolean; renders: number; confirmed?: boolean } = { renders: 0 };
+let state: {
+  email?: string; consent?: boolean; photos?: boolean; renders: number; confirmed?: boolean;
+  twin?: { id: string; attempt: number; startedAt: number; verdict?: string };
+} = { renders: 0 };
 const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
 let renderStartedAt = 0;
 
@@ -18,6 +21,20 @@ const PLACEHOLDER = "data:image/svg+xml;utf8," + encodeURIComponent(
     <text x='150' y='360' fill='#908674' font-family='Inter,sans-serif' font-size='14' text-anchor='middle'>DEMO RENDER</text>
   </svg>`);
 
+
+// A drawn stand-in for the twin: a head turned the right way, never a real face.
+function twinPicture(view: "front" | "left side" | "right side", attempt: number) {
+  const dx = view === "front" ? 0 : view === "left side" ? -22 : 22;
+  return "data:image/svg+xml;utf8," + encodeURIComponent(
+    `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 400'>
+      <rect width='300' height='400' fill='#d8d4cc'/>
+      <path d='M40 400 Q150 300 260 400Z' fill='#4a4744'/>
+      <ellipse cx='${150 + dx / 3}' cy='185' rx='${view === "front" ? 66 : 58}' ry='86' fill='#8a6a52'/>
+      <path d='M${88 + dx / 2} 165 Q150 70 ${212 + dx / 2} 165 L${212 + dx / 2} 135 Q150 55 ${88 + dx / 2} 135Z' fill='#1f1a17'/>
+      <circle cx='${150 + dx}' cy='205' r='6' fill='#6d523f'/>
+      <text x='150' y='380' fill='#5c5347' font-family='Inter,sans-serif' font-size='13' text-anchor='middle'>DEMO TWIN ${attempt} · ${view.toUpperCase()}</text>
+    </svg>`);
+}
 
 // A made-up reading: two findings the AI is unsure of (asked as questions),
 // the rest shown as "Yes, that's right / Not quite".
@@ -78,6 +95,37 @@ export async function demoDoor(door: string, body: Record<string, unknown>): Pro
     }
     case "confirm-finding":
       return { confirmations: { [String(body.key)]: { value: body.value } } };
+    // The AI twin, simulated: the front after 6 seconds, the sides after 11
+    // (the real one takes about a minute each). Add &twinfail to the address to
+    // see a twin that could not be made.
+    case "make-twin": {
+      if (!state.photos) throw new DemoError("photos_required", 409);
+      if (state.twin && state.twin.verdict !== "not-quite") return { twin_id: state.twin.id, attempt: state.twin.attempt, status: "succeeded" };
+      const attempt = state.twin ? state.twin.attempt + 1 : 1;
+      if (attempt > 2) throw new DemoError("no_twin_attempts_left", 409);
+      state.twin = { id: `00000000-0000-4000-8000-00000000007${attempt}`, attempt, startedAt: Date.now() };
+      return { twin_id: state.twin.id, attempt };
+    }
+    case "twin-status": {
+      const t = state.twin;
+      if (!t) return { status: "none", attempts_left: 2 };
+      const age = Date.now() - t.startedAt;
+      const left = 2 - t.attempt;
+      if (new URLSearchParams(window.location.search).has("twinfail") && age > 6000) return { status: "failed", twin_id: t.id, attempt: t.attempt, attempts_left: left };
+      if (age < 6000) return { status: "running", twin_id: t.id, attempt: t.attempt, attempts_left: left };
+      if (age < 11000) return { status: "running", twin_id: t.id, attempt: t.attempt, image_url: twinPicture("front", t.attempt), attempts_left: left };
+      return { status: "succeeded", twin_id: t.id, attempt: t.attempt, image_url: twinPicture("front", t.attempt),
+        side_a_url: twinPicture("left side", t.attempt), side_b_url: twinPicture("right side", t.attempt), verdict: t.verdict ?? null, attempts_left: left };
+    }
+    case "twin-verdict": {
+      const t = state.twin;
+      if (!t || t.id !== body.twin_id) throw new DemoError("twin_not_found", 404);
+      t.verdict = String(body.verdict);
+      if (t.verdict === "looks-like-me") return { next: "use-twin" };
+      return { next: t.attempt < 2 ? "try-again" : "use-own-photo" };
+    }
+    case "my-photos":
+      return {}; // demo photos live in the phone's memory only
     case "booking-handoff":
       return { kind: "pass", code: "4729", shop_name: "Barber Jansen", address: "Eerste van der Helststraat 41" };
   }

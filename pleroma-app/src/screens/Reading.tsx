@@ -135,7 +135,7 @@ export function Reading({ flow }: { flow: Flow }) {
       const answers = { ...c.answers };
       for (const [k, v] of Object.entries(patch)) { if (v === null) delete answers[k]; else answers[k] = v; }
       update({ answers, findingsDone: true });
-      go("want");
+      go("twin");
     } catch (e) {
       setProblem(explain(e));
     } finally {
@@ -213,7 +213,7 @@ export function Reading({ flow }: { flow: Flow }) {
         )}
         {allDone && (
           <button className="btn btn--glass-gold" onClick={finish} disabled={saving} aria-busy={saving}>
-            {saving ? <span className="spinner" aria-label="Saving" /> : "Next: choose your cut"}
+            {saving ? <span className="spinner" aria-label="Saving" /> : "Next: your AI twin"}
           </button>
         )}
       </div>

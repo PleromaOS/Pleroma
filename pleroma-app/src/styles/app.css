@@ -339,3 +339,36 @@ html:has(.scan--light), body:has(.scan--light) { background: #ffffff; }
 @media (prefers-reduced-motion: reduce) { .wa, .chat__reply { animation: none; } }
 .btn--glass { background: color-mix(in srgb, var(--surface) 44%, transparent); color: var(--ink); -webkit-backdrop-filter: blur(22px) saturate(140%); backdrop-filter: blur(22px) saturate(140%); border: 1px solid color-mix(in srgb, var(--ink) 18%, transparent); border-top-color: color-mix(in srgb, var(--ink) 30%, transparent); }
 .chat__own { font-size: var(--body); margin-top: var(--space-2); }
+
+/* ---- W43 (revised) · making the twin, then checking it --------------------- */
+.twin__steps { list-style: none; margin: var(--space-3) 0 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-1); font-size: var(--body-sm); color: var(--ink-2); }
+.twin__steps li { display: flex; align-items: center; gap: var(--space-2); }
+.twin__steps li::before { content: ""; width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid var(--line-strong); flex: none; box-sizing: border-box; }
+.twin__steps li.is-now { color: var(--ink); font-weight: 600; }
+.twin__steps li.is-now::before { border-color: var(--gold); border-top-color: transparent; animation: twin-spin 900ms linear infinite; }
+.twin__steps li.is-done::before { background: var(--gold); border-color: var(--gold); }
+@keyframes twin-spin { to { transform: rotate(360deg); } }
+.twin__mini { display: block; width: 140px; aspect-ratio: 3 / 4; object-fit: cover; border-radius: var(--r-md); border: 1px solid var(--line); margin-top: var(--space-2); }
+.twin__msg { align-items: flex-start; }
+.twin__msg .chat__av { display: none; }
+.twin__card { flex: 1; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); overflow: hidden; }
+@media (prefers-reduced-motion: reduce) { .twin__steps li.is-now::before { animation: none; border-top-color: var(--gold); } }
+
+/* ---- W47 (locked) inside W43: your photo and the twin, one slider ---------- */
+.tc__pair { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; background: var(--line); }
+.tc__pair.is-single { grid-template-columns: 1fr; }
+.tc__col { display: flex; flex-direction: column; background: var(--surface); }
+.tc__cap { font-size: var(--micro); line-height: var(--micro-lh); font-weight: 600; letter-spacing: var(--micro-tracking); text-transform: uppercase; color: var(--ink-2); padding: var(--space-2) var(--space-3); }
+.tc__stage { position: relative; aspect-ratio: 3 / 4; overflow: hidden; touch-action: pan-y; cursor: grab; user-select: none; -webkit-user-select: none; background: var(--surface-2); }
+.tc__stage:active { cursor: grabbing; }
+.tc__stage:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
+.tc__stage img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; -webkit-user-drag: none; }
+.tc__stage.is-settling img { transition: opacity 260ms var(--ease); }
+.tc__rail { padding: var(--space-3) var(--space-4) var(--space-4); display: flex; flex-direction: column; gap: var(--space-2); }
+.tc__track { position: relative; height: 32px; touch-action: none; cursor: pointer; }
+.tc__track::before { content: ""; position: absolute; left: 14px; right: 14px; top: 15px; height: 2px; background: var(--line-strong); border-radius: 1px; }
+.tc__stop { position: absolute; top: 12px; width: 8px; height: 8px; border-radius: 50%; background: var(--line-strong); transform: translateX(-50%); }
+.tc__thumb { position: absolute; top: 2px; width: 28px; height: 28px; border-radius: 50%; background: var(--gold); transform: translateX(-50%); }
+.tc__names { display: flex; justify-content: space-between; font-size: var(--caption); color: var(--ink-2); }
+.tc__names .is-on { color: var(--ink); font-weight: 600; }
+@media (prefers-reduced-motion: reduce) { .tc__stage.is-settling img { transition: none; } }

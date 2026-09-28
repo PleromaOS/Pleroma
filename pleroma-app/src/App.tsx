@@ -21,6 +21,7 @@ import { Reading } from "./screens/Reading";
 import { EffortQuestion, LengthQuestion, StyleQuestion, TextureQuestion } from "./screens/Questions";
 import { Refine, Reveal } from "./screens/Reveal";
 import { Scan } from "./screens/Scan";
+import { Twin } from "./screens/Twin";
 import { Wait } from "./screens/Wait";
 import { Want } from "./screens/Want";
 
@@ -29,6 +30,7 @@ const ROOMS: Record<StepId, (p: { flow: Flow }) => React.ReactNode> = {
   scan: Scan,
   email: EmailGate,
   reading: Reading,
+  twin: Twin,
   want: Want,
   texture: TextureQuestion,
   length: LengthQuestion,
