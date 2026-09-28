@@ -100,7 +100,7 @@ Added 2026-09-27 after grilling. See `docs/specs/scan-path.md`, `docs/specs/intr
 | W40 | Prep checklist + consent | | **LOCKED** | 3 of 3 | `ui/locked/W40/` | 2026-09-27 |
 | W41 | Reading your hair | | **LOCKED** | 3 of 3 | `ui/locked/W41/` | 2026-09-27 |
 | W42 | Finding screen (yes / no) | ★ | **LOCKED** | 4 of 7 | `ui/locked/W42/` | 2026-09-27 |
-| W43 | AI twin check | | **LOCKED** | 1 of 3 | `ui/locked/W43/` | 2026-09-27 |
+| W43 | AI twin check (narrated making + side by side with own photo) | | **REVISED** | r2 · 2 of 3 | `ui/locked/W43/` | 2026-09-28 |
 | W44 | Keep my AI twin | | **LOCKED** | 1 of 3 | `ui/locked/W44/` | 2026-09-27 |
 | W45 | Avatar picker (question path) | | — | | | |
 | W46 | Conversation question · word answers (reusable) | | **LOCKED** | 4 of 4 | `ui/locked/W46/` | 2026-09-27 |
@@ -180,6 +180,7 @@ record of how the product got its shape.
 
 | Date | ID | What happened |
 |---|---|---|
+| 2026-09-28 | W43 | **REVISED** — variant r2-2, side by side: narrated making, then the twin next to the client's own photo, one W47 slider for both. |
 | 2026-09-27 | W43 | Revision asked by Bryan: make the twin straight after the reading (not during the questions: "two conversations at the same time"), narrate the wait, then check it against the client's own photo. 3 variants in `candidates/W43/r2-v*.html`: your photo in the corner, side by side, hold to see your photo. All use the locked W47 slider. |
 | 2026-09-27 | W47 | **LOCKED** — variant 2, photo with a turn slider. First look showed both sides facing the same way (the image model mirrored a side); twin-kitchen fixed and the sides remade before locking. |
 | 2026-09-27 | W47 | New widget (Bryan: "with their finger, turn the head of their avatar"). Option 1: blends the three checked pictures, always lands on a real one. 4 variants: drag the photo, turn slider, shows you first, tap to open and turn. |
