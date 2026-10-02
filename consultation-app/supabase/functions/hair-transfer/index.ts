@@ -22,6 +22,7 @@
 //      hair added where he has little, texture and colour kept, beard as
 //      asked. If it cheated it is drawn once more (our cost); failing twice
 //      it is kept with a note for the barber (renders.needs_barber_note).
+//      2 Oct: and NEVER shown to the client - see runRender (handoff 5b).
 //   3. On a twin, the front is drawn first. When it is stored, its job starts
 //      one job per side (POST { mode: "view" }), because three pictures in one
 //      job would run past the 150-second limit. Each side gets the side of
@@ -126,13 +127,13 @@ Deno.serve(async (req: Request) => {
       if (body.mode === "view") {
         if (body.view !== "side_a" && body.view !== "side_b") return json({ error: "view" }, 400);
         // @ts-ignore EdgeRuntime is provided by the Supabase edge runtime
-        EdgeRuntime.waitUntil(cookSide(String(body.renderId), body.view, Number(body.relayNo ?? 0)));
+        EdgeRuntime.waitUntil(cookSide(String(body.renderId), body.view, Number(body.relayNo ?? 0), readResume(body.resume)));
         return json({ accepted: true }, 202);
       }
       // A fresh job picking up a front that Google was too busy to draw.
       if (body.mode === "front") {
         // @ts-ignore EdgeRuntime is provided by the Supabase edge runtime
-        EdgeRuntime.waitUntil(resumeFront(String(body.renderId), Number(body.relayNo ?? 0)));
+        EdgeRuntime.waitUntil(resumeFront(String(body.renderId), Number(body.relayNo ?? 0), readResume(body.resume)));
         return json({ accepted: true }, 202);
       }
       return await submit(body);
@@ -252,12 +253,39 @@ async function callGemini(
   throw new Error(`no image returned (finishReason: ${j.candidates?.[0]?.finishReason})`);
 }
 
+// Where a fresh job picks up a view (Bryan, 28 Sep, handoff 5b): which try
+// it is on, a picture already drawn but not yet checked, the artist who drew
+// it, and the checks so far (kept for the barber's record).
+type Resume = { tries: number; unchecked?: string | null; artist?: string; checks?: Check[] };
+const readResume = (x: unknown): Resume => {
+  const r = (x ?? {}) as Resume;
+  return { tries: r.tries === 2 ? 2 : 1, unchecked: typeof r.unchecked === "string" ? r.unchecked : null,
+    artist: typeof r.artist === "string" ? r.artist : undefined, checks: Array.isArray(r.checks) ? r.checks : [] };
+};
+
+// THE RULE (handoff 5b): no picture reaches the client unless a truth check
+// has run on it and passed.
+//   - Every picture is stored as "unchecked" first (<id>-try1.png) and only
+//     becomes the render's picture once its check passed.
+//   - Check failed: drawn once more WITHOUT the example photo (the example is
+//     where borrowed colour comes from). Failed again: the client never sees
+//     it; the render fails ("doesn't count against you") and the picture
+//     stays in the record with a note for the barber.
+//   - Checker busy: wait and ask again; when this job runs out of time, a
+//     fresh job takes the SAME stored picture and only checks it (no second
+//     drawing bill). About ten minutes in all, like the drawing itself.
+// What it does NOT do: it never shows an unchecked picture "with a note"
+// (the old behaviour, which let grey through on render 068af9b0 while
+// Google's checker was busy).
 async function runRender(
   renderId: string, prompt: string, photoPath: string, refPath: string | null,
-  bucket: string, beard: string, sides: string[], relayNo = 0,
+  bucket: string, beard: string, sides: string[], relayNo = 0, from: Resume = { tries: 1 },
 ) {
-  const checks: Check[] = [];
+  const checks: Check[] = [...(from.checks ?? [])];
   const started = Date.now();
+  let tries = from.tries;
+  let unchecked = from.unchecked ?? null;
+  let artist = from.artist ?? MODEL;
   try {
     const photo = await supabase.storage.from(bucket).download(photoPath);
     if (photo.error) throw new Error(`source photo: ${photo.error.message}`);
@@ -272,8 +300,9 @@ async function runRender(
       ratio = nearestRatio(im.width, im.height);
     } catch { /* fall back to square */ }
 
+    // The example photo is only used for the first drawing.
     let refB64: string | null = null;
-    if (refPath) {
+    if (refPath && tries === 1 && !unchecked) {
       const r = await supabase.storage.from("style-library").download(refPath);
       if (!r.error && r.data) {
         const cropped = await cropToHair(new Uint8Array(await r.data.arrayBuffer()));
@@ -283,71 +312,95 @@ async function runRender(
       // full description, so the render degrades rather than fails.
     }
 
-    let out: Uint8Array = new Uint8Array();
-    let artist = MODEL;
-    for (let tries = 1; tries <= 2; tries++) {
-      const p = prompt + (tries > 1 ? REDO : "");
-      let raw: string;
-      try {
-        if (tries === 1) {
-          ({ raw, artist } = await drawPatiently(
-            (model, deadline) => callGemini(p, photoB64, refB64, ratio, deadline, model), started, renderId));
-        } else raw = await callGemini(p, photoB64, refB64, ratio, started + JOB_LIMIT_MS, artist);
-      }
-      catch (e) {
-        if (tries === 1) throw e;
-        // The redo did not come back in time: keep the first picture with its note.
-        checks.push({ passed: false, ran: false, notes: `redo not finished: ${String(e).slice(0, 80)}` });
-        break;
-      }
-      out = Uint8Array.from(atob(raw), (c) => c.charCodeAt(0));
+    for (;;) {
+      let out: Uint8Array;
+      if (unchecked) {
+        const dl = await supabase.storage.from("renders").download(unchecked);
+        if (dl.error) throw new Error(`unchecked picture: ${dl.error.message}`);
+        out = new Uint8Array(await dl.data.arrayBuffer());
+      } else {
+        // No room left in this job for a redo: a fresh job draws it.
+        if (tries > 1 && Date.now() - started > REDO_CUTOFF_MS) throw new Handover("redo in a fresh job");
+        const p = prompt + (tries > 1 ? REDO : "");
+        const ref = tries === 1 ? refB64 : null;
+        let raw: string;
+        ({ raw, artist } = await drawPatiently(
+          (model, deadline) => callGemini(p, photoB64, ref, ratio, deadline, model), started, renderId));
+        out = Uint8Array.from(atob(raw), (c) => c.charCodeAt(0));
 
-      // Collage guard: markedly wider out than in means two options side by side.
-      try {
-        const im = (await decode(out)) as Image;
-        if (im.width / im.height > srcAspect * 1.4) {
-          raw = await callGemini(
-            p + " CRITICAL: return a single portrait of one man, cropped" +
-              " exactly like the input photo. Do not return two images side by side.",
-            photoB64, refB64, ratio, started + JOB_LIMIT_MS, artist,
-          );
-          out = Uint8Array.from(atob(raw), (c) => c.charCodeAt(0));
-        }
-      } catch { /* if it will not decode, store it and let the eye judge */ }
+        // Collage guard: markedly wider out than in means two options side by side.
+        try {
+          const im = (await decode(out)) as Image;
+          if (im.width / im.height > srcAspect * 1.4) {
+            raw = await callGemini(
+              p + " CRITICAL: return a single portrait of one man, cropped" +
+                " exactly like the input photo. Do not return two images side by side.",
+              photoB64, ref, ratio, started + JOB_LIMIT_MS, artist,
+            );
+            out = Uint8Array.from(atob(raw), (c) => c.charCodeAt(0));
+          }
+        } catch { /* if it will not decode, the check still judges it */ }
 
-      const check = await truthCheck(photoB64, out, beard, false, undefined, started + CHECK_DEADLINE_MS);
+        const path = `${renderId}-try${tries}.png`;
+        const up = await supabase.storage.from("renders").upload(path, out, { contentType: "image/png", upsert: true });
+        if (up.error) throw new Error(up.error.message);
+        unchecked = path;
+      }
+
+      const check = await checkPatiently(
+        () => truthCheck(photoB64, out, beard, false, undefined, started + CHECK_DEADLINE_MS), started + CHECK_DEADLINE_MS, renderId);
       check.artist = artist;
+      check.picture = unchecked;
+      if (tries > 1) check.without_example = true;
       checks.push(check);
-      if (check.passed || check.ran === false) break;
-      // No time for a second picture inside the job's time limit: keep this one with the note.
-      if (Date.now() - started > REDO_CUTOFF_MS) { checks.push({ passed: false, ran: false, notes: "no time left for a redo" }); break; }
+
+      if (check.passed) {
+        if (artist !== MODEL) await supabase.from("renders").update({ model: `${artist} (backup)` }).eq("id", renderId);
+        await supabase.rpc("render_view_done", { p_render: renderId, p_view: "front", p_path: unchecked, p_checks: checks, p_passed: true, p_error: null });
+        if (sides.length) await dispatchSides(renderId, sides);
+        return;
+      }
+      if (tries >= 2) {
+        await supabase.rpc("render_view_done", { p_render: renderId, p_view: "front", p_path: unchecked, p_checks: checks, p_passed: false,
+          p_error: `truth_check_failed: ${String(check.notes ?? "").slice(0, 200)}` });
+        return;
+      }
+      tries++;
+      unchecked = null;
     }
-
-    const outPath = `${renderId}.png`;
-    const up = await supabase.storage.from("renders")
-      .upload(outPath, out, { contentType: "image/png", upsert: true });
-    if (up.error) throw new Error(up.error.message);
-
-    if (artist !== MODEL) await supabase.from("renders").update({ model: `${artist} (backup)` }).eq("id", renderId);
-    await supabase.rpc("render_view_done", { p_render: renderId, p_view: "front", p_path: outPath, p_checks: checks, p_passed: !!checks[checks.length - 1]?.passed, p_error: null });
-    if (sides.length) await dispatchSides(renderId, sides);
   } catch (e) {
-    // Google still busy: a fresh job tries again, up to about ten minutes.
-    if (e instanceof StillBusy && relayNo < MAX_RELAYS) {
-      await relay("hair-transfer", { mode: "front", renderId, relayNo: relayNo + 1 }, { Authorization: `Bearer ${SERVICE_KEY}` });
+    // Google still busy (drawing or checking), or no time for the redo: a fresh job carries on.
+    if ((e instanceof StillBusy || e instanceof CheckBusy || e instanceof Handover) && relayNo < MAX_RELAYS) {
+      await relay("hair-transfer", { mode: "front", renderId, relayNo: relayNo + 1, resume: { tries, unchecked, artist, checks } },
+        { Authorization: `Bearer ${SERVICE_KEY}` });
       return;
     }
-    const error = e instanceof StillBusy ? `google_busy: ${e.message}` : String(e);
+    const error = e instanceof StillBusy ? `google_busy: ${e.message}` : e instanceof CheckBusy ? `checker_busy: ${e.message}` : String(e);
     await supabase.rpc("render_view_done", { p_render: renderId, p_view: "front", p_path: null, p_checks: checks, p_passed: false, p_error: error.slice(0, 800) });
   }
 }
 
-// The front again, in a fresh job: everything it needs is on the render row.
-async function resumeFront(renderId: string, relayNo: number) {
+// The front again, in a fresh job: everything it needs is on the render row,
+// plus where the last job stopped.
+async function resumeFront(renderId: string, relayNo: number, from: Resume) {
   const { data: r } = await supabase.from("renders").select("*").eq("id", renderId).single();
   if (!r || r.status !== "running" || r.output_path) return;
   await runRender(renderId, r.prompt, r.source_photo_path, r.reference_image_url, r.source_bucket ?? "client-photos",
-    beardWords(r.beard), r.pending_views ?? [], relayNo);
+    beardWords(r.beard), r.pending_views ?? [], relayNo, from);
+}
+
+// A busy checker: ask again every few seconds while this job has time, then
+// CheckBusy (a fresh job checks the same stored picture).
+class CheckBusy extends Error {}
+class Handover extends Error {}
+async function checkPatiently(run: () => Promise<Check>, until: number, renderId: string): Promise<Check> {
+  for (;;) {
+    const c = await run();
+    if (c.ran !== false) return c;
+    markBusy(renderId);
+    if (Date.now() + 8_000 + 35_000 > until) throw new CheckBusy(String(c.notes ?? "").slice(0, 200));
+    await new Promise((r) => setTimeout(r, 8_000));
+  }
 }
 
 // Tells the app "Google is busy, still trying" (render-status reads busy_at).
@@ -381,8 +434,11 @@ function dispatchSides(renderId: string, views: string[]) {
   })));
 }
 
-async function cookSide(renderId: string, view: "side_a" | "side_b", relayNo = 0) {
-  const checks: Check[] = [];
+async function cookSide(renderId: string, view: "side_a" | "side_b", relayNo = 0, from: Resume = { tries: 1 }) {
+  const checks: Check[] = [...(from.checks ?? [])];
+  let tries = from.tries;
+  let unchecked = from.unchecked ?? null;
+  let artist = from.artist ?? MODEL;
   const started = Date.now();
   const done = (path: string | null, passed: boolean, error: string | null) =>
     supabase.rpc("render_view_done", { p_render: renderId, p_view: view, p_path: path, p_checks: checks, p_passed: passed, p_error: error });
@@ -419,40 +475,45 @@ async function cookSide(renderId: string, view: "side_a" | "side_b", relayNo = 0
       ? ` DIRECTION: in IMAGE 1 his nose points toward the ${pose.toUpperCase()} edge of the picture. In the new picture his nose must point toward the ${pose.toUpperCase()} edge too.`
       : "";
 
-    let out: Uint8Array = new Uint8Array();
-    let artist = MODEL;
-    for (let tries = 1; tries <= 2; tries++) {
-      const last = checks[checks.length - 1];
-      const redo = tries > 1 ? REDO + (last?.cut_differs ? " The haircut MUST be exactly the one in IMAGE 2: the same length on top and the same texture." : "") : "";
-      let raw: string;
-      try {
-        if (tries === 1) {
-          ({ raw, artist } = await drawPatiently(
-            (model, deadline) => callGemini(prompt + facing + redo, sideB64, frontB64, "3:4", deadline, model), started, renderId));
-        } else raw = await callGemini(prompt + facing + redo, sideB64, frontB64, "3:4", started + JOB_LIMIT_MS, artist);
+    // Same rule as the front (handoff 5b): only a checked, passed side is shown.
+    // A side's example is the client's own finished front, so the redo keeps it.
+    for (;;) {
+      let out: Uint8Array;
+      if (unchecked) {
+        const dl = await supabase.storage.from("renders").download(unchecked);
+        if (dl.error) throw new Error(`unchecked picture: ${dl.error.message}`);
+        out = new Uint8Array(await dl.data.arrayBuffer());
+      } else {
+        if (tries > 1 && Date.now() - started > REDO_CUTOFF_MS) throw new Handover("redo in a fresh job");
+        const last = checks[checks.length - 1];
+        const redo = tries > 1 ? REDO + (last?.cut_differs ? " The haircut MUST be exactly the one in IMAGE 2: the same length on top and the same texture." : "") : "";
+        let raw: string;
+        ({ raw, artist } = await drawPatiently(
+          (model, deadline) => callGemini(prompt + facing + redo, sideB64, frontB64, "3:4", deadline, model), started, renderId));
+        out = Uint8Array.from(atob(raw), (c) => c.charCodeAt(0));
+        const path = `${renderId}-${view}-try${tries}.png`;
+        const up = await supabase.storage.from("renders").upload(path, out, { contentType: "image/png", upsert: true });
+        if (up.error) throw new Error(up.error.message);
+        unchecked = path;
       }
-      catch (e) {
-        if (tries === 1) throw e;
-        checks.push({ passed: false, ran: false, notes: `redo not finished: ${String(e).slice(0, 80)}` });
-        break;
-      }
-      out = Uint8Array.from(atob(raw), (c) => c.charCodeAt(0));
-      const check = await truthCheck(sideB64, out, beardWords(r.beard), true, frontB64, started + CHECK_DEADLINE_MS);
+      const check = await checkPatiently(
+        () => truthCheck(sideB64, out, beardWords(r.beard), true, frontB64, started + CHECK_DEADLINE_MS), started + CHECK_DEADLINE_MS, renderId);
       check.artist = artist;
+      check.picture = unchecked;
       checks.push(check);
-      if (check.passed || check.ran === false) break;
-      if (Date.now() - started > REDO_CUTOFF_MS) { checks.push({ passed: false, ran: false, notes: "no time left for a redo" }); break; }
+      if (check.passed) { await done(unchecked, true, null); return; }
+      if (tries >= 2) { await done(unchecked, false, `truth_check_failed: ${String(check.notes ?? "").slice(0, 200)}`); return; }
+      tries++;
+      unchecked = null;
     }
-    const path = `${renderId}-${view}.png`;
-    const up = await supabase.storage.from("renders").upload(path, out, { contentType: "image/png", upsert: true });
-    if (up.error) throw new Error(up.error.message);
-    await done(path, !!checks[checks.length - 1]?.passed, null);
   } catch (e) {
-    if (e instanceof StillBusy && relayNo < MAX_RELAYS) {
-      await relay("hair-transfer", { mode: "view", renderId, view, relayNo: relayNo + 1 }, { Authorization: `Bearer ${SERVICE_KEY}` });
+    if ((e instanceof StillBusy || e instanceof CheckBusy || e instanceof Handover) && relayNo < MAX_RELAYS) {
+      await relay("hair-transfer", { mode: "view", renderId, view, relayNo: relayNo + 1, resume: { tries, unchecked, artist, checks } },
+        { Authorization: `Bearer ${SERVICE_KEY}` });
       return;
     }
-    await done(null, false, (e instanceof StillBusy ? `google_busy: ${e.message}` : String(e)).slice(0, 300));
+    const error = e instanceof StillBusy ? `google_busy: ${e.message}` : e instanceof CheckBusy ? `checker_busy: ${e.message}` : String(e);
+    await done(null, false, error.slice(0, 300));
   }
 }
 

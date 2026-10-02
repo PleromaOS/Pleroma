@@ -135,11 +135,56 @@ bring to Bryan, one at a time, tested first:
 - **Decide what happens when the colour check fails**: redo with the other
   artist, or never show that picture to the client as their cut.
 
+### 5b. Bryan's decision (28 Sep, evening): what "never" has to mean
+
+Bryan's correction: this is **not a grey problem**. The rule is not "never
+add grey" — it's "the hair colour in the result must always match the hair
+colour in the client's own photo, whatever that colour is." Same standard
+as texture, face, everything else on the list. Grey was just the one that
+slipped through today.
+
+His proposed fix: the truth check (section 5, point 3) already asks
+`colour_changed` and the other locked questions, and it already caught the
+grey correctly on render `068af9b0`. **The check itself is not the missing
+piece — what happens after it runs is.** Today, a failed or skipped check
+still lets the picture reach the client. That's the actual hole.
+
+**The rule to build:** no picture reaches the client unless a truth check
+has run on it and passed.
+
+- If it fails: redo once, **without the example photo** (proven safe in
+  today's beard-only lab test — hair stayed untouched with no reference
+  image at all). If the redo also fails, the client does not see that
+  picture as their cut; it goes to the barber with a note instead.
+- If the checker (Google's) is busy: **wait and ask again**, the same way
+  `patient.ts` already waits for the artist. Never skip the check and show
+  the picture anyway.
+- The Claude backup checker (section 3, "off until Bryan adds the key")
+  becomes the second line here: with two checkers from two companies, both
+  would have to be busy at once before a client has to wait.
+- The plain-arithmetic colour check (the third bullet above) is now
+  **optional, not required** — the AI check already covers colour as one of
+  several locked attributes. Worth adding later only if the AI checks prove
+  unreliable on their own.
+
+**Built 2 Oct** (hair-transfer v19 + migration 20261002_render_only_passed_pictures):
+every picture is stored unchecked first and released only after a passed
+check; a fail is redrawn once without the example photo; a busy checker is
+waited for (a fresh job checks the same stored picture). Lab test on a copy
+of `068af9b0` (render f40d4d0a): the grey picture was caught ("The hair
+colour has been changed to grey"), redrawn without the example, passed, and
+only then shown; both sides passed. Original plan below, for the record:
+Test in the lab on `068af9b0` first (force a check
+failure, confirm it redraws without the reference photo, confirm nothing
+unchecked reaches "succeeded"), show Bryan, then build.
+
 ## 6. To do, in Bryan's order
 
 1. **Show Bryan render `068af9b0`** (3 angles, next to his approved Crew Cut
    `3422dd56`).
-2. **Fix the grey leak** (section 5). Test first, show him, then build.
+2. **Fix the colour leak** (section 5, decision in 5b: no picture reaches
+   the client without a passed truth check; wait rather than skip when the
+   checker is busy). Test first, show him, then build.
 3. **Beard-only mode in the app** (hair untouched), plus "haircut first,
    beard later on the same haircut". Proven in the lab with 3.1 Flash Image
    and **no example photo**. Needs: a render mode, a source that can be an

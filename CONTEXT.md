@@ -65,6 +65,14 @@ _Avoid_: customer (reserved for the salon owner as buyer), patient
 The client-facing flow that captures what a client wants and shows them the result on their own face, producing a brief and a render. Run by a client who has not necessarily chosen the shop yet. This is the acquisition surface: shops advertise a free consultation instead of advertising haircuts.
 _Avoid_: quiz (internal only), demo, trial, preview flow
 
+**Introduction**:
+The story screens a client sees first when opening a consultation link: the welcome, how it works, your face your rules, the guarantee, then getting ready and the photo consent. The only part of a consultation that is not the conversation.
+_Avoid_: onboarding, landing, splash
+
+**Conversation**:
+Everything in a consultation after the introduction and the camera: one chat thread that keeps growing from the client's three photos to their pass or booking link. The client answers in it and can change only their most recent reply; nothing earlier is taken back.
+_Avoid_: chat screen, room, step (for what the client sees)
+
 **Scan path**:
 The way into a consultation where the client's current hair and face are learned from a three-photo scan (front and both sides) and the client confirms each finding with yes or no.
 _Avoid_: photo route, selfie flow, AI route
@@ -78,7 +86,7 @@ An AI-made likeness of the client in good studio light, built from their scan ph
 _Avoid_: clone, AI clone, digital double, avatar (an avatar is not the client's own face)
 
 **Question path**:
-The way into a consultation for a client who prefers no photos: every fact about their current hair is asked as a question, and the result is shown on an avatar.
+The way into a consultation for a client who prefers no photos: every fact about their current hair is asked as a question in the conversation, and the result is shown on the chosen style's reference photo (later: on an avatar). Never carries the result guarantee.
 _Avoid_: no-photo route, manual route, quiz route
 
 **Avatar**:
@@ -130,7 +138,7 @@ The message sent 24 hours after a consultation that produced a render but no boo
 _Avoid_: reminder, nurture, drip, abandoned cart
 
 **Shop entry**:
-A consultation started from the shop's QR code by someone already in the building. The client selects their barber. (Changed 2026-09-26: email is now asked after the scan and before the render, as in the campaign entry, because photo consent must belong to a known person.)
+A consultation started from the shop's QR code by someone already in the building. The client selects their barber (not built yet: until each shop's barbers are entered at onboarding, it runs like the campaign entry). (Changed 2026-09-26: email is now asked after the scan and before the render, as in the campaign entry, because photo consent must belong to a known person.)
 _Avoid_: in-store flow, walk-in flow
 
 **Campaign entry**:
